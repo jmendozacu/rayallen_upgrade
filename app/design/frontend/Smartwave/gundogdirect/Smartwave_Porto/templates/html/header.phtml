@@ -1,0 +1,184 @@
+<?php
+    $header_type = $this->getConfig('porto_settings/header/header_type');
+?>
+<header class="page-header type<?php echo $header_type; ?>">
+ <!--[if IE 9]>
+        <link rel="stylesheet" type="text/css" href="css/ie.css" />
+        <![endif]-->
+
+<?php if($header_type == 3 || $header_type == 4 ): ?>
+    <div class="header content">
+    <?php echo $this->getChildHtml("logo"); ?>
+    <?php //echo $this->getChildHtml("navigation.sections"); ?>
+        <div class="panel header">
+            <div class="top-panel">
+                <?php echo $this->getChildHtml("skip_to_content"); ?>
+                <?php echo $this->getChildHtml("header.links"); ?>
+                <div class="search-area">
+                    <a href="javascript:void(0)" class="search-toggle-icon"><i class="porto-icon-search"></i></a>
+                    <?php echo $this->getChildHtml("top.search"); ?>
+                </div>
+            </div>
+            <div class="bottom-panel">
+                <?php echo $this->getChildHtml("currency"); ?>
+                <?php echo $this->getChildHtml("store_language"); ?>
+                <?php echo $this->getChildHtml("minicart"); ?>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="panel wrapper">
+        <div class="panel header">
+            <div class="blank-block col-md-3 col-sm-3"></div>
+            <?php echo $this->getChildHtml("skip_to_content"); ?>
+            <?php echo $this->getChildHtml("currency"); ?>
+            <?php echo $this->getChildHtml("store_language"); ?>
+            <div class="header_phone">
+               <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('header_phone')->toHtml();?>
+           </div>
+            <?php echo $this->getChildHtml("header.links"); ?>
+        </div>
+    </div>
+    <div class="header content">
+    <div class="col-md-3 col-sm-3">
+    <div class="header-logo">
+    <?php echo $this->getChildHtml("logo"); ?></div></div>
+    <div class="col-md-9 col-sm-9">
+    <div class="row search-block">
+    <div class="col-md-7 col-sm-7 col-xs-8"> <?php echo $this->getChildHtml("top.search"); ?></div>
+    <div class="col-md-3 col-sm-3 col-xs-4 pull-right"><?php echo $this->getChildHtml("minicart"); ?></div>
+    </div>
+   	<div class="row navigation-block">
+     <div class="sections nav-sections">
+        <div class="section-items nav-sections-items" role="tablist">
+            <div data-role="content" id="store.menu" class="section-item-content nav-sections-item-content" role="tabpanel" aria-hidden="false">
+                <nav class="navigation sw-megamenu" role="navigation">
+                    <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('top_custom_menu')->toHtml();?>
+                </nav>
+            </div>
+        </div>
+    </div>
+    </div>
+<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('offer_block')->toHtml();?>
+    </div>
+    </div>
+<?php endif; ?>
+</header>
+<!--
+<script>
+    jQuery(function(){
+   if (jQuery(window).width() < 850) {
+   //alert('Less than 800');
+    var vis = 10;
+    }
+    else if(jQuery(window).width() < 1030) {
+   //alert('More than 980');
+    var vis = 15;
+    }
+else{
+   //alert('More than 1100');
+    var vis = 20;
+    }
+
+        jQuery('.side-custom-menu .navigation li.level0').slice(vis).hide();
+        var $more = jQuery('<a href="javascript:void(0);" class="more-categories">More Categories</a>');
+        $more.click(function(){
+            jQuery('.side-custom-menu .navigation li:hidden').slice(0,jQuery('.side-custom-menu .navigation li').length).show();
+            if(jQuery('.side-custom-menu .navigation li:hidden').length == 0)
+                $more.hide();
+        });
+        jQuery('.side-custom-menu > .navigation > ul').after($more);
+		
+    });
+</script>
+
+<script>
+jQuery(".submenu").hide();
+   jQuery(".open-children-toggle").click(function(){
+       jQuery(this).next(".submenu").slideToggle('slow', function() {
+   jQuery(this).prev(".open-children-toggle").toggleClass('active', jQuery(this).is(':visible'));
+ });
+   });
+jQuery(document).ready(function(){
+	jQuery('#popup-myModal').click(function() {
+		jQuery("#popup-myModal").hide();
+	});
+});
+</script>
+-->
+<!--
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-70058844-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+-->
+<style type="text/css">
+
+#popup-myModal {
+   background: rgba(250, 250, 250, 0.5) none repeat scroll 0 0;
+   border-radius: 2px;
+   display: none;
+   font-size: 1.1em;
+   height: 100%;
+   position: fixed;
+   text-align: center;
+   width: 100%;
+   z-index: 500;
+}
+#popup-myModal .modal-dialog {
+   background: #ffffff  none repeat scroll 0 0;
+   border-radius: 2px;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+   margin: auto;
+   padding: 15px 30px 15px;
+   position: relative;
+   text-align: center;
+   width: 480px;
+   top: 25%;
+   z-index: 1000;
+}
+.addtocart-popup.viewcart {
+    background: #454545 none repeat scroll 0 0;
+    color: #fff;
+    display: inline-block;
+    margin-left: 5px;
+    padding: 9px 15px;
+}
+#popup-myModal .modal-footer {
+    text-align: center;
+}
+</style>
+
+
+<!-- Modal -->
+<div id="popup-myModal" class="modal fade in add-to-popup" role="dialog">
+ <div class="modal-dialog">
+
+   <!-- Modal content-->
+   <div class="modal-content modal-inner-wrap add-to-popup">
+     <div class="modal-body">
+       <div class="add-to-message">
+		</div>
+     </div>
+     <div class="modal-footer">
+      <a class="addtocart-popup viewcart" href="<?php echo $block->getCurrentUrl(); ?>">
+                <span><span>Continue Shopping</span></span>
+            </a>
+      <a class="addtocart-popup viewcart" href="<?php echo $block->getBaseUrl().'checkout/cart'; ?>">
+                <span><span>Checkout</span></span>
+            </a>
+     </div>
+   </div>
+
+ </div>
+
+
+</div>
+
+

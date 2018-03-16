@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Kensium\GiftCard\Api\CreateOrderInterface" type="Kensium\GiftCard\Model\CreateOrder" />
+    <preference for="Kensium\GiftCard\Api\JsondataInterface" type="Kensium\GiftCard\Model\Jsondata" />
+    <preference for="Kensium\GiftCard\Api\AddressdataInterface" type="Kensium\GiftCard\Model\Addressdata" />
+    <preference for="Kensium\GiftCard\Api\BillingdataInterface" type="Kensium\GiftCard\Model\Billingdata" />
+    <preference for="Kensium\GiftCard\Api\ShippingdataInterface" type="Kensium\GiftCard\Model\Shippingdata" />
+    <preference for="Kensium\GiftCard\Api\ItemsdataInterface" type="Kensium\GiftCard\Model\Itemsdata" />
+</config>

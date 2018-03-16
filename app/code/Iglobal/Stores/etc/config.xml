@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+  <default>
+    <currencies>
+      <AED></AED>
+      <ARS>&amp;#8371;</ARS>
+      <AUD>&amp;#36;</AUD>
+      <BRL>R&amp;#36;</BRL>
+      <CAD>&amp;#36;</CAD>
+      <CHF></CHF>
+      <CLP>&amp;#36;</CLP>
+      <CNY>&amp;#165;</CNY>
+      <DKK>kr.</DKK>
+      <EUR>&amp;euro;</EUR>
+      <GBP>&amp;pound;</GBP>
+      <HKD>&amp;#36;</HKD>
+      <HUF></HUF>
+      <ILS>&amp;#8362;</ILS>
+      <INR>&amp;#8377;</INR>
+      <JPY>&#165;</JPY>
+      <KWD></KWD>
+      <MXN>&amp;#36;</MXN>
+      <MYR>RM</MYR>
+      <NOK>kr.</NOK>
+      <NZD>&amp;#36;</NZD>
+      <RUB>r.</RUB>
+      <SEK>kr.</SEK>
+      <SGD>S&amp;#36;</SGD>
+      <THB>&amp;#3647;</THB>
+      <TWD>NT&amp;#36;</TWD>
+      <USD>&amp;#36;</USD>
+    </currencies>
+    <countries>
+      <AL label="Albania">USD</AL>
+      <AS label="American Samoa">USD</AS>
+      <AD label="Andorra">EUR</AD>
+      <AI label="Anguilla">USD</AI>
+      <AG label="Antigua and Barbuda">USD</AG>
+      <AR label="Argentina">ARS</AR>
+      <AM label="Armenia">USD</AM>
+      <AW label="Aruba">USD</AW>
+      <AU label="Australia">AUD</AU>
+      <AT label="Austria">EUR</AT>
+
+      <BS label="Bahamas">USD</BS>
+      <BB label="Barbados">USD</BB>
+      <BE label="Belgium">EUR</BE>
+      <BZ label="Belize">USD</BZ>
+      <BM label="Bermuda">USD</BM>
+      <BQ label="Bonaire, Sint Eustatius and Saba">USD</BQ>
+      <BR label="Brazil">BRL</BR>
+      <BG label="Bulgaria">USD</BG>
+
+      <KH label="Cambodia">USD</KH>
+      <CA label="Canada">CAD</CA>
+      <IC label="Canary Islands">EUR</IC>
+      <KY label="Cayman Islands">USD</KY>
+      <CL label="Chile">CLP</CL>
+      <CN label="China">CNY</CN>
+      <CR label="Costa Rica">USD</CR>
+      <CK label="Cook Islands">NZD</CK>
+      <CY label="Cyprus">EUR</CY>
+
+      <DK label="Denmark">DKK</DK>
+      <DM label="Dominica">USD</DM>
+      <DO label="Dominican Republic">USD</DO>
+
+      <EC label="Ecuador">USD</EC>
+      <SV label="El Salvador">USD</SV>
+      <ER label="Eritrea">USD</ER>
+      <EE label="Estonia">EUR</EE>
+      <ET label="Ethiopia">USD</ET>
+
+      <FO label="Faroe Islands">DKK</FO>
+      <FI label="Finland">EUR</FI>
+      <FR label="France">EUR</FR>
+      <GF label="French Guiana">EUR</GF>
+      <PF label="French Polynesia">USD</PF>
+
+      <DE label="Germany">EUR</DE>
+      <GR label="Greece">EUR</GR>
+      <GL label="Greenland">DKK</GL>
+      <GD label="Grenada">USD</GD>
+      <GP label="Guadeloupe">EUR</GP>
+      <GU label="Guam">USD</GU>
+      <GT label="Guatemala">USD</GT>
+      <GY label="Guyana">USD</GY>
+
+      <HK label="Hong Kong">HKD</HK>
+      <HU label="Hungary">HUF</HU>
+
+      <IS label="Iceland">USD</IS>
+      <IN label="India">INR</IN>
+      <IE label="Ireland">EUR</IE>
+      <IL label="Israel">ILS</IL>
+      <IT label="Italy">EUR</IT>
+
+      <JM label="Jamaica">USD</JM>
+      <JP label="Japan">JPY</JP>
+      <JO label="Jordan">USD</JO>
+
+      <KI label="Kiribati">AUD</KI>
+      <KW label="Kuwait">KWD</KW>
+
+      <LT label="Lithuania">USD</LT>
+      <LU label="Luxembourg">EUR</LU>
+
+      <MY label="Malaysia">MYR</MY>
+      <MV label="Maldives">USD</MV>
+      <MT label="Malta">EUR</MT>
+      <MX label="Mexico">MXN</MX>
+      <MP label="Northern Mariana Islands">USD</MP>
+      <MH label="Marshall Islands">USD</MH>
+      <MQ label="Martinique">EUR</MQ>
+      <FM label="Micronesia, Federated States of">USD</FM>
+      <MD label="Moldova, Republic of">USD</MD>
+      <MC label="Monaco">EUR</MC>
+      <MS label="Montserrat">USD</MS>
+
+      <NL label="Netherlands">EUR</NL>
+      <NZ label="New Zealand">NZD</NZ>
+      <NI label="Nicaragua">USD</NI>
+      <NO label="Norway">NOK</NO>
+
+      <PK label="Pakistan">USD</PK>
+      <PW label="Palau">USD</PW>
+      <PA label="Panama">USD</PA>
+      <PY label="Paraguay">USD</PY>
+      <PL label="Poland">USD</PL>
+      <PT label="Portugal">EUR</PT>
+      <PR label="Puerto Rico">USD</PR>
+
+      <RO label="Romania">USD</RO>
+      <RU label="Russia">RUB</RU>
+
+      <BL label="Saint Barthélemy">EUR</BL>
+      <KN label="Saint Kitts and Nevis">USD</KN>
+      <LC label="Saint Lucia">USD</LC>
+      <SX label="Saint Maarten">USD</SX>
+      <VC label="Saint Vincent and the Grenadines">USD</VC>
+      <WS label="Samoa">USD</WS>
+      <SM label="San Marino">EUR</SM>
+      <ST label="Sao Tome and Principe">USD</ST>
+      <SC label="Seychelles">USD</SC>
+      <SG label="Singapore">SGD</SG>
+      <SK label="Slovakia">EUR</SK>
+      <SI label="Slovenia">EUR</SI>
+      <ES label="Spain">EUR</ES>
+      <SE label="Sweden">SEK</SE>
+      <CH label="Switzerland">CHF</CH>
+
+      <TW label="Taiwan">TWD</TW>
+      <TH label="Thailand">THB</TH>
+      <TC label="Turks and Caicos Islands">USD</TC>
+
+      <AE label="United Arab Emirates">AED</AE>
+      <GB label="United Kingdom">GBP</GB>
+      <US label="United States">USD</US>
+      <UY label="Uruguay">USD</UY>
+
+      <VU label="Vanuatu">USD</VU>
+      <VE label="Venezuela, Bolivarian Republic of">USD</VE>
+      <VN label="Viet Nam">USD</VN>
+      <VI label="Virgin Islands, U.S.">USD</VI>
+    </countries>
+    <payment>
+      <iGlobal>
+        <active>1</active>
+        <model>Iglobal\Stores\Model\Payment\Iglobal</model>
+        <order_status>pending</order_status>
+        <title>iGlobal International Payment</title>
+        <allowspecific>0</allowspecific>
+        <group>offline</group>
+      </iGlobal>
+      <iGlobalCreditCard>
+        <active>1</active>
+        <model>Iglobal\Stores\Model\Payment\IglobalCreditCard</model>
+        <order_status>pending</order_status>
+        <title>iGlobal International Credit Card Payment</title>
+        <allowspecific>0</allowspecific>
+        <group>offline</group>
+      </iGlobalCreditCard>
+      <iGlobalPaypal>
+        <active>1</active>
+        <model>Iglobal\Stores\Model\Payment\IglobalPaypal</model>
+        <order_status>pending</order_status>
+        <title>iGlobal International PayPal Payment</title>
+        <allowspecific>0</allowspecific>
+        <group>offline</group>
+      </iGlobalPaypal>
+    </payment>
+    <carriers>
+      <ig>
+        <active>1</active>
+        <model>Iglobal\Stores\Model\Carrier</model>
+        <title>iGlobal</title>
+        <name>International Shipping</name>
+        <price>0.00</price>
+        <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+      </ig>
+    </carriers>
+    <iglobal_integration>
+      <apireqs>
+        <secret>Your API Code Goes Here</secret>
+        <iglobalid>Your Store ID Goes Here</iglobalid>
+        <ice_toggle>0</ice_toggle>
+        <use_iframe>1</use_iframe>
+      </apireqs>
+      <igmat>
+        <welcome_mat_active>0</welcome_mat_active>
+      </igmat>
+      <igjq>
+        <enabled>0</enabled>
+      </igjq>
+      <igc_dev>
+        <dev_on>0</dev_on>
+      </igc_dev>
+      <ig_item_attribute>
+        <weight>weight</weight>
+        <length>ig_length</length>
+        <width>ig_width</width>
+        <height>ig_height</height>
+        <country_of_origin>country_of_manufacture</country_of_origin>
+    </ig_item_attribute>
+    </iglobal_integration>
+
+    <general>
+      <country>
+        <ig_domestic_countries>US</ig_domestic_countries>
+      </country>
+    </general>
+  </default>
+</config>

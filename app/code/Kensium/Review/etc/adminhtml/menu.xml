@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Kensium. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="kensium_review::kensium_review" title="Reviews Import" module="Kensium_Review" sortOrder="10" parent="kensium::productimport" action="kensium_review/import" resource="Kensium_Review::kensium_review"/>
+    </menu>
+</config>

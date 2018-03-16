@@ -1,0 +1,1 @@
+Kensium_Productimport module consists of installation scripts and fixtures.

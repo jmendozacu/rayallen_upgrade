@@ -1,0 +1,148 @@
+<style type="text/css">
+    span.custom-required{color: #ff0000;}
+    h1 {
+        font-size: 26px;
+        font-weight: 600;
+        margin: 0 0 15px;
+    }
+</style>
+<?php
+/**
+ * @var $block \Kensium\Quote\Block\Quote
+ */
+$storeName = $block->getCurrentStoreName();
+$storeId = $block->getCurrentStoreId();
+?>
+    <h1 style="text-align: left;"><?php /* @escapeNotVerified */ echo __('Request a Quote')?></h1>
+    <p><?php /* @escapeNotVerified */ echo __('Please fill out the following form.')?></p>
+    <p><span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('Indicates a required field.')?></p>
+    <form action="<?php echo $block->getAction(); ?>" id="quoterequest" method="post" name="myform">
+        <table>
+            <tbody>
+            <tr>
+                <input type="hidden" name="store_id" value="<?php  echo $storeId; ?>" />
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('First Name')?>
+                </td>
+                <td>
+                    <input class="formtext input-medium " type="text"  value="" name="fname" class="input-text required-entry" data-validate="{required:true}">
+                </td>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('Last Name')?>
+                </td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="lname" class="input-text required-entry" data-validate="{required:true}">
+                </td>
+
+
+            </tr>
+
+            <tr>
+                <td><?php /* @escapeNotVerified */ echo __('Business/Organization Name')?></td>
+                <td>
+                    <input class="formtext input-xlarge" type="text"  value="" name="bname">
+                </td>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('Address')?>
+                </td>
+                <td>
+                    <input class="formtext input-xlarge" type="text"  value="" name="address" class="input-text required-entry" data-validate="{required:true}">
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('City')?>
+                </td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="city" class="input-text required-entry" data-validate="{required:true}">
+                </td>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('State/Province')?>
+                </td>
+                <td>
+                    <input class="formtext input-xsmall" type="text"  value="" name="state" class="input-text required-entry" data-validate="{required:true}">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('ZIP')?>
+                </td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="zip" class="input-text required-entry" data-validate="{required:true, 'validate-zip-us':true}">
+                </td>
+                <td><?php /* @escapeNotVerified */ echo __('Country')?></td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="country">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('Phone')?>
+                </td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="phone" class="input-text required-entry" data-validate="{required:true, 'validate-phoneStrict':true}">
+                </td>
+                <td><?php /* @escapeNotVerified */ echo __('FAX')?>   </td>
+                <td>
+                    <input class="formtext input-medium" type="text"  value="" name="fax">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span class="custom-required">*</span><?php /* @escapeNotVerified */ echo __('Email')?>
+                </td>
+                <td>
+                    <input class="formtext input-xlarge" type="text"  value="" name="email" class="input-text required-entry validate-email" data-validate="{required:true, 'validate-email':true}">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p><?php /* @escapeNotVerified */ echo __('To add a product to your quote, please complete the fields below and click submit.')?>
+            <span style="color: #F00; font-weight: bold;"><?php /* @escapeNotVerified */ echo __('PLEASE NOTE:')?> </span>
+            <?php /* @escapeNotVerified */ echo __('If an Item# ends in "-P" then you will need to specify the color/size/style of this item in the Description field. Omitting this information may delay processing of your quote.')?>
+        </p>
+        <table>
+            <tbody>
+            <?php for($i = 1;$i<=10;$i++){?>
+                <tr>
+                    <td class="normaltext" align="right"><?php /* @escapeNotVerified */ echo __('Quantity')?><?php echo $i;?></td>
+                    <td align="left">
+                        <input class="formtext input-xsmall" type="text"  value="" name="<?php echo 'qty'.$i;?>">
+                    </td>
+                    <td class="normaltext" align="right"><?php /* @escapeNotVerified */ echo __('Item')?><?php echo $i;?>#   </td>
+                    <td align="left">
+                        <input class="formtex input-small" type="text"  value="" name="<?php echo 'item'.$i;?>">
+                    </td>
+                    <td class="normaltext" align="right"><?php /* @escapeNotVerified */ echo __('Description')?><?php echo $i;?></td>
+                    <td align="left">
+                        <input class="formtext input-large" type="text"  value="" name="<?php echo 'description'.$i;?>">
+                    </td>
+                </tr>
+            <?php }?>
+            </tbody>
+            <tr>
+
+                <td colspan="2" align="center"><input value="Submit Quote" type="submit" id="cr" class ="action primary" style="margin-right: 18px;" /></td></tr>
+        </table>
+    </form>
+
+<script>
+    require([
+        'jquery',
+        'mage/mage'
+    ], function($){
+
+        var dataForm = $('#quoterequest');
+        var ignore = '';
+        dataForm.mage('validation', {
+            ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+        }).find('input:text').attr('autocomplete', 'off');
+
+    });
+</script>

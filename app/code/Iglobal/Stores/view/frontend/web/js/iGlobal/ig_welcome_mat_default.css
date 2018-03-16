@@ -1,0 +1,71 @@
+/* iGlobal Welcome Mat Styles */
+/* Authored by iGlobal Stores (www.iglobalstores.com) */
+
+/* Google Fonts - If you're using your own fonts, you can remove these */
+@import 'https://fonts.googleapis.com/css?family=Material+Icons';
+@import 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,400i,500,700,900';
+
+/* igFlag controls the placement of the country flag on your website */
+#igFlag { width: 30px; }
+#igFlag img { max-width: 26px; margin-bottom: -3px; cursor: pointer; margin-left: 5px; padding: 1px; background-color: #eee; }
+
+/* Begin Modal Styles */
+#igSplashElement {
+	position: fixed;
+	max-width: 500px;
+	background-color: #fff;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	-webkit-box-shadow:  0px 0px 60px 0px rgba(0, 0, 0, 0.5);
+	box-shadow:  0px 0px 60px 0px rgba(0, 0, 0, 0.5);
+	color: rgba(0,0,0,.87);
+	font-size: 14px;
+	font-family: 'Roboto', Helvetica, Arial, sans-serif;
+	/* The CSS below is for the opening and closing animation */
+	-webkit-transform: translateY(-50%) translateX(-50%);
+	-moz-transform: translateY(-50%) translateX(-50%);
+	-ms-transform: translateY(-50%) translateX(-50%);
+	transform: translateY(-50%) translateX(-50%);
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+	z-index: 2001;
+}
+#igSplashElement .closeButton { position: absolute; top: 3px; right: 3px; }
+#igSplashElement .close { padding: 5px 8px; background: #eee; text-align: right; width: 100%; box-sizing:border-box; float: none; }
+#igSplashElement .close i { cursor: pointer; }
+#igSplashElement .igModalHeader {background-color: #fff;text-align: center;color: rgba(0,0,0,.87);box-sizing: border-box;}
+#igSplashElement .logoWrapper { width: 100%; padding: 30px; text-align: center; float: none; border-bottom: 1px solid #eee; box-sizing: border-box; }
+#igSplashElement .messageWrapper { width: 100%; padding: 30px 30px 10px; box-sizing: border-box; }
+#igSplashElement .modalLogo {  max-width: 100%; max-height: 160px; }
+#igSplashElement .igModalHeader img.headerFlag {max-width: 50px;position: absolute;left: 5px;top: 5px;}
+#igSplashElement .headerZero { margin-bottom: 8px; font-size: 30px; font-weight: 600; margin-top:0; }
+#igSplashElement .headerOne {font-size: 30px;padding-left: 0.5em; /* Set the color of your choice here */text-transform: uppercase;font-weight: 600;}
+#igSplashElement .headerTwo { color: #999; margin-top: 7px; font-size: 12px; }
+#igSplashElement .countryP { font-size: 16px; text-transform: uppercase; }
+#igSplashElement .igModalBody {background-color: white;width: 100%;}
+#igSplashElement .countryDropDownWrapper {width: 100%;min-height: 25px;-webkit-border-radius: 2px;border-radius: 2px;background: #eee;border: 0px; /* Set the color of your choice here */margin: 0 auto;padding: 0px;cursor: pointer;position: relative;}
+#igSplashElement .countryDropDownWrapper i { position: absolute; right: 10px; top: 10px; color: rgba(0,0,0,.3); }
+#igSplashElement #countrySelect { width:100%; position: relative; box-shadow: 0px 0px 0px; padding: 10px 15px;margin: 0px;font-size: 14px;line-height: 14px;color: #333 !important;cursor: pointer;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;background: none !important;border: 0 !important;-webkit-appearance: none;-moz-appearance: window;appearance: none;ms-appearance: none;overflow: hidden;height: 44px;padding-left:65px;}
+#igSplashElement select::-ms-expand { display: none; }
+#igSplashElement ul.featureList { padding: 30px; margin: 20px 0px 30px; background-color: #eee; display: none !important; }
+#igSplashElement ul.featureList li { list-style-type: none; padding: 5px 0px; }
+#igSplashElement ul.featureList li i { position: relative; top: 6px; }
+#igSplashElement .igWelcomeCTAButton { width: 100%;padding: 0px 30px 30px; box-sizing: border-box;}
+#igSplashElement .igWelcomeCTAButton button {width: 100%;height: 44px;-webkit-border-radius: 2px;border-radius: 2px;color: white;margin: 0 auto;border: none;font-size: 14px;font-weight: normal; background-color: #333;opacity: 1;text-shadow: none;float: none;text-transform: uppercase;text-align: center;}
+#igSplashElement .igWelcomeCTAButton button:hover { color: white; background-color: #666; opacity: 1; }
+.modal-open {
+	-webkit-animation-name: igFadeInDown;
+	animation-name: igFadeInDown;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
+@media screen and (max-width: 600px) { /* Responsive design sets a width of 400px for all devices <= 600px */
+	#igSplashElement { width: 95%; }
+    #igSplashElement .igModalHeader { width: 100%; }
+    #igSplashElement .messageWrapper { clear: both; }
+}

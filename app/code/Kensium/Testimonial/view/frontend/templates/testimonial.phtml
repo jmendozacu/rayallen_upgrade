@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Testimonials</title>
+</head>
+<body>
+<script type="text/javascript">
+        function validate() {
+		var name=document.myform.Name.value;
+	if(name== ""){
+                alert("Please provide your name!");
+                document.myform.Name.focus();
+                return false;
+            }
+
+	   else{
+		if(!name.match("^[a-zA-Z0-9.]*$"))
+		{
+			alert("Your name should not contain special characters");
+               		document.myform.Name.focus();
+              		return false;
+		}
+
+	       }
+
+	       var email= document.myform.email.value;
+            if(email== ""){
+                alert("Please provide your email!");
+                document.myform.email.focus();
+                return false;
+            }
+
+
+        }
+
+   </script>
+<?php $collection = $block->getTestimonialsCollection();
+?>
+<!--<form name="myform" id="testimonial-form" method="post" onsubmit="return validate()" action="<?php echo $block->getAction(); ?>">
+    <table>
+   <tbody>
+   <tr>
+    <td colspan="2" style="text-align:center;">
+        <h3><?php echo "Testimonial"; ?></h3>
+    </td>
+    </tr>
+   <tr>
+    <td>
+        <span>Name</span>
+    </td>
+    <td>
+        <input type="text" id="Name" name="Name" />
+    </td>
+   </tr>
+   <tr>
+    <td>
+        <span>email</span>
+    </td>
+    <td>
+        <input type="email" id="email" name="email" />
+    </td>
+   </tr>
+   <tr>
+    <td>
+        <span>Testmonial</span>
+    </td>
+    <td>
+        <textarea id="Testimonial" name="testimonial" ></textarea>
+    </td>
+   </tr>
+   <tr>
+    <td colspan="2" style="text-align:center;">
+        <input type="submit" name="submit" value ="submit" class ="action primary"/>
+    </td>
+    </tr>
+    </tbody>
+   </table>
+</form>-->
+<div class="testimonials">
+<ul>
+<?php foreach($collection as $testimonial):?>
+	<li><?php echo $block->converttoHtml($testimonial['testimonial']);?><span class="testimonial-name">- <?php echo $testimonial['name'];?></span></li>
+<?php endforeach;?>
+</ul>
+</div>
+</body>
+</html>
+

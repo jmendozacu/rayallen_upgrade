@@ -1,0 +1,417 @@
+<root>
+   <pages>
+      <cms_item>
+         <title>Porto - Homepage 1</title>
+         <identifier>porto_home_1</identifier>
+         <content><![CDATA[<h2 class="filterproduct-title" style="margin:0 0 10px;"><span class="content"><strong>Featured Brands</strong></span></h2>
+<div id="brands-slider-demo-1" class="brands-slider">
+    <div class="owl-carousel">
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand1.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand2.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand3.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand4.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand5.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand1.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand2.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand3.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand4.png"}}" alt="" /></div>
+        <div class="item" style="padding-top:10px;"><img src="{{media url="wysiwyg/smartwave/porto/brands/brand5.png"}}" alt="" /></div>
+    </div>
+<script type="text/javascript">
+    jQuery(function($){
+        $("#brands-slider-demo-1 .owl-carousel").owlCarousel({
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplayHoverPause: true,
+            margin: 30,
+            nav: false,
+            dots: true,
+            loop: true,
+            responsive: {
+                0: {
+                    items:2
+                },
+                640: {
+                    items:3
+                },
+                768: {
+                    items:4
+                },
+                992: {
+                    items:5
+                },
+                1200: {
+                    items:6
+                }
+            }
+        });
+    });
+</script>
+</div>
+<h2 class="filterproduct-title" style="margin-top:40px;margin-bottom: 5px;"><span class="content"><strong>FROM THE BLOG</strong></span></h2>
+<div id="latest_news" class="owl-top-narrow">
+    <div class="recent-posts">
+        <div class="owl-carousel">
+            <div class="item">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="post-image">
+                            <img src="{{media url="wysiwyg/smartwave/porto/blog/03.jpg"}}" alt="" />
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="post-date">
+                            <span class="day">08</span>
+                            <span class="month">Dec</span>
+                        </div>
+                        <div class="postTitle">
+                            <h2><a href="#">Post Format – Video</a></h2>
+                        </div>
+                        <div class="postContent"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non placerat mi…</p></div>
+                        <a class="readmore" href="#">Read more &gt;</a>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="post-image">
+                            <img src="{{media url="wysiwyg/smartwave/porto/blog/04.jpg"}}" alt="" />
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="post-date">
+                            <span class="day">08</span>
+                            <span class="month">Dec</span>
+                        </div>
+                        <div class="postTitle">
+                            <h2><a href="#">Post Format – Image Gallery</a></h2>
+                        </div>
+                        <div class="postContent"><p>Euismod atras vulputate iltricies etri elit. Class aptent taciti sociosqu ad litora torquent…</p></div>
+                        <a class="readmore" href="#">Read more &gt;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+    jQuery(function($){
+        $("#latest_news .owl-carousel").owlCarousel({
+            loop: false,
+            margin: 10,
+            nav: true,
+            navText: ["<em class='porto-icon-left-open-huge'></em>","<em class='porto-icon-right-open-huge'></em>"],
+            dots: false,
+            responsive: {
+                0: {
+                    items:1
+                },
+                640: {
+                    items:2
+                },
+                768: {
+                    items:2
+                },
+                992: {
+                    items:2
+                },
+                1200: {
+                    items:2
+                }
+            }
+        });
+    });
+</script>
+</div>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[<referenceContainer name="page.top">
+    <block class="Magento\Cms\Block\Block" name="home_slider">
+        <arguments>
+            <argument name="block_id" xsi:type="string">porto_homeslider_1</argument>
+        </arguments>
+    </block>
+</referenceContainer>]]></layout_update_xml>
+      </cms_item>
+      <cms_item>
+         <title>Porto - Homepage 2</title>
+         <identifier>porto_home_2</identifier>
+         <content><![CDATA[<h2 class="filterproduct-title" style="margin-top:30px;"><span class="content"><strong>New Products</strong></span></h2>
+<div id="new_product" class="owl-top-narrow">
+    {{block class="Smartwave\Filterproducts\Block\Home\LatestList" name="latest_product" product_count="10" aspect_ratio="1" image_width="250" image_height="250" template="owl_list.phtml"}}
+</div>
+<script type="text/javascript">
+    jQuery(function($){
+        $("#new_product .owl-carousel").owlCarousel({
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplayHoverPause: true,
+            margin: 10,
+            nav: true,
+            navText: ["<em class='porto-icon-left-open-huge'></em>","<em class='porto-icon-right-open-huge'></em>"],
+            dots: false,
+            navRewind: true,
+            animateIn: 'fadeIn',
+            animateOut: 'fadeOut',
+            loop: true,
+            responsive: {
+                0: {
+                    items:2
+                },
+                768: {
+                    items:3
+                },
+                992: {
+                    items:4
+                },
+                1200: {
+                    items:5
+                }
+            }
+        });
+    });
+</script>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[<referenceContainer name="page.top">
+    <block class="Magento\Cms\Block\Block" name="home_slider">
+        <arguments>
+            <argument name="block_id" xsi:type="string">porto_homeslider_2</argument>
+        </arguments>
+    </block>
+</referenceContainer>]]></layout_update_xml>
+      </cms_item>
+      <cms_item>
+         <title>Porto - Homepage 3</title>
+         <identifier>porto_home_3</identifier>
+         <content><![CDATA[<style type="text/css">
+html, body {
+    overflow: hidden;
+}
+body.boxed {
+    padding: 0;
+}
+body.boxed .page-wrapper {
+    width: 100%;
+}
+.cms-index-index .page-header.type3 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: rgba(0,0,0,.5);
+    width: 100%;
+    max-height: 100%;
+}
+.page-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    z-index: 1;
+}
+.page-main, .footer-top, .footer-middle {
+    display: none;
+}
+.footer-bottom {
+    padding: 10px 0;
+    background-color: #fff;
+    background-color: rgba(255,255,255,0.85);
+}
+@media (max-width: 1199px) {
+    .footer-bottom .custom-block.f-right, .footer-bottom .custom-block ul.links {
+        display: none;
+    }
+}
+@media (max-width: 767px) {
+    .footer-bottom .custom-block {
+        text-align: center;
+    }
+    .footer-bottom .social-icons {
+        float: none;
+        margin: 0;
+    }
+    .footer-bottom address {
+        float: none;
+        text-align: center;
+    }
+}
+@media (max-width: 640px) {
+    .footer-bottom address {
+        display: none;
+    }
+}
+</style>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[<referenceContainer name="page.top">
+    <block class="Magento\Cms\Block\Block" name="home_slider">
+        <arguments>
+            <argument name="block_id" xsi:type="string">porto_homeslider_3</argument>
+        </arguments>
+    </block>
+</referenceContainer>]]></layout_update_xml>
+      </cms_item>
+      <cms_item>
+         <title>Porto - Homepage 4</title>
+         <identifier>porto_home_4</identifier>
+         <content><![CDATA[<style type="text/css">
+body.boxed {
+    padding: 0;
+}
+body.boxed .page-wrapper {
+    width: 100%;
+}
+.page-header.type4 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+    background: transparent;
+}
+.page-main {
+    display: none;
+}
+</style>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[<referenceContainer name="page.top">
+    <block class="Magento\Cms\Block\Block" name="home_slider">
+        <arguments>
+            <argument name="block_id" xsi:type="string">porto_homeslider_4</argument>
+        </arguments>
+    </block>
+</referenceContainer>]]></layout_update_xml>
+      </cms_item>
+      <cms_item>
+         <title>Porto - About Us</title>
+         <identifier>about-porto</identifier>
+         <content><![CDATA[<br/>
+<div class="entry-content">
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="word-rotator-title">The New Way to <strong><span class="word-rotate"><span class="word-rotate-items" style="top: 0px;"><span>success.</span><span>advance.</span><span>progress.</span></span></span></strong></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-10">
+                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque rutrum pellentesque imperdiet. Nulla lacinia iaculis nulla non <span class="alternative-font">metus.</span> pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut eu risus enim, ut pulvinar lectus. Sed hendrerit nibh.</p> 
+                </div>
+                <div class="col-md-2">
+                    <a class="btn btn-primary push-top" title="Join Our Team!" href="#">Join Our Team!</a>
+                </div> 
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-12">
+                    <hr class="tall"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class=""><strong>Who</strong> We Are</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc <a href="#">vehicula</a> lacinia. Proin adipiscing porta tellus, ut feugiat nibh adipiscing sit amet. In eu justo a felis faucibus ornare vel id metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In eu libero ligula. Fusce eget metus lorem, ac viverra leo. Nullam convallis, arcu vel pellentesque sodales, nisi est varius diam, ac ultrices sem ante quis sem. Proin ultricies volutpat sapien, nec scelerisque ligula mollis lobortis. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, ut feugiat nibh adipiscing <span class="alternative-font">metus</span> sit amet. In eu justo a felis faucibus ornare vel id metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In eu libero ligula. Fusce eget metus lorem, ac viverra leo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In eu libero ligula. Fusce eget metus lorem, ac viverra leo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In eu libero ligula.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-12">
+                    <hr class="tall"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="push-top">Our <strong>History</strong></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row-wrapper container" style="margin-bottom: 25px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="history">
+                        <div class="thumb">
+                            <img width="150" height="150" src="{{media url="wysiwyg/smartwave/porto/aboutus/office-1-150x150.jpg"}}" class="attachment-thumbnail" alt="office-1"/>
+                        </div>
+                        <div class="featured-box" style="height: auto;">
+                            <div class="box-content">
+                                <h4><strong>2012</strong></h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus,</p>
+                            </div>
+                        </div><!--.feature-box-->
+                    </div><!--.history-->
+                    <div class="history">
+                        <div class="thumb">
+                            <img width="150" height="150" src="{{media url="wysiwyg/smartwave/porto/aboutus/office-2-150x150.jpg"}}" class="attachment-thumbnail" alt="office-2"/>
+                        </div>
+                        <div class="featured-box" style="height: auto;">
+                            <div class="box-content">
+                                <h4><strong>2010</strong></h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia.</p>
+                            </div>
+                        </div><!--.feature-box-->
+                    </div><!--.history-->
+                    <div class="history">
+                        <div class="thumb">
+                            <img width="150" height="150" src="{{media url="wysiwyg/smartwave/porto/aboutus/office-3-150x150.jpg"}}" class="attachment-thumbnail" alt="office-3"/>
+                        </div>
+                        <div class="featured-box" style="height: auto;">
+                            <div class="box-content">
+                                <h4><strong>2005</strong></h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus,</p>
+                            </div>
+                        </div><!--.feature-box-->
+                    </div><!--.history-->
+                    <div class="history">
+                        <div class="thumb">
+                            <img width="150" height="150" src="{{media url="wysiwyg/smartwave/porto/aboutus/office-4-150x150.jpg"}}" class="attachment-thumbnail" alt="office-4"/>
+                        </div>
+                        <div class="featured-box" style="height: auto;">
+                            <div class="box-content">
+                                <h4><strong>2000</strong></h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus, Curabitur pellentesque neque eget diam posuere porta. Quisque ut nulla at nunc vehicula lacinia. Proin adipiscing porta tellus,</p>
+                            </div>
+                        </div><!--.feature-box-->
+                    </div><!--.history-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[]]></layout_update_xml>
+      </cms_item>
+      <cms_item>
+         <title>404 Not Found 2</title>
+         <identifier>no-route-2</identifier>
+         <content><![CDATA[<h1 style="text-align:center;margin: 20px 0; font-size: 70px;margin-top:70px"><span style="display: inline-block;vertical-align:middle;">404</span><i class="porto-icon-doc" style="display: inline-block;vertical-align:middle;"></i></h1>
+<p style="text-align:center; font-size: 15px;">You might want to check that URL again or head over to our <a href="{{config path="web/unsecure/base_url"}}">homepage.</a></p>]]></content>
+         <is_active>1</is_active>
+         <page_layout>1column</page_layout>
+         <layout_update_xml><![CDATA[]]></layout_update_xml>
+      </cms_item>
+   </pages>
+</root>

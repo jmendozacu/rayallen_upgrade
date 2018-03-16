@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Kensium\CalculatorWebService\Api\CalculatorInterface" type="Kensium\CalculatorWebService\Model\Calculator" />
+    <preference for="Kensium\CalculatorWebService\Api\JsondataInterface" type="Kensium\CalculatorWebService\Model\Jsondata" />
+    <preference for="Kensium\CalculatorWebService\Api\AddressdataInterface" type="Kensium\CalculatorWebService\Model\Addressdata" />
+    <preference for="Kensium\CalculatorWebService\Api\BillingdataInterface" type="Kensium\CalculatorWebService\Model\Billingdata" />
+    <preference for="Kensium\CalculatorWebService\Api\ShippingdataInterface" type="Kensium\CalculatorWebService\Model\Shippingdata" />
+    <preference for="Kensium\CalculatorWebService\Api\ItemsdataInterface" type="Kensium\CalculatorWebService\Model\Itemsdata" />
+    <preference for="Kensium\CalculatorWebService\Api\JsonOrderInterface" type="Kensium\CalculatorWebService\Model\JsonOrder" />
+</config>

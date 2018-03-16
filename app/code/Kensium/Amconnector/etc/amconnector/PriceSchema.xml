@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soap:Body>
+      <GI000018Submit xmlns="http://www.acumatica.com/generic/">
+         <commands>
+            <Command xsi:type="Value">
+               <Value>FROMDATE</Value>
+               <LinkedCommand xsi:type="Field">
+                  <FieldName>Date</FieldName>
+                  <ObjectName>Filter</ObjectName>
+                  <Value>Date</Value>
+                  <Commit>true</Commit>
+               </LinkedCommand>
+            </Command>
+            <Command xsi:type="Action">
+               <FieldName>editDetail</FieldName>
+               <ObjectName>Filter</ObjectName>
+            </Command>
+            <Command xsi:type="Field">
+               <FieldName>InventoryItem_inventoryCD</FieldName>
+               <ObjectName>Results</ObjectName>
+               <Value>InventoryID</Value>
+               <Commit>true</Commit>
+               <LinkedCommand xsi:type="Key">
+                  <FieldName>InventoryItem_inventoryCD</FieldName>
+                  <ObjectName>Results</ObjectName>
+                  <Value>=[Results.InventoryItem_inventoryCD]</Value>
+               </LinkedCommand>
+            </Command>
+            <Command xsi:type="Field">
+               <FieldName>InventoryItem_basePrice</FieldName>
+               <ObjectName>Results</ObjectName>
+               <Value>DefaultPrice</Value>
+            </Command>
+         </commands>
+      </GI000018Submit>
+   </soap:Body>
+</soap:Envelope>

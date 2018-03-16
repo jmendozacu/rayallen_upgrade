@@ -1,0 +1,11 @@
+<?php
+namespace Kensium\Quote\Block;
+
+class Quote extends \Magento\Framework\View\Element\Template
+{
+ public function getAction()
+ {
+    return $this->getUrl('*/Save/Save');
+ }
+}
+?>

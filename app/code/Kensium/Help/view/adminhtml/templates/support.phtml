@@ -1,0 +1,73 @@
+<div class="content-header-support">
+    <h3 class="icon-head head-adminhtml-support"><span class='acu-icon'></span><span class='acu-title'>Acumatica Support</span></h3>
+</div>
+
+<div class="box-left">
+    <div id="support_system_requirements_container" class="entry-edit">
+
+        <div class="example-responsive-block">
+            <h4 class="" style="background-image: linear-gradient(hsla(207, 10%, 35%, 0.97), hsla(207, 5%, 25%, 0.92));color:#fff;line-height: 20px;padding:10px"><?php echo'System Requirements'; ?></h4>
+        </div>
+
+        <div class="fieldset sys-req">
+            <div class="hor-scroll">
+                <?php echo $block->getChildHtml('system_requirements'); ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-right">
+    <div id="support_cron_info_container" class="entry-edit">
+
+        <div class="example-responsive-block">
+            <h4 class="" style="background-image: linear-gradient(hsla(207, 10%, 35%, 0.97), hsla(207, 5%, 25%, 0.92));color:#fff;line-height: 20px;padding:10px"><?php echo'Cron Info'; ?></h4>
+        </div>
+
+        <div class="fieldset cron-info">
+            <div class="hor-scroll">
+                <?php echo $block->getChildHtml('cron_info'); ?>
+            </div>
+        </div>
+
+    </div>
+</div>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$urlLoader = $objectManager->create('Magento\Store\Model\StoreManagerInterface');
+?>
+<script src="<?php echo $urlLoader->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB); ?>pub/static/adminhtml/Magento/backend/en_US/Kensium_Amconnector/js/jquery-3.0.0.min.js"></script>
+<script>
+    $.noConflict();
+    jQuery(document).ready(function($){
+        jQuery("#hide").click(function(){
+            jQuery(".sys-req").hide();
+            jQuery(".s-up").hide();
+            jQuery(".s-down").show();
+        });
+        jQuery("#show").click(function(){
+            jQuery(".sys-req").show();
+            jQuery(".s-down").hide();
+            jQuery(".s-up").show();
+        });
+        jQuery(".s-down").hide();
+
+
+        jQuery("#hide-two").click(function(){
+            jQuery(".cron-info").hide();
+            jQuery(".s-up-two").hide();
+            jQuery(".s-down-two").show();
+        });
+        jQuery("#show-two").click(function(){
+            jQuery(".cron-info").show();
+            jQuery(".s-down-two").hide();
+            jQuery(".s-up-two").show();
+        });
+        jQuery(".s-down-two").hide();
+
+
+    });
+</script>
+
+
+<div style="clear:both"></div>

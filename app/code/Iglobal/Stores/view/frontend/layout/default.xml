@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <body>
+    <referenceBlock name="head.additional">
+      <block template="Iglobal_Stores::iglobal/stores/igcincludes.phtml" class="Iglobal\Stores\Block\Includes" name="iglobal.includes"/>
+    </referenceBlock>
+  </body>
+</page>

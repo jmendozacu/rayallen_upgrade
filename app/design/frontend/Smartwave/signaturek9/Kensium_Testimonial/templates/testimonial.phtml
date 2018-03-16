@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Testimonials</title>
+</head>
+<body>
+<?php
+$collection = $block->getTestimonialsCollection();
+$storeId = $block->getCurrentStoreId();
+?>
+
+<div class="testimonials">
+    <ul>
+        <?php foreach($collection as $testimonial):?>
+            <?php if ($testimonial['store_id'] == $storeId) : ?>
+            <li><?php echo $block->converttoHtml($testimonial['testimonial']);?><span class="testimonial-name">- <?php echo $testimonial['name'];?></span></li>
+            <?php endif; ?>
+        <?php endforeach;?>
+    </ul>
+</div>
+</body>
+</html>
+

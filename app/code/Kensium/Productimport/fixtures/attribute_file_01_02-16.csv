@@ -1,0 +1,1193 @@
+frontend_label,frontend_input,is_required,option,default,attribute_code,is_global,default_value_text,default_value_yesno,default_value_date,default_value_textarea,is_unique,is_searchable,is_visible_in_advanced_search,is_comparable,is_filterable,is_filterable_in_search,position,is_used_for_promo_rules,is_html_allowed_on_front,is_visible_on_front,used_in_product_listing,used_for_sort_by,attribute_set
+Manufacturer,select,0,"Ray Allen Manufacturing
+Buddy Bowl
+Dogtra
+Petmate
+Herm Sprenger
+KONG
+Kong
+Zuke's
+K&H
+5.11 Tactical
+Propper
+RuffWear
+Pet Matrix
+J&J Dog Supplies
+Streamlight
+Top Dawg
+Signature K9
+Garmin
+GoughNut
+GoughNuts
+H2O4K9
+HAVIS
+Ray Allen Manufacturer
+Oakley
+Ray Allen Manufacturning
+Ray Allen
+Rockstrap
+Ruff Wear
+Smith & Wesson
+Under Armour
+VOODOO Tactical
+Zymox
+Dingo
+JJ Dog
+TAG IT
+Casio
+Coast
+CPN
+FitPAWS
+HWI Gear, Inc
+Kyjen
+Merrell
+Boyt Harness Company
+Boyt
+Boyt Harnes Company
+Mil Spec Monkey
+PROPPER
+Redpaw
+SmartBones
+Salomon
+Tommie Copper
+Tru-Spec
+Signature Science
+Working Dog Studios
+Ray Allen Manufacturing Collar
+Company of Animals
+Bihlerflex
+Therapeutic Pet Products
+Back on Track
+Akoma Dog Products
+Hyper Pet
+Hurtta
+K&H Manufacturing
+Mammoth
+Charlee Bear
+RC Pet Products
+Rex Specs
+Surefire
+Ray Allen Manufacturing Harnesses
+TurboPup
+Tru Spec
+Atlanco
+Altanco
+Elephant Hunter
+Tuggo
+VooDoo Tactical
+West Paw Designs
+West Paw Designs Dog
+Zukes
+J & J Dog
+Coastal Pet Products
+Evolution
+Impact Case
+Havis
+Major Dog
+DigPets
+Under Armor
+Voodoo Tactical",,manufacturer,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Tugs
+Sleeves
+Bite Suits
+Leashes
+Dog Bowls
+Transport
+Collars
+Dog Training Toys
+Harness Accessories
+Shirts
+Panels-patches
+Dog Treats
+Dog Beds
+Food Storage
+Dog Vest
+Kennels
+Shoes
+Jackets
+Tactical Gear
+Backpacks
+Belts
+Gloves
+Pants
+Hats
+Dog Harnesses
+E-collars
+Sunglasses
+Bags-duffels
+Muzzles
+Competition
+Dog Lights
+Garmin Models
+Detection
+Grooming-sanitation
+First Aid"
+Rope,select,0,"No Rope
+With Rope",,rope,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Tugs"
+"Tug Size",select,0,"3/4"" x 10""
+1 7/8"" x 10""
+11
+12
+13
+14
+15
+16
+18
+2"" x 12""
+2"" x 16""
+4 1/2"" x 16""
+5"" x 33""
+3"" x 22""
+3"" x 16""
+12""
+16""",,tug_size,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Tugs"
+Type,select,0,"Manitou Sleeve
+Jute Cuff
+Ambidextrous Sleeve
+Champion Jute Cuff - Intermedidate
+Bite Builder
+Replacement Cuff
+Ultra Puppy Sleeve
+Ultra Intermediate Sleeve
+Ultra Advanced Sleeve
+Ultra Training Sleeve
+Ambidextrous
+Complete Left
+Complete Right
+Replacement Lower Left
+Replacement Lower Right
+Ambidextrous - Complete
+Right - Complete
+Left - Complete
+Ambidextrous - Replacement Lower
+Right - Replacement Lower
+Left - Replacement Lower
+Replacement Upper
+Nylon Hidden Sleeve
+Syntek Sleeve Cuff
+Syntek Sleeve
+Left
+Right
+Latigo Leather Gauntlet
+Harness Leather Gauntlet
+Closure Hidden Sleeve
+Sleeve Replacement Cuff
+Single Layer Basic Jute
+Double Layer Basic Jute
+Deluxe Champion Jute
+Syntek Cuff
+Target Cuff
+Target Cuff w/ Handle
+Right Arm
+Left Arm
+Trial Sleeve Light - Left
+Trial Sleeve Light - Right
+Trial Sleeve Light - Ambidextrous
+Basic
+Intermediate
+Advanced",,type,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Sleeves"
+Length,select,0,"36""
+42""
+46""
+26
+19
+11
+10
+8
+5'
+20""
+24""
+28""
+15'
+10 Meter
+50'
+30'
+16'
+36'
+4'
+6'
+10 Meters
+25'
+26""
+19""
+12""
+72""
+106""
+18
+20
+22
+24
+28
+22""
+8""
+10""
+26'
+21""
+23""
+25""
+27""
+16""
+18""
+14""
+14"" extra link
+21"" extra link
+26"" extra link
+10'
+32' ; 10""
+n/a
+Extra Link
+Extra Links - 2 Pack
+Extra Links - 2 Pk
+Extra Links - 2 Links
+33'
+5 inches
+6.5 inches
+6.5'
+3'
+12'
+2'
+5' x 7/8""
+6' x 7/8""
+20'
+60'
+15' x 2""
+30' x 2""
+10 inch
+12 inch
+14 inch
+16 inch
+18 inch
+13""-16""
+17""-20""
+18""-21""
+22""-26""
+30""
+Regular
+Long
+Short
+10""-11""
+11""-12""
+12""-13""
+13""-14""
+14""-16""
+16""18""
+18""-20""
+20""-22""
+22""-24""
+8'",,length,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Leashes
+Collars
+Dog Training Toys
+Competition
+Shirts"
+Size,select,0,"Small
+Medium
+Large
+X-Large
+Regular
+32 oz
+Giant
+10' x 10'
+8' x 10'
+6' x 10'
+2 Pounds
+4 Pounds
+10 Pounds
+Replacement Lense
+XX-Large
+64 Ounce
+96 Ounce
+2 Quart
+3 Quart
+5 Quart
+13 Quart
+9 Quart
+6 Quart
+3 Ounce
+15 Ounce
+King
+4.5 Quart
+RAM
+Vari
+Military
+Small-Set
+Labels
+X-Small
+6 oz
+1 lb
+6""
+7""
+8""
+9 1/2""
+10 1/2""
+11 1/2""
+7"" x 6"" x 2""
+10"" x 7"" x 2""
+9
+9.5
+10
+10.5
+11
+11.5
+12
+13
+2XL
+4XL
+Small/Medium
+Large/X-Large
+Medium/Large
+5 Cup
+8 Cup
+Mini
+Extra Pack Medium
+Extra Pack Large
+Extra Pack X-large
+Medium/Narrow
+Large/Narrow
+EI-3
+EI-4
+EI-1-1
+EI-1-2
+EI-3-1
+EI-3-2
+EI-2-2
+EI-5
+EI-6-1
+EI-2-1
+6
+6.5
+7
+7.5
+8
+8.5
+12.5
+13.5
+14
+14.5
+15
+XX-Small
+small
+medium
+large
+7-pack
+Mega Bone
+Standard
+1.8 lbs
+3.5 lbs
+5
+2
+4
+16
+18
+20
+15.5"" H x 32"" L
+19.5 H x 36.25"" L
+23.5"" H x 44"" L
+27.5"" H x 50.75"" L
+31.5"" H x 62"" L
+Short
+22
+24
+12 lb
+26 lb
+30ML
+50ML
+2.5""
+4""
+Mini-24 pack
+Small-6 pack
+Medium-4 pack
+Large-3 pack
+2X-Large/3X-Large
+7.25
+7.75
+6.75
+10""
+45 lbs
+65 lbs
+Jumbo
+Lima
+XRay
+Small 4.5""
+Large 7""
+Small 7""
+Large 10.5""
+1"" square
+2"" square
+MAX",,size,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Muzzles
+Bite Suits
+Dog Vest
+Dog Harnesses
+Dog Bowls
+Dog Training Toys
+Kennels
+Dog Treats
+Jackets
+Shirts
+Grooming-sanitation
+Detection
+Collars
+Sleeves
+Harness Accessories
+Dog Beds
+Shoes
+Belts
+Gloves
+Pants
+Hats
+Tactical Gear
+Panels-patches
+Bags-duffels
+Food Storage"
+Style,select,0,"Leatherlite - Half Length
+Leatherlite Synthetic Leather
+Padded Pant
+Codura Nylon Pant
+Equipment Bag
+Bite Suit Bag
+Full Suit
+Full Suit with Zipper
+Jacket Only
+Zippered Pants Only
+Jacket
+Pants - No Zipper
+Pants - Zipper
+Pant",,style,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Bite Suits"
+Arm,select,0,"Left
+Right
+n/a
+Lower - Ambidextrous
+Right-handed
+Left-handed",,arm,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Sleeves
+Backpacks"
+"Dog Weight",select,0,"40 - 65lbs
+65 - 75lbs
+75 - 85lbs
+85 - 95lbs
+95+ lbs
+60-75 lb Malinois
+75-90 lb GSD",,dog_weight,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Muzzles"
+"Leash Style",select,0,"Lockjaw
+Bolt Snap
+Snap Tab
+Tab w/ Snap Bolt
+Classic Lead
+Heavy Duty Lead
+French Scissor Snap Lead
+1"" Bolt Snap
+Heavy Duty Bolt Snap
+Lockjaw Snap
+French Scissor Snap
+Police Trial Lead
+Trial Lead
+Belt Lead
+Tape Lead
+Molle Flexi Pouch - Black
+Molle Flexi Pouch - Coyote
+RA81-Reed Schlagstock
+RA86-Bamboo Baton
+RA82-Ploycarbonate Clear Plastic Stick
+RA83-Leather Covered Stick
+RA88-12""Popper For Whips
+RA84-Delrin Whip
+RA85-Leather Covered Whip
+RA87-Whip Drop With Popper
+RA9623-Nylon Padded Whip
+Removable Traffic Lead
+Removable Tab
+With Ring
+No Ring",,leash_style,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Leashes"
+Width,select,0,"1 1/4""
+2""
+5/8""
+1""
+1
+1.25
+2
+1/2""
+3/4""
+4' Wide
+5' Wide
+Leather Conditioner
+3/8""
+1 1/2""
+1/2"" - Max 60 lbs.
+3/4"" - Max 120 lbs.
+1"" - Max 150 lbs.
+1/4""
+5/16""",,width,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Collars
+Leashes
+Competition"
+"Collar Options",select,0,"Double-Layered Collar
+Extra Links
+Collar
+8-Prong
+10-Prong",,collar_options,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Collars"
+Color,select,0,"Black
+Coyote
+Orange
+Tab - Black
+Tab - Orange
+Tab With Ring - Black
+Lead - Black
+Black - Sure Grip
+Black - Lead with Extra Handle
+Blue
+Red
+Gray
+Lime
+Natural/Clear White
+Fire Brown
+Clear
+Mirror
+Smoke
+White
+Black Vinyl
+N/A
+Double-Layered Nylon -  Black
+Natural
+Black With Bag
+Sure-Grip - Black
+Gold
+Silver
+Medium
+Large
+Clear Lens
+4 Colors
+Blue/Gray
+Tan/Mocha
+Sage/Tan
+ACU
+Multi-Cam
+Brown
+Burgundy
+Tan
+White w/Red LED
+White w/Blue LED
+White w/Yellow-Green LED
+Smoke IR
+Molle Clip
+Midnight Navy
+Dark Navy
+Moss
+Granite/Black
+Black/Black
+Coyote/Black
+Sandstone
+Storm
+Tactical Olive Drab
+Flat Dark Earth
+TAC OD
+Charcoal
+LE Green
+Silver Tan
+TDU Green
+Khaki
+Grey
+TDU Khaki
+Battle Brown
+Tac-Black
+Ghost Grey
+Green
+Disco-O
+LAPD Navy
+Olive
+Navy
+Dk Green
+LANavy
+Charcoal Grey
+Sheriff's Brown
+Dark Green
+COYOTE
+BLACK
+CHARCOAL GREY
+GREY
+SHERIFF'S BROWN
+KHAKI
+OLIVE
+LAPD NAVY
+GHOST Gray
+Black MultiCam
+Green MultiCam
+Cool Gray - 1/2 Liter
+Night Blue - 1 Liter
+Mocha
+Purple
+Pink
+Shadow
+Dark Brown
+Acutan
+Matte Black
+Double Tap
+OD Trail
+Claymore
+Alert Blue
+Asphalt/Black
+Mantis Green/Dark Oak
+Ice/Grey
+Foliage Green
+Cascade
+Violet
+Heather Grey
+Caribbean Sea
+Jungle
+Field Green
+Gun Powder
+Pine
+Stainless Steel
+Coyote Brown
+Desert
+Blue Spruce
+White/White
+Red/White
+Reflective Black
+Camo
+Twilight Gray
+Red Currant
+Red Rock
+GHOST Grey
+Yellow
+Barrel and Frame
+Black Graphite
+Gunsmoke
+Fatigue
+Nautical
+Scorched Earth
+Tundra
+Fire Navy
+OD Green
+Graphite
+Coral (Summer Orange)
+Drop (Caribbean Blue)
+Flower (Mulberry)
+Walnut
+Black Night
+Aluminum
+MultiCam
+Forest
+ACU Dark
+ACU Light
+Swat
+Full Color
+Full Grey
+Black/White
+Gray/Black
+SWAT
+Black/Black/Silver Metallic-X
+Cobalt Blue/Granny Green/Black
+Dark Cloud/Black/Light Onix
+Navajo
+Teal Blue/Granny Green/Passion Purple
+Bordeaux/Hot Pink/Lotus Pink
+Blue/Emerald Green/Hot Pink
+Light Onix/Topaz Blue/Dark Cloud
+Green Clay/Light Grey/Sakura Pink
+Mystic Purple/Gray/Granny Green
+Plum
+MultiCam Black
+Black poly/cotton blend
+Multicam Black Cordura blend
+Black Cordura blend
+OD Green Cordura blend
+Od Green
+Desert Sand
+Dark Navy Blue
+Brick Red
+Academy Blue
+TAC OD Green
+Storm Gray
+Cobalt Blue
+Stone
+Goldrush
+Grid Iron
+Dark Heather Gray
+Stealth Black
+Matte Black Frame w/PRIZM TR45
+Matte Black Frame w/PRIZM TR22
+Olive Green
+Strap Extender
+Detroit/Black
+Iguana Green/Asphalt
+Asphalt Black
+Black/Asphalt
+Camo Green
+Charcoal Gray
+Multicam Black
+Multi-Cam Black
+Real Tree Frame/Gray Lens
+Satin Black/Black Rubber with Gray Storm Polar
+Shiny Black/Black Rubber with Gray
+Clear Rubber Frames with Gray/Orange Lens
+Blake Frame/Gray Lens
+Black Frame/Yellow Lens
+Gray Frame/Clear Lens
+Green & Black Frame/Gray Lens
+Black Frame/Gray Lens
+Real Tree Frame/Blue & Gray Reflect Lens
+Satin Black/Black Rubber with Gray Storm Polar Lens
+Satin Real Tree Frames with Gray Lenses
+Satin Black with Gray Lenses
+Black Frame/3 Lens
+Real Tree Frame/3 Lens
+Black & Green Frame/Gray Lens
+Shiny Black/Black Rubber Frame with Gray Storm Polar Lens
+Hunter Green
+Navy Blue
+Wine Red
+Woodland Camo
+Fire Engine Red
+SandStone
+TacOD
+Black - XL
+Purple/Green
+Royal Blue
+Stealth Gray
+Superior Blue",,color,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Leashes
+Dog Bowls
+Dog Vest
+Panels-patches
+Dog Training Toys
+Dog Harnesses
+Dog Lights
+Dog Beds
+Harness Accessories
+Food Storage
+Collars
+Tactical Gear
+Backpacks
+Shirts
+Jackets
+Belts
+Pants
+Hats
+Sleeves
+E-collars
+Shoes
+Sunglasses
+Bags-duffels
+Gloves
+First Aid
+Muzzles
+Competition
+Kennels
+Detection
+Garmin Models"
+Handle,select,0,"Handle
+No Handle
+With Handle
+Two handles
+One handle",,handle,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Sleeves
+Tugs
+Collars"
+"Hair Length",select,0,"Short
+Long
+No Handle
+With Handle",,hair_length,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Grooming-sanitation
+Collars"
+"Vest Type",select,0,"Level II Ballistic Vest
+Level II Stab Vest Combo
+Ballistic II Vest
+Ballistic III Vest
+Ballistic II Vest Heavy Duty
+Ballistic III Vest Heavy Duty",,vest_type,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Vest"
+Models,select,0,"Universal Fit
+Crown Vic Only
+Dodge Charger 2012+
+2 Door - 2 Window Package - 1998+
+2 Door - 2 Window Package - 1991 - 1997
+Tactical K-9 Heat Alert System w Pager
+Replacement Belt loop Holster for F Series Remote
+Alternative Belt Clip Holster ofr F Series Remote
+Alph 100 GPS
+Extra Collar
+320 GPS Tracking Device
+Dodge or 2015-2016 Chevy Tahoe
+All Other Vehicles
+F4 Series Heat System
+F4 Series Heat System - Temperature Sensor
+Small
+Large
+X
+XE",,models,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Transport
+Garmin Models"
+Multidog,select,0,"One Dog Unit
+Two Dog Unit
+1-Dog Unit
+2-Dog Unit",,multidog,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+E-collars"
+Breed,select,0,"German Shepherd
+Rottweller
+Bloodhound
+Black Lab
+Yellow Lab
+Malinois
+German Shepherd - Long Lasting
+Malinois - Long Lasting
+Doberman - Malinois
+Rottweiler
+Blank Patch Carrier
+K-9 Unit Patch Shield - German Shepherd
+K-9 Unit Patch Shield - Malinois",,breed,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Panels-patches
+Muzzles"
+Office,select,0,"""K-9""
+""Unit""
+""Keep Away""
+""Caution""
+""Police Dog""
+Clear Strip
+Police
+Sheriff
+German Shepherd Head
+Explosives Detection
+K-9 Lab Head - (ST-23)
+K-9 Dog Head - (ST-4)
+K-9 Pin Small
+K-9 Pin Large
+K-9 Dress Pin - (ST-5)
+Border Patrol
+State Patrol
+State Police
+Customs
+Military Working Dogs
+Police K-9
+Sheriff K-9
+Medical
+SWAT",,office,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Panels-patches
+Hats
+Jackets"
+"Detection Type",select,0,"Narcotics 1
+Narcotics 2
+Narcotics Safe
+Pelican Model 1150
+Glass Jars
+Label Sheet
+TNT
+RDX
+PETN
+Nitrate
+Chlorate
+Sample Kit
+Double-Base Smokeless Powder
+Untagged RDX
+U.S. Tagged RDX
+Any-Region Tagged RDX
+ICAO-Mandated Explosive Taggants
+Dynamite
+Semtex (A+H)
+TATP
+HMTD
+SSE100 ScentKit Bundle
+SSE200 ScentKit Bundle
+SSE300 ScentKit Bundle
+Cocaine
+Methamphetamine
+MDA/MDMA - Ecstasy
+Heroin
+ScentKit Bundle
+Silica Distractor - Training Tin
+Petrolatum Distractor - Tube
+Training Tin
+Foil Storage Magazine Bag
+Silica Distractor - Cloth Bag w/Outer Bag
+Silica Distractor - Quart Can
+Non-Polarized
+Polarized
+Ammonium Nitrate
+Potassium Chlorate
+Urea Nitrate
+Starter Kit with Storage Cases
+Refill Kit (Scent Material only)",,detection_type,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Detection
+Sunglasses"
+Title,select,0,"Obedience Series 1
+Obedience Series 2
+Obedience Series 3
+Basic Obedience
+Advanced Obedience
+Modern View Obedience
+Protection 1
+Protection 2
+Protection 3
+Tracking Series 1
+Tracking Series 2
+Foundations Series 1
+Foundations Series 2
+Foundations 1
+Foundations 2
+Series Part 1
+Series Part 2
+Series Part 3",,title,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Media"
+"Prong Thickness",select,0,"3mm
+4mm
+2.25mm
+3mm Extra Link
+Extra Links - 3mm
+Extra Links - 4mm",,prong_thickness,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Collars"
+Products,select,0,"Standard Plastic Tank
+Pyramid - 1 Dog
+Deluxe Pyramid - 2 Dogs
+Waste Terminator - 6 Month Supply
+Waste Terminator - 12 Month Supply
+Standard
+With Red
+Safety Strobe
+Civilian Model
+Dry Shampoo
+Hot Spot Spray
+Ear Cleaner
+Dog Scale
+Carrying Bag
+Ear Solution
+Disinfectant Topical Spray
+1 Clip
+10 Clips
+Full Kit
+Dry Bag Only
+34/35 LFT LFT
+34/35 RT
+Breaching Kit
+Lite Kit Bag
+15"" x 10.38"" x 6"" (940F)
+20.38"" x 11.44"" x 7.5"" (1750F)
+20.5"" x 15.5"" x 10"" (3180F)
+23"" x 17"" x 14"" (5480F)
+36.5"" x 14.5"" x 6"" (36F)
+42.5"" x 14.5"" x 5.5"" (42F)
+50.5"" x 14.5"" x 6"" (50F)",,products,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Grooming-sanitation
+Tactical Gear"
+"Jump Type",select,0,"JJ1
+JJ2
+JJ3
+JJ4
+JJ5
+JJ6
+JJ7
+JJ8
+4' Bars
+5' Bars
+4' Wide",,jump_type,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Competition"
+Accessories,select,0,"No Headstrap
+With Headstrap
+Harness Only
+Fleece Pad
+Harness Pad
+8"" Handle
+10""Handle
+12"" Handle
+One Pouch Kit
+Two Pouch Kit",,accessories,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Muzzles
+Dog Harnesses"
+"Toy Style",select,0,"With Rope
+With Squeaker -No Rope
+With Squeaker
+Black Ring
+Stick
+Black Ring Maxx
+Ball
+Good Cuz
+Bad Cuz",,toy_style,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Training Toys"
+Material,select,0,"Duck Cloth
+Pack Cloth
+Single Layer Basic Jute
+Double Layer Basic Jute
+Deluxe Champion Jute
+Syntek Cuff
+Manitou Sleeve
+Ultra Puppy Sleeve
+Fiberglass with Sand Surface
+Fiberglass with Rubber Surface
+Aluminum with Rubber Surface
+Sand
+Rubber",,material,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Detection
+Sleeves
+Competition"
+System,select,0,"Collapsible Blind
+Set of 6
+1 Flag
+12 Flags
+50 Flags
+Metal Buckle
+Plastic Buckle
+2"" Plastic Buckle
+Cobra Buckle
+Chest Mounted K-9 Camera System
+Back Mounted K-9 Camera System
+Back Camera Mount - Black
+Back Camera Mount - Coyote
+Trunk Organizer
+See-Through Pouch
+Mesh Pouch
+Small Pouch
+Large Pouch
+Loop Holster-Non Sport Basic
+Loop Holster-Sport Basic
+Clip Holster-Sport Basic
+Clip Holster-Non Sport Basic
+Basic Tripod Mount
+Basic Mount with Garmin Adapter
+Basic Mount with GoPro Adapter",,system,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Harness Accessories"
+"Panel Type",select,0,"Individual
+Bulk (100)
+Circle
+Shield
+Beware of Dog - Spanish
+Beware of Dog
+Warning Police Work Dog
+Memorial Urn - 150 Cubic Inches
+Additional Line of Text
+Commemorative Plaque
+Service
+Do Not Pet
+MWD Yellow
+MWD Gray
+SAR Orange
+Embroidered
+PVC
+Service Dog",,panel_type,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Panels-patches"
+"Delivery Method",select,0,"Training Tin
+Cloth Bag w/Outer Bag
+Petrolatum Tube
+Quart Can",,delivery_method,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Detection"
+Flavor,select,0,"Beef and Rice
+Chicken and Rice
+Peanut Butter
+Beef
+Chicken
+Venison
+Salmon
+Wild Rabbit
+Pork
+Duck
+Lamb and Rice
+Cheese
+Liver
+Puppy 1
+Fitness 2
+Perform 3
+Maintain 4
+Chicken & Apple
+Duck & Apple
+Pork & Apple
+Original Beef
+Teriyaki Beef
+BBQ Beef
+Tasty Greens
+Yummy Betas
+Yummy Berry
+Peanut Butter & Banana
+Pumpkin & Sweet Potato
+Cherry & Berry",,flavor,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Treats"
+"Fence Options",select,0,"Electric Fence
+Replacement/Additional Collar/Receiver
+Expansion Kit",,fence_options,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+E-collars"
+Holster,select,0,"Model 200
+Model 300M
+Model 1700
+Model 1900
+Model 2300
+Model 3500",,holster,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+E-collars"
+Doors,select,0,"1
+2",,doors,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Kennels"
+Inseam,select,0,"Short
+Long
+Regular
+30
+32
+34
+36
+38",,inseam,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Pants
+Shirts"
+Waist,select,0,"30
+32
+34
+36
+38
+40
+42
+44
+46
+28
+31
+33
+35",,waist,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Pants"
+Battery,select,0,"3V Lithium 2016
+3V Lithium 2032",,battery,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Lights"
+"Bag Size",select,0,"3-Pack
+5-Pack
+10 ct
+20 ct
+4-Pack
+15-Pack
+2-Pack
+Single
+6-pack
+4-pack
+3-pack
+7-pack
+21-pack
+5 - pack
+10 - pack",,bag_size,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Treats"
+Lens,select,0,"Non-Polarized
+Polarized
+w/Gray lens
+w/TR22 lens",,lens,1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Sunglasses"
+"Fit Range",select,0,"9.5""-11""
+10""-12""
+11""-13""
+12""-14""
+13""-15""
+14""-16.5""
+15""-18""
+16""-19.5""
+17""-21""
+18""-22""
+20""-23""
+21""-24""
+23""-26""
+24""-28""
+25-29""
+27-31""
+28""-32""
+29""-33""
+30""-35""
+25""-29""
+27""-31""
+32""-36""
+33""-37""",,"fit range",1,,0,,,0,0,0,,1,0,,1,1,0,1,0,"Default
+Dog Vest"

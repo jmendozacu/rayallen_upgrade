@@ -1,0 +1,22 @@
+{
+    "name": "iglobal/ship",
+    "description": "iGlobal Magento 2 Shipping Module",
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0"
+    },
+    "type": "magento2-module",
+    "version": "0.1.0",
+    "extra": {
+      "map": [
+        [
+          "*",
+          "Iglobal/Shipping"
+        ]
+      ]
+    },
+    "autoload": {
+      "files": [
+          "registration.php"
+      ]
+    }
+}

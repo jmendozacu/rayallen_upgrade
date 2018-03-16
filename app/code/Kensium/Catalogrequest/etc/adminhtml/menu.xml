@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Kensium_Catalogrequest extension
+ *                     NOTICE OF LICENSE
+ * 
+ *                     This source file is subject to the MIT License
+ *                     that is bundled with this package in the file LICENSE.txt.
+ *                     It is also available through the world-wide-web at this URL:
+ *                     http://opensource.org/licenses/mit-license.php
+ * 
+ *                     @category  Kensium
+ *                     @package   Kensium_Catalogrequest
+ *                     @copyright Copyright (c) 2016
+ *                     @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
+    <menu>
+        <add id="Kensium_Catalogrequest::catalogrequests" title="catalogrequest" module="Kensium_Catalogrequest" sortOrder="132" resource="Kensium_Catalogrequest::catalogrequest"/>
+        <add id="Kensium_Catalogrequest::catalogrequest" title="Catalogrequests" module="Kensium_Catalogrequest" sortOrder="10" action="kensium_catalogrequest/catalogrequest" resource="Kensium_Catalogrequest::catalogrequest" parent="Kensium_Catalogrequest::catalogrequests"/>
+    </menu>
+</config>

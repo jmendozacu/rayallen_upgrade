@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+* @category   Amconnector
+* @package    Kensium_Amconnector
+* @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
+    <module name="Kensium_Attributemanager" setup_version="1.0.0" schema_version="1.0.0">
+	<sequence>
+            <module name="Kensium_FpcDisable"/>
+        </sequence>
+    </module>
+</config>

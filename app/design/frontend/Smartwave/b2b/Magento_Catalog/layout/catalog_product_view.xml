@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="2columns-left" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="Magento_Catalog::js/jquery.zoom.min.js"/>
+    </head>
+    <body>
+        <!--<referenceContainer name="sidebar.additional">
+            <block class="Smartwave\Porto\Block\Template" name="product_view_custom_cat_block" before="-" template="Magento_Catalog::product/view/custom_cat_block.phtml"/>
+            <block class="Smartwave\Porto\Block\Template" name="product_view_custom_block" after="-" template="Magento_Catalog::product/view/custom_block.phtml"/>
+        </referenceContainer>-->
+        <move element="product.info.stock.sku" destination="product.info.price" after="product.price.final"/>
+        <move element="product.info.review" destination="product.info.main" before="product.info.price"/>
+        <!--<move element="catalog.product.related" destination="sidebar.additional" after="product_view_custom_block"/>-->
+		<referenceContainer name="product.info.details">
+			<block class="Smartwave\Porto\Block\Product\View\Video" name="video" template="Magento_Catalog::product/view/video.phtml" group="detailed_info">
+                <arguments>
+                    <argument name="title" translate="true" xsi:type="string">Video</argument>
+                </arguments>
+            </block>
+			<block class="Smartwave\Porto\Block\Product\View\Compareproducts" name="compareproducts" template="Magento_Catalog::product/view/compareproducts.phtml" group="detailed_info">
+                <arguments>
+                    <argument name="title" translate="true" xsi:type="string">Compare Products</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+		<referenceContainer name="content.bottom">
+            <block class="Magento\Catalog\Block\Product\ProductList\Upsell" name="product.info.upsell" template="Magento_Catalog::product/list/items.phtml">
+                <arguments>
+                    <argument name="type" xsi:type="string">upsell</argument>
+                </arguments>
+            </block>  			
+        </referenceContainer>
+    </body>
+</page>

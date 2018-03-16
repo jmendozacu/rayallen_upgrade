@@ -1,0 +1,15 @@
+:root .toolbar select { background:transparent\0/IE9; }  /* IE9 + IE10pp4 */
+:root .toolbar select { padding-right: 0px\0/IE9; }  /* IE9 + IE10pp4 */
+:root #layered-filter-block{ display:none\0/IE9; } 
+:root .toolbar select { background-color:#fff \0/IE9; }
+
+@media all and (min-width:0\0) and (min-resolution:.001dpcm)
+{
+   .toolbar select{background: none; }
+   .modes{display:block;}
+   .products.wrapper ~ .toolbar .modes {
+    display: none;
+   }
+}
+
+ 

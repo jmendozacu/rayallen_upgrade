@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body>
+        <Get xmlns="http://www.acumatica.com/entity/5.30.001/AmconnectorConfig/">
+            <entity xsi:type="BasicConfiguration">
+                <ID xsi:nil="true"/>
+                <Delete>false</Delete>
+                <ApplyOverdueCharges xsi:nil="true"/>
+                <Attributes xsi:nil="true"/>
+                <AutoApplyPayments xsi:nil="true"/>
+                <ClassID>
+                    <Value>CONSUMERS</Value>
+                    <HasError>false</HasError>
+                </ClassID>
+                <Country xsi:nil="true"/>
+                <CreditDaysPastDue xsi:nil="true"/>
+                <CreditLimit xsi:nil="true"/>
+                <CreditVerification xsi:nil="true"/>
+                <CurrencyID xsi:nil="true"/>
+                <CurrencyRateType xsi:nil="true"/>
+                <DefaultLocationIDfromBranch xsi:nil="true"/>
+                <DefaultRestrictionGroup xsi:nil="true"/>
+                <Description xsi:nil="true"/>
+                <EnableCurrencyOverride xsi:nil="true"/>
+                <EnableRateOverride xsi:nil="true"/>
+                <EnableWriteOffs xsi:nil="true"/>
+                <EntityUsageType xsi:nil="true"/>
+                <GroupDocumentDiscountLimit xsi:nil="true"/>
+                <MultiCurrencyStatements xsi:nil="true"/>
+                <OverdueChargeID xsi:nil="true"/>
+                <OverLimitAmount xsi:nil="true"/>
+                <PaymentMethod xsi:nil="true"/>
+                <PrintDunningLetters xsi:nil="true"/>
+                <PrintInvoices xsi:nil="true"/>
+                <PrintStatements xsi:nil="true"/>
+                <RequireEntityUsageType xsi:nil="true"/>
+                <RequireTaxZone xsi:nil="true"/>
+                <SalespersonID xsi:nil="true"/>
+                <SendDunningLettersbyEmail xsi:nil="true"/>
+                <SendInvoicesbyEmail xsi:nil="true"/>
+                <SendStatementsByEmail xsi:nil="true"/>
+                <ShippingRule xsi:nil="true"/>
+                <ShippingTerms xsi:nil="true"/>
+                <ShipVia xsi:nil="true"/>
+                <StatementCycleID xsi:nil="true"/>
+                <StatementType xsi:nil="true"/>
+                <TaxZoneID xsi:nil="true"/>
+                <Terms xsi:nil="true"/>
+                <WriteOffLimit xsi:nil="true"/>
+            </entity>
+        </Get>
+    </soap:Body>
+</soap:Envelope>

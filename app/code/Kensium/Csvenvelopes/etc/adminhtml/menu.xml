@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
+    <!--<menu>
+        <add id="Kensium_Csvenvelopes::kensium_csvenvelopes" title="Manage Envelopes" module="Kensium_Csvenvelopes" sortOrder="43"
+             parent="Kensium_Amconnector::kensium_kensiumadminindex0" action="kensium_csvenvelopes/csvenvelopes/index"
+             resource="Kensium_Csvenvelopes::kensium_kensiumadminindex"/>
+    </menu>-->
+</config>
+

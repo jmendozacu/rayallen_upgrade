@@ -1,0 +1,64 @@
+<?php
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+?>
+
+<script type="text/javascript">
+    //<![CDATA[
+    //get multiple selected options like domains,macids
+    function getSelectedOptions(element) {
+        // validate element
+        if (!element || !element.options)
+            return []; //or null?
+
+        // return HTML5 implementation of selectedOptions instead.
+        if (element.selectedOptions)
+            return element.selectedOptions;
+
+        // you are here because your browser doesn't have the HTML5 selectedOptions
+        var opts = element.options;
+        var selectedOptions = [];
+        for (var i = 0; i < opts.length; i++) {
+            if (opts[i].selected) {
+                selectedOptions.push(opts[i]);
+            }
+        }
+        return selectedOptions;
+    }
+    //License request sent
+    function deleteLicense() {
+        var domain = getSelectedOptions(document.getElementById("license_delete_domain_request_delete_domain_names"));
+        var comments = document.getElementById('license_delete_domain_request_delete_comments').value;
+        var domains = "";
+        for (var i = 0; i < domain.length; i++) {
+            domains += domain[i].value + ",";
+        }
+
+        new Ajax.Request('<?php echo $this->getAjaxUrl() ?>', {
+            method: 'get',
+            parameters: {
+                "domain": domains,
+                "comments":comments
+            },
+
+            onSuccess: function (transport) {
+                //return true;
+                if (transport.responseText) {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    //]]>
+</script>
+
+<div class="pp-buttons-container">
+    <div id="delete_domain" class="message-validation hidden"></div>
+    <button id="<?php echo $block->getHtmlId(); ?>" onclick= "javascript:deleteLicense(); return false;">
+        <span><span><span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span></span></span>
+    </button>
+</div>

@@ -1,0 +1,39 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+    $title = "Be the First to Know";//\Magento\Framework\App\Config\ScopeConfigInterface::getValue();//\Smartwave\Porto\Block\Template::getConfig('porto_settings/footer/footer_newsletter_title');//$this->_scopeConfig->getValue('porto_settings/footer/footer_newsletter_title',\Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    $sub_title = "Get all the latest information on Events,<br>Sales and Offers. Sign up for newsletter today.";//\Smartwave\Porto\Block\Template::getConfig('porto_settings/footer/footer_newsletter_text');//$this->_scopeConfig->getValue('porto_settings/footer/footer_newsletter_text',\Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+?>
+<div class="block newsletter">
+    <div class="block-title"><strong><?php echo __($title); ?></strong></div>
+    <div class="content">
+        <p><?php echo __($sub_title); ?></p>
+        <label for="footer_newsletter"><?php echo __('Enter your email address') ?></label>
+        <form class="form subscribe"
+            novalidate
+            action="<?php echo $block->getFormActionUrl() ?>"
+            method="post"
+            data-mage-init='{"validation": {"errorClass": "mage-error"}}'
+            id="newsletter-validate-detail">
+            <div class="field newsletter">
+                <label class="label" for="footer_newsletter"><span><?php echo __('Sign Up for Our Newsletter:') ?></span></label>
+                <div class="control">
+                    <input name="email" type="email" id="footer_newsletter"
+                                data-validate="{required:true, 'validate-email':true}"/>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="action subscribe primary" title="<?php echo __('Subscribe') ?>" type="submit">
+                    <span><?php echo __('Subscribe') ?></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

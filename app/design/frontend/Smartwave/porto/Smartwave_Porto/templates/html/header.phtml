@@ -1,0 +1,134 @@
+<?php
+    $header_type = $this->getConfig('porto_settings/header/header_type');
+?>
+<header class="page-header type<?php echo $header_type; ?>">
+ <!--[if IE 9]>
+        <link rel="stylesheet" type="text/css" href="css/ie.css" />
+        <![endif]-->
+
+<?php if($header_type == 3 || $header_type == 4 ): ?>
+    <div class="header content">
+    <?php echo $this->getChildHtml("logo"); ?>
+    <?php //echo $this->getChildHtml("navigation.sections"); ?>
+        <div class="panel header">
+            <div class="top-panel">
+                <?php echo $this->getChildHtml("skip_to_content"); ?>
+                <?php echo $this->getChildHtml("header.links"); ?>
+                <div class="search-area">
+                    <a href="javascript:void(0)" class="search-toggle-icon"><i class="porto-icon-search"></i></a>
+                    <?php echo $this->getChildHtml("top.search"); ?>
+                </div>
+            </div>
+            <div class="bottom-panel">
+                <?php echo $this->getChildHtml("currency"); ?>
+                <?php echo $this->getChildHtml("store_language"); ?>
+                <?php echo $this->getChildHtml("minicart"); ?>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="panel wrapper">
+        <div class="panel header">
+            <div class="blank-block col-md-3 col-sm-3"></div>
+            <?php echo $this->getChildHtml("skip_to_content"); ?>
+            <?php echo $this->getChildHtml("currency"); ?>
+            <?php echo $this->getChildHtml("store_language"); ?>
+            <div class="header_phone">
+               <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('header_phone')->toHtml();?>
+           </div>
+			<div class="country-flag">
+               <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('country_flag')->toHtml();?>
+           </div>
+            <?php echo $this->getChildHtml("header.links"); ?>
+        </div>
+    </div>
+    <div class="header content">
+    <div class="col-md-3 col-sm-3">
+    <div class="header-logo">
+    <?php echo $this->getChildHtml("logo"); ?></div></div>
+    <div class="col-md-9 col-sm-9">
+    <div class="row search-block">
+    <div class="col-md-7 col-sm-7 col-xs-8"> <?php echo $this->getChildHtml("top.search"); ?></div>
+    <div class="col-md-3 col-sm-3 col-xs-4 pull-right"><?php echo $this->getChildHtml("minicart"); ?></div>
+    </div>
+   	<div class="row navigation-block">
+     <div class="sections nav-sections">
+        <div class="section-items nav-sections-items" role="tablist">
+            <div data-role="content" id="store.menu" class="section-item-content nav-sections-item-content" role="tabpanel" aria-hidden="false">
+                <nav class="navigation sw-megamenu" role="navigation">
+                    <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('top_custom_menu')->toHtml();?>
+                </nav>
+            </div>
+        </div>
+    </div>
+    </div>
+<?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('offer_block')->toHtml();?>
+    </div>
+    </div>
+<?php endif; ?>
+</header>
+
+<style type="text/css">
+
+#popup-myModal {
+   background: rgba(250, 250, 250, 0.5) none repeat scroll 0 0;
+   border-radius: 2px;
+   display: none;
+   font-size: 1.1em;
+   height: 100%;
+   position: fixed;
+   text-align: center;
+   width: 100%;
+   z-index: 500;
+}
+#popup-myModal .modal-dialog {
+   background: #ffffff  none repeat scroll 0 0;
+   border-radius: 2px;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+   margin: auto;
+   padding: 15px 30px 15px;
+   position: relative;
+   text-align: center;
+   width: 480px;
+   top: 25%;
+   z-index: 1000;
+}
+.addtocart-popup.viewcart {
+    background: #454545 none repeat scroll 0 0;
+    color: #fff;
+    display: inline-block;
+    margin-left: 5px;
+    padding: 9px 15px;
+}
+#popup-myModal .modal-footer {
+    text-align: center;
+}
+</style>
+
+
+<!-- Modal -->
+<div id="popup-myModal" class="modal fade in add-to-popup" role="dialog">
+ <div class="modal-dialog">
+
+   <!-- Modal content-->
+   <div class="modal-content modal-inner-wrap add-to-popup">
+     <div class="modal-body">
+       <div class="add-to-message">
+		</div>
+     </div>
+     <div class="modal-footer">
+      <a class="addtocart-popup viewcart" href="<?php echo $block->getCurrentUrl(); ?>">
+                <span><span>Continue Shopping</span></span>
+            </a>
+      <a class="addtocart-popup viewcart" href="<?php echo $block->getBaseUrl().'checkout/cart'; ?>">
+                <span><span>Checkout</span></span>
+            </a>
+     </div>
+   </div>
+
+ </div>
+
+
+</div>
+
+

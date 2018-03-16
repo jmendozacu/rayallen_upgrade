@@ -1,0 +1,32 @@
+<?php
+/** @var \ParadoxLabs\TokenBase\Block\Adminhtml\Customer\Wrapper $block */
+// @codingStandardsIgnoreFile
+?>
+<div class="admin__fieldset-wrapper" id="tokenbase-wrapper" data-mage-init='{"tokenbasePaymentinfo":{}}'>
+    <div class="admin__fieldset-wrapper-title">
+        <strong class="title">
+            <?php echo __('Payment Data'); ?>
+        </strong>
+    </div>
+    <div class="admin__fieldset-wrapper-content">
+        <?php if (count($block->getActiveMethods()) > 1): ?>
+            <ul class="links">
+                <?php foreach ($block->getActiveMethods() as $method): ?>
+                    <li <?php if ($block->getCurrentMethod() == $method): ?>class="active"<?php endif; ?>>
+                        <a href="<?php echo $block->getUrl('*/*/paymentinfo', [ 'method' => $method, 'id' => $block->getRequest()->getParam('id') ]); ?>">
+                            <?php echo $block->getMethodTitle($method); ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
+        <div class="manage-payment-method">
+            <?php if (count($block->getActiveMethods()) > 0): ?>
+                <?php echo $block->getChildHtml(); ?>
+            <?php else: ?>
+                <?php echo __('There are currently no active TokenBase payment methods.'); ?>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

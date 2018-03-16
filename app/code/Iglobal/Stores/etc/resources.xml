@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/resources.xsd">
+    <resource name="iglobal_stores_setup" extends="setup"/>
+    <resource name="Iglobal_Stores_Model_Resource_Setup" extends="resource_setup"/>
+</config>

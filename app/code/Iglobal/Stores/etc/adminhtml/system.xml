@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+  <system>
+    <tab id="iglobal" translate="label" sortOrder="150">
+      <label>iGlobal Stores Configuration</label>
+    </tab>
+    <section id="general">
+      <group id="country">
+        <field id="ig_domestic_countries" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Domestic Shipping Countries</label>
+          <comment>Hold down Ctrl to select more than one. Select each country to which you will ship. iGlobal will not service these countries, and customers will use your
+            checkout system.
+          </comment>
+          <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+          <can_be_empty>1</can_be_empty>
+        </field>
+      </group>
+    </section>
+    <section id="carriers">
+      <group id="ig" translate="label" type="text" sortOrder="99" showInDefault="0" showInWebsite="0" showInStore="0">
+        <label>Iglobal Shipping Module</label>
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Enabled</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Title</label>
+        </field>
+        <field id="name" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Method Name</label>
+        </field>
+        <field id="price" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Price</label>
+        </field>
+        <field id="specificerrmsg" translate="label" type="textarea" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Displayed Error Message</label>
+        </field>
+        <field id="sallowspecific" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Ship to Applicable Countries</label>
+          <frontend_class>shipping-applicable-country</frontend_class>
+          <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+        </field>
+        <field id="specificcountry" translate="label" type="multiselect" sortOrder="91" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Ship to Specific Countries</label>
+          <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+          <can_be_empty>1</can_be_empty>
+        </field>
+      </group>
+    </section>
+    <section id="iglobal_integration" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+      <label>iGlobal Integration Options</label>
+      <tab>iglobal</tab>
+      <resource>Iglobal_Stores::config</resource>
+      <group id="apireqs" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Store Setup</label>
+        <comment>
+          <![CDATA[ <div style="padding:10px;background-color:#fff;border:1px solid #ddd;margin-bottom:7px;"><strong>iGlobal wants to help!</strong> You can always <a href="http://academy.iglobalstores.com/" target="_blank">learn more about how we can increase your sales</a> or if you have any questions or problems <a href="http://www.iglobalstores.com/contact-us.html" target="_blank">contact us online</a> or call 1-800-942-0721.<br /></div>]]>
+        </comment>
+        <field id="heading_id" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Store Identification</label>
+          <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
+        </field>
+        <field id="iglobalid" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>iGlobal Store ID Number</label>
+          <comment>Paste the provided 3 digit store number here.</comment>
+        </field>
+        <field id="secret" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>iGlobal API Key</label>
+          <comment>Paste the provided API secret security key here.</comment>
+        </field>
+        <field id="igsubdomain" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>iGlobal Hosted Checkout Subdomain</label>
+          <comment>Paste the provided subdomain here.</comment>
+        </field>
+        <field id="heading_includes" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Included Files</label>
+          <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
+        </field>
+        <field id="ice_toggle" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Turn on International Checkout?</label>
+          <comment>Turn on to enable iGlobal International Checkout. Leave this off until setup and testing has been completed!</comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="use_iframe" type="select" sortOrder="42" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Embed iGlobal Checkout by iframe?</label>
+          <comment>Embed the iGlobal Checkout into your site, making customers feel more secure by seeing your url and improving the user experience.</comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="heading_checkout" translate="label" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Checkout Options</label>
+          <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
+        </field>
+        <field id="send_order_email" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Send Order Email</label>
+          <comment>Send a confirmation email after the order is placed (iGlobal may also send a confirmation email, depending on the settings you requested)</comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="heading_error" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Error Reporting</label>
+          <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
+        </field>
+        <field id="admin_email" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Admin Email Address</label>
+          <comment>This email address will receive notices of errors</comment>
+        </field>
+        <field id="heading_force_login" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Customer Login</label>
+          <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
+        </field>
+        <field id="force_login" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Require Account for Checkout</label>
+          <comment>If yes, The option "Redirect Customer to Account Dashboard after Logging in" needs to be set to "No" in the Customer Configuration > Login Options.</comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+      </group>
+      <group id="igmat" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>iGlobal Welcome Mat</label>
+        <comment>
+          <![CDATA[ <div style="padding:10px;background-color:#fff;border:1px solid #ddd;margin-bottom:7px;">iGlobal's unique welcome mat will recognize your customers' location and automatically tailor their shopping experience to make it seamless and increase your conversions!  If you have any questions or problems <a href="http://www.iglobalstores.com/contact-us.html" target="_blank">contact us online</a> or call 1-800-942-0721.<br /></div>]]>
+        </comment>
+        <field id="welcome_mat_active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Use the Welcome Mat?</label>
+          <comment>For testing purposes you may use the default Welcome Mat by leaving the "Welcome Mat Script" field blank. This may result in poor appearance or strange behavior,
+            and should be used only for testing and development. Please contact us at
+            1-800-942-0721 to have use make a customized script to match your site's style and design.
+          </comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="welcome_mat_script" translate="label comment" type="file" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Welcome Mat Script File</label>
+          <backend_model>Magento\Config\Model\Config\Backend\File</backend_model>
+          <upload_dir>js/iGlobal</upload_dir>
+        </field>
+        <field id="welcome_mat_css" translate="label comment" type="file" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Welcome Mat CSS File</label>
+          <backend_model>Magento\Config\Model\Config\Backend\File</backend_model>
+          <upload_dir>js/iGlobal</upload_dir>
+        </field>
+        <field id="flag_parent" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Flag position selector</label>
+          <comment>Enter the code provided to customize the location of the Welcome Mat flag, or leave blank to use the default location.</comment>
+        </field>
+        <field id="flag_method" type="text" sortOrder="42" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Flag insertion method</label>
+          <comment>Enter the code provided to customize the location of the Welcome Mat flag, or leave blank to use the default location.</comment>
+        </field>
+        <field id="flag_code" type="text" sortOrder="42" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Flag insertion code</label>
+          <comment>Enter the code provided to customize the location of the Welcome Mat flag, or leave blank to use the default location.</comment>
+        </field>
+        <field id="checkout_selectors" type="text" sortOrder="43" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Checkout button selector</label>
+          <comment>Enter a css selector for your checkout buttons. Multiple selectors are seperated with a comma</comment>
+        </field>
+        <field id="toggle_selectors" type="text" sortOrder="44" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Domestic elements selector</label>
+          <comment>Enter a css selector for your elements that should be hidden for international customers. Multiple selectors are seperated with a comma</comment>
+        </field>
+        <field id="store_logo" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Your Store's Logo URL</label>
+          <comment>Enter the URL provided to customize the look of the welcome mat, showing customers your logo.</comment>
+        </field>
+      </group>
+			<group id="ig_item_attribute" translate="label" type="text" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Cart Item Attribute Mapping</label>
+				<comment><![CDATA[ <div style="padding:10px;background-color:#fff;border:1px solid #ddd;margin-bottom:7px;">Map your existing and/or custom fields back to iGlobal for added product info and custom rules built around your store.</div>]]></comment>
+        <field id="weight" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Weight</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="length" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Length</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="width" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Width</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="height" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+						<label>Height</label>
+						<source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="country_of_origin" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Country of origin</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="category" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+						<label>Category</label>
+						<source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="brand" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Brand</label>
+						<source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="hs_code" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>HS code</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="customization" translate="label" type="select" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Customization</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+					<field id="color" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Color</label>
+						<source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+          </field>
+        <field id="material" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Material</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="status" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Status</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+        <field id="non_shippable" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Non Shippable</label>
+          <source_model>Iglobal\Stores\Model\ConfigOptions</source_model>
+        </field>
+			</group>
+      <group id="igjq" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>jQuery Settings</label>
+        <comment>
+          <![CDATA[<div style="padding:10px;background-color:#fff;border:1px solid #ddd;margin-bottom:7px;">To avoid conflicts, please select Yes ONLY if you do not currently have jQuery running on your site.  If you are unsure, please contact us at 1-800-942-0721 and we will assist you. </div>]]>
+        </comment>
+        <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Enabled</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="iglogging" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Turn on iGlobal Logging?</label>
+          <comment>Turn on to enable iGlobal Logging. This can result in very large log files, so it's best to leave this off unless needed!</comment>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+      </group>
+    </section>
+    <section id="payment" translate="label">
+      <group id="international" translate="label" type="text" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
+        <label>International Order Payment From iGlobal</label>
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Enabled</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>New Order Status</label>
+          <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Sort Order</label>
+          <frontend_class>validate-number</frontend_class>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+          <label>Title</label>
+        </field>
+        <field id="allowspecific" translate="label" type="allowspecific" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Payment from Applicable Countries</label>
+          <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+        </field>
+        <field id="specificcountry" translate="label" type="multiselect" sortOrder="51" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Payment from Specific Countries</label>
+          <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+          <can_be_empty>1</can_be_empty>
+        </field>
+        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Minimum Order Total</label>
+        </field>
+        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Maximum Order Total</label>
+        </field>
+      </group>
+    </section>
+  </system>
+</config>

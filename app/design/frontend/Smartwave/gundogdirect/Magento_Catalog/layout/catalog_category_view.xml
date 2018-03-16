@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="page.top">
+             <block class="Magento\Catalog\Block\Category\View" name="category_banner" template="category/banner.phtml" ifconfig="porto_settings/category/category_description" after="-"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\Catalog\Block\Category\View" name="category_desc_main_column" template="category/desc_main_column.phtml" ifconfig="porto_settings/category/category_description" before="category.products"/>
+        </referenceContainer>
+        <move element="category.image" destination="content" before="category_desc_main_column"/>        
+        <move element="catalog.leftnav" destination="sidebar.main" after="category_view_custom_block"/>
+		<referenceContainer name="sidebar.main">
+            <block class="Smartwave\Porto\Block\Template" name="category_view_featured_block" template="Magento_Catalog::category/custom_block.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

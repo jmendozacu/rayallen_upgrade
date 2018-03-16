@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+		<title>Online Catalog Version- JJDog Supplies, LLC</title>
+		<meta name="description" content="To receive a free J&J DOG SUPPLIES CATALOG complete the form.."/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Kensium\Catalogrequest\Block\Catalogrequest" name="catalogrequest" template="Kensium_Catalogrequest::catalogrequest.phtml" >
+			<block class="Magento\Captcha\Block\Captcha" name="catcaptcha" after="-">
+                    <action method="setFormId">
+                        <argument name="formId" xsi:type="string">contact_us</argument>
+                    </action>
+                    <action method="setImgWidth">
+                        <argument name="width" xsi:type="string">230</argument>
+                    </action>
+                    <action method="setImgHeight">
+                        <argument name="width" xsi:type="string">50</argument>
+                    </action>
+                </block>
+		    </block>
+        </referenceContainer>
+		<referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="captcha_page_head_components" template="Magento_Captcha::js/components.phtml"/>
+        </referenceBlock>
+    </body>
+</page><!--Magento\Framework\View\Element\Template (or) Kensium\Freecatalog\Block\Testimonial-->

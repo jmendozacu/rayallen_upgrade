@@ -1,0 +1,40 @@
+
+<h3 class="sitemp-head"><?php echo "Categories";?></h3>
+<ul class ="sitemap-cat">
+    <?php
+
+    $url = $block->getBaseUrl();
+
+    /*
+     * display of categories
+     */
+    $categoryInfo=$this->getInfo();
+    //print_r($categoryInfo);
+    foreach($categoryInfo as $cat) {
+        ?>
+        <li>
+            <a href="<?php echo $cat['url']; ?>"><span><?php echo $cat['name']; ?></span></a>
+        </li>
+    <?php
+    }
+    ?>
+</ul>
+<h3 class="sitemp-head"><?php echo "CMS Pages";?></h3>
+<ul class ="sitemap-cms">
+    <?php
+    /*
+     * display of cms pages
+     */
+
+    $pageInfo=$this->getPageInfo();
+
+    foreach($pageInfo as $page){
+        ?>
+        <li>
+            <a href="<?php echo $url.$page['identifier']; ?>"><span><?php echo $page['title']; ?></span></a>
+        </li>
+
+    <?php
+    }
+    ?>
+</ul>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Sales\Helper\Guest" type="Kensium\TrackOrder\Helper\Guest" />
+    <preference for="Magento\Sales\Block\Widget\Guest\Form" type="Kensium\TrackOrder\Block\Widget\Guest\Form" />
+    <preference for="Magento\Shipping\Block\Items" type="Kensium\TrackOrder\Block\Items" />
+    <preference for="Magento\Sales\Controller\Guest\Form" type="Kensium\TrackOrder\Controller\Guest\Form" />
+    <type name="Magento\Sales\Block\Order\View">
+        <plugin name="trackkens"
+                type="Kensium\TrackOrder\Block\View\Plugin"
+                sortOrder="10"
+                disabled="false"/>
+    </type>
+</config>

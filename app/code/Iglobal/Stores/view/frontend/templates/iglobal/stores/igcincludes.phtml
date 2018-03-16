@@ -1,0 +1,18 @@
+<!--Begin iGlobal-->
+<?php if ($block->getConfigValue('igmat/welcome_mat_active', false)) { ?>
+<script type="text/javascript">var ig_vars=<?php echo $block->getHelper()->getJavascriptVars() ?>;</script>
+<script type="text/javascript">
+    var endPath = "<?php echo $block->getConfigValue('igmat/welcome_mat_script', 'ig_welcome_mat_default'); ?>",
+        begginingPath = 'Iglobal_Stores',
+        baseUrl = window.location.protocol + "//" + window.location.host + "/";
+
+    if(endPath != "ig_welcome_mat_default")
+        begginingPath = baseUrl+'pub';
+
+    require(['jquery'], function(jQuery){
+        require([begginingPath+'/js/iGlobal/'+endPath]);
+    });
+</script>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getViewFileUrl('Iglobal_Stores/js/iGlobal/' .$block->getConfigValue('igmat/welcome_mat_css',  'ig_welcome_mat_default.css'));?>">
+<?php } ?>
+<!--End iGlobal-->

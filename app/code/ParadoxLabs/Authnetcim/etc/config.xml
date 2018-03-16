@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <authnetcim>
+                <active>0</active>
+                <title>Credit Card (Authorize.Net CIM)</title>
+                <cctypes>AE,VI,MC,DI</cctypes>
+                <login backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <trans_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <model>ParadoxLabs\Authnetcim\Model\Method</model>
+                <card_model>ParadoxLabs\Authnetcim\Model\Card</card_model>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <test>0</test>
+                <useccv>1</useccv>
+                <validation_mode>liveMode</validation_mode>
+                <allowspecific>0</allowspecific>
+                <currency>USD</currency>
+                <allow_unsaved>1</allow_unsaved>
+                <show_branding>0</show_branding>
+                <require_ccv>0</require_ccv>
+                <send_shipping_address>1</send_shipping_address>
+                <send_line_items>1</send_line_items>
+                <reauthorize_partial_invoice>1</reauthorize_partial_invoice>
+                <savecard_opt_out>1</savecard_opt_out>
+                <verify_ssl>1</verify_ssl>
+                <group>tokenbase</group>
+            </authnetcim>
+            <authnetcim_ach>
+                <active>0</active>
+                <title>Bank Account (eCheck)</title>
+                <login backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <trans_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <model>ParadoxLabs\Authnetcim\Model\Ach\Method</model>
+                <card_model>ParadoxLabs\Authnetcim\Model\Ach\Card</card_model>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <test>0</test>
+                <validation_mode>liveMode</validation_mode>
+                <allowspecific>0</allowspecific>
+                <currency>USD</currency>
+                <allow_unsaved>1</allow_unsaved>
+                <show_branding>0</show_branding>
+                <send_shipping_address>1</send_shipping_address>
+                <send_line_items>1</send_line_items>
+                <reauthorize_partial_invoice>1</reauthorize_partial_invoice>
+                <savecard_opt_out>1</savecard_opt_out>
+                <verify_ssl>1</verify_ssl>
+                <group>tokenbase</group>
+            </authnetcim_ach>
+        </payment>
+    </default>
+</config>

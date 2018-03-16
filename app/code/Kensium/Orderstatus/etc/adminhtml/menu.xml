@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Kensium. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="kensium_orderstatus::orderstatus" title="Order Status Manager" module="Kensium_Orderstatus" sortOrder="10" parent="Kensium_Amconnector::kensium_kensiumadminindex0" action="kensium_orderstatus/orderstatus/" resource="Kensium_Orderstatus::orderstatus"/>
+    </menu>
+</config>

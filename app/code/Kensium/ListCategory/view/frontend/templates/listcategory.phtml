@@ -1,0 +1,12 @@
+<?php  $categoryInfo=$this->getInfo();
+foreach($categoryInfo as $cat){
+?>
+<div class='col-md-1 col-sm-2 col-xs-2 tactical' >
+<a href="<?php echo $cat['url'];?>" ><img src="<?php echo $cat['image']; ?>" /><span><?php echo $cat['name']; ?></span></a></div>
+
+<?php
+
+}
+
+
+?>
