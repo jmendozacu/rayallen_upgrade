@@ -15,13 +15,13 @@
             "type": "composer",
             "url": "https://repo.magento.com/"
         },
-        "listrak": {
-            "type": "composer",
-            "url": "https://s1.listrakbi.com/Magento2/Composer"
-        },
         "mirasvit": {
             "type": "composer",
             "url": "https://18317:ea7b0e3585@packages.mirasvit.com/"
+        },
+        "mirasvit-ssu2": {
+            "type": "composer",
+            "url": "https://18333:SNC8MOED9J@packages.mirasvit.com/"
         }
     },
     "require": {
@@ -52,8 +52,7 @@
         "magento/module-swatches-sample-data": "100.0.*",
         "magento/sample-data-media": "100.0.*",
         "magento/module-offline-shipping-sample-data": "100.0.*",
-        "listrak/listrak-remarketing": "^2.0",
-        "mirasvit/module-search-ultimate": "^1.0"
+        "mirasvit/module-search-ultimate": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.0",
