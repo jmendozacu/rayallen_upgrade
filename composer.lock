@@ -4,60 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2da12e2fb6567091a57f63113e201afa",
-    "content-hash": "0176a9ede270ce0c4cc6bf79a290cbda",
+    "content-hash": "e694c1d35f6df11abd137a9ac853839e",
     "packages": [
-        {
-            "name": "bitexpert/magento2-force-customer-login",
-            "version": "1.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bitExpert/magento2-force-login.git",
-                "reference": "24ea7bdf2553fcf8059570d039e2bc3381260596"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bitExpert/magento2-force-login/zipball/24ea7bdf2553fcf8059570d039e2bc3381260596",
-                "reference": "24ea7bdf2553fcf8059570d039e2bc3381260596",
-                "shasum": ""
-            },
-            "require": {
-                "magento/module-customer": "100.0.*",
-                "php": "~5.5.0|~5.6.0|~7.0.0"
-            },
-            "require-dev": {
-                "phing/phing": "^2.8.0",
-                "phpunit/phpunit": "~5.0",
-                "squizlabs/php_codesniffer": "^2.3"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "files": [
-                    "registration.php"
-                ],
-                "psr-4": {
-                    "bitExpert\\ForceCustomerLogin\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Stephan Hochdörfer",
-                    "email": "S.Hochdoerfer@bitExpert.de",
-                    "homepage": "http://www.bitExpert.de"
-                },
-                {
-                    "name": "Florian Horn",
-                    "email": "F.Horn@bitExpert.de",
-                    "homepage": "http://www.bitExpert.de"
-                }
-            ],
-            "description": "Magento2 Module to force the login for frontend customers.",
-            "time": "2016-05-12 08:24:46"
-        },
         {
             "name": "braintree/braintree_php",
             "version": "2.39.0",
@@ -101,7 +49,7 @@
                 }
             ],
             "description": "Braintree PHP Client Library",
-            "time": "2015-05-07 16:53:06"
+            "time": "2015-05-07T16:53:06+00:00"
         },
         {
             "name": "composer/composer",
@@ -169,7 +117,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-04-14 21:18:51"
+            "time": "2015-04-14T21:18:51+00:00"
         },
         {
             "name": "foolz/sphinxql-query-builder",
@@ -220,7 +168,7 @@
                 "sphinxql",
                 "sql"
             ],
-            "time": "2015-10-21 23:09:24"
+            "time": "2015-10-21T23:09:24+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -286,46 +234,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2016-01-06 14:37:04"
-        },
-        {
-            "name": "listrak/listrak-remarketing",
-            "version": "2.1.0",
-            "dist": {
-                "type": "zip",
-                "url": "https://faui.listrakbi.com/Magento2/Composer/Listrak_Remarketing-2.1.0.zip",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "magento/framework": "100.0.*",
-                "magento/magento-composer-installer": "*",
-                "magento/module-catalog": "100.0.*",
-                "magento/module-catalog-inventory": "100.0.*",
-                "magento/module-checkout": "100.0.*",
-                "magento/module-config": "100.0.*",
-                "magento/module-configurable-product": "100.0.*",
-                "magento/module-customer": "100.0.*",
-                "magento/module-eav": "100.0.*",
-                "magento/module-grouped-product": "100.0.*",
-                "magento/module-integration": "100.0.*",
-                "magento/module-sales": "100.0.*",
-                "magento/module-store": "100.0.*",
-                "php": "~5.5.0|~5.6.0|~7.0.0"
-            },
-            "type": "magento2-module",
-            "autoload": {
-                "psr-4": {
-                    "Listrak\\Remarketing\\": ""
-                },
-                "files": [
-                    "registration.php"
-                ]
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "Listrak Retail Solutions"
+            "time": "2016-01-06T14:37:04+00:00"
         },
         {
             "name": "magento/composer",
@@ -695,7 +604,7 @@
                 "composer-installer",
                 "magento"
             ],
-            "time": "2015-09-14 19:59:55"
+            "time": "2015-09-14T19:59:55+00:00"
         },
         {
             "name": "magento/magento2-base",
@@ -7708,21 +7617,16 @@
                 "ZF1",
                 "framework"
             ],
-            "time": "2015-10-29 14:34:55"
+            "time": "2015-10-29T14:34:55+00:00"
         },
         {
             "name": "mirasvit/module-core",
             "version": "1.2.3",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:mirasvit/module-core.git",
-                "reference": "e57e949d37d752269c61278bd4717f2054844f43"
-            },
             "dist": {
                 "type": "tar",
-                "url": "https://packages.mirasvit.com//downloads/mirasvit-module-core-1.2.3-b7712d.tar",
+                "url": "https://18333:SNC8MOED9J@packages.mirasvit.com//downloads/mirasvit-module-core-1.2.3-b7712d.tar",
                 "reference": "e57e949d37d752269c61278bd4717f2054844f43",
-                "shasum": "b898a3b4b114fa4431fda528f0eecab33f9f20c2"
+                "shasum": null
             },
             "require": {
                 "magento/framework": "100.0.*",
@@ -7743,21 +7647,16 @@
                 "proprietary"
             ],
             "description": "Mirasvit Core",
-            "time": "2016-03-16 10:23:43"
+            "time": "2016-03-16T10:23:43+00:00"
         },
         {
             "name": "mirasvit/module-misspell",
             "version": "1.0.4",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:mirasvit/module-misspell.git",
-                "reference": "ba255e41659ddc7da648240115d83ae53c417555"
-            },
             "dist": {
                 "type": "tar",
-                "url": "https://packages.mirasvit.com//downloads/mirasvit-module-misspell-1.0.4-0b69ef.tar",
+                "url": "https://18333:SNC8MOED9J@packages.mirasvit.com//downloads/mirasvit-module-misspell-1.0.4-0b69ef.tar",
                 "reference": "ba255e41659ddc7da648240115d83ae53c417555",
-                "shasum": "9ac56e286da15e32c430211138650d847f269882"
+                "shasum": null
             },
             "require": {
                 "magento/framework": "100.0.*",
@@ -7779,21 +7678,16 @@
                 "proprietary"
             ],
             "description": "Search Spell Correction",
-            "time": "2016-02-23 17:08:00"
+            "time": "2016-02-23T17:08:00+00:00"
         },
         {
             "name": "mirasvit/module-search-autocomplete",
             "version": "1.0.14",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:mirasvit/module-search-autocomplete.git",
-                "reference": "61f8458dff8b3d6bc2e5c8af209915cd255376b6"
-            },
             "dist": {
                 "type": "tar",
-                "url": "https://packages.mirasvit.com//downloads/mirasvit-module-search-autocomplete-1.0.14-0ca058.tar",
+                "url": "https://18333:SNC8MOED9J@packages.mirasvit.com//downloads/mirasvit-module-search-autocomplete-1.0.14-0ca058.tar",
                 "reference": "61f8458dff8b3d6bc2e5c8af209915cd255376b6",
-                "shasum": "e30351167460891a596293bf92d55d6f5c1aaa13"
+                "shasum": null
             },
             "require": {
                 "magento/framework": "100.0.*",
@@ -7815,21 +7709,16 @@
                 "proprietary"
             ],
             "description": "Search Autocomplete & Suggest",
-            "time": "2016-04-06 11:01:40"
+            "time": "2016-04-06T11:01:40+00:00"
         },
         {
             "name": "mirasvit/module-search-sphinx",
             "version": "1.0.14",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:mirasvit/module-search-sphinx.git",
-                "reference": "39b0fb0a7e8b2cdca78504c8e6cfafc4dbfdfaf8"
-            },
             "dist": {
                 "type": "tar",
-                "url": "https://packages.mirasvit.com//downloads/mirasvit-module-search-sphinx-1.0.14-1fee70.tar",
+                "url": "https://18333:SNC8MOED9J@packages.mirasvit.com//downloads/mirasvit-module-search-sphinx-1.0.14-1fee70.tar",
                 "reference": "39b0fb0a7e8b2cdca78504c8e6cfafc4dbfdfaf8",
-                "shasum": "807da50350f038e04606344922815f7733ebc684"
+                "shasum": null
             },
             "require": {
                 "foolz/sphinxql-query-builder": "1.0.1",
@@ -7857,21 +7746,16 @@
                 "proprietary"
             ],
             "description": "Search Sphinx",
-            "time": "2016-04-26 10:00:53"
+            "time": "2016-04-26T10:00:53+00:00"
         },
         {
             "name": "mirasvit/module-search-ultimate",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:mirasvit/module-search-ultimate.git",
-                "reference": "8a215b5c368bee3267deab93d800d95f6207002c"
-            },
+            "version": "1.0.6",
             "dist": {
                 "type": "tar",
-                "url": "https://packages.mirasvit.com//downloads/mirasvit-module-search-ultimate-1.0.1-242627.tar",
-                "reference": "8a215b5c368bee3267deab93d800d95f6207002c",
-                "shasum": "7d35816ea83318b4395590aab02f0eb35b4f46fb"
+                "url": "https://18333:SNC8MOED9J@packages.mirasvit.com//downloads/mirasvit-module-search-ultimate-1.0.6-46f176.tar",
+                "reference": "dc558b67e6a4eb4742fb851a155f9d7fe9ac6494",
+                "shasum": null
             },
             "require": {
                 "mirasvit/module-misspell": "1.0.*",
@@ -7880,14 +7764,18 @@
             },
             "type": "magento2-module",
             "autoload": {
-                "files": [],
-                "psr-4": []
+                "files": [
+                    "src/SearchUltimate/registration.php"
+                ],
+                "psr-4": {
+                    "Mirasvit\\SearchUltimate\\": "src/SearchUltimate"
+                }
             },
             "license": [
                 "proprietary"
             ],
             "description": "Sphinx Search Ultimate",
-            "time": "2016-03-09 09:06:41"
+            "time": "2016-12-16T14:54:15+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -7963,7 +7851,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-08-09 17:44:44"
+            "time": "2015-08-09T17:44:44+00:00"
         },
         {
             "name": "oyejorge/less.php",
@@ -8022,19 +7910,19 @@
                 "php",
                 "stylesheet"
             ],
-            "time": "2015-03-10 18:12:59"
+            "time": "2015-03-10T18:12:59+00:00"
         },
         {
             "name": "pelago/emogrifier",
             "version": "v0.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jjriv/emogrifier.git",
+                "url": "https://github.com/MyIntervals/emogrifier.git",
                 "reference": "ed72bcd6a3c7014862ff86d026193667a172fedf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jjriv/emogrifier/zipball/ed72bcd6a3c7014862ff86d026193667a172fedf",
+                "url": "https://api.github.com/repos/MyIntervals/emogrifier/zipball/ed72bcd6a3c7014862ff86d026193667a172fedf",
                 "reference": "ed72bcd6a3c7014862ff86d026193667a172fedf",
                 "shasum": ""
             },
@@ -8078,7 +7966,7 @@
             ],
             "description": "Converts CSS styles into inline style attributes in your HTML code",
             "homepage": "http://www.pelagodesign.com/sidecar/emogrifier/",
-            "time": "2015-05-15 11:37:51"
+            "time": "2015-05-15T11:37:51+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -8176,7 +8064,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2015-01-28 21:50:33"
+            "time": "2015-01-28T21:50:33+00:00"
         },
         {
             "name": "psr/log",
@@ -8214,7 +8102,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2012-12-21 11:40:51"
+            "time": "2012-12-21T11:40:51+00:00"
         },
         {
             "name": "seld/jsonlint",
@@ -8260,7 +8148,7 @@
                 "parser",
                 "validator"
             ],
-            "time": "2015-11-21 02:21:41"
+            "time": "2015-11-21T02:21:41+00:00"
         },
         {
             "name": "solarium/solarium",
@@ -8314,7 +8202,7 @@
                 "search",
                 "solr"
             ],
-            "time": "2014-11-12 06:53:41"
+            "time": "2014-11-12T06:53:41+00:00"
         },
         {
             "name": "symfony/console",
@@ -8372,7 +8260,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-26 09:08:40"
+            "time": "2015-07-26T09:08:40+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -8432,7 +8320,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-01-13T10:28:07+00:00"
         },
         {
             "name": "symfony/finder",
@@ -8481,7 +8369,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-14 08:26:52"
+            "time": "2016-01-14T08:26:52+00:00"
         },
         {
             "name": "symfony/process",
@@ -8530,7 +8418,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-06 09:59:23"
+            "time": "2016-01-06T09:59:23+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -8579,7 +8467,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-01-13T10:28:07+00:00"
         },
         {
             "name": "tedivm/jshrink",
@@ -8625,7 +8513,7 @@
                 "javascript",
                 "minifier"
             ],
-            "time": "2014-11-11 03:54:14"
+            "time": "2014-11-11T03:54:14+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
@@ -8669,7 +8557,7 @@
                 "minify",
                 "yui"
             ],
-            "time": "2014-09-22 08:08:50"
+            "time": "2014-09-22T08:08:50+00:00"
         },
         {
             "name": "videlalvaro/php-amqplib",
@@ -8723,7 +8611,8 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2015-08-11 12:30:09"
+            "abandoned": "php-amqplib/php-amqplib",
+            "time": "2015-08-11T12:30:09+00:00"
         },
         {
             "name": "zendframework/zend-code",
@@ -8776,7 +8665,7 @@
                 "code",
                 "zf2"
             ],
-            "time": "2015-05-11 16:17:05"
+            "time": "2015-05-11T16:17:05+00:00"
         },
         {
             "name": "zendframework/zend-config",
@@ -8833,7 +8722,7 @@
                 "config",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-console",
@@ -8883,7 +8772,7 @@
                 "console",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-crypt",
@@ -8935,7 +8824,7 @@
                 "crypt",
                 "zf2"
             ],
-            "time": "2015-11-23 16:33:27"
+            "time": "2015-11-23T16:33:27+00:00"
         },
         {
             "name": "zendframework/zend-di",
@@ -8986,7 +8875,7 @@
                 "di",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-escaper",
@@ -9031,7 +8920,7 @@
                 "escaper",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-eventmanager",
@@ -9077,7 +8966,7 @@
                 "eventmanager",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-filter",
@@ -9133,7 +9022,7 @@
                 "filter",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-form",
@@ -9204,7 +9093,7 @@
                 "form",
                 "zf2"
             ],
-            "time": "2015-09-09 19:11:05"
+            "time": "2015-09-09T19:11:05+00:00"
         },
         {
             "name": "zendframework/zend-http",
@@ -9255,7 +9144,7 @@
                 "http",
                 "zf2"
             ],
-            "time": "2015-09-14 16:11:20"
+            "time": "2015-09-14T16:11:20+00:00"
         },
         {
             "name": "zendframework/zend-i18n",
@@ -9319,7 +9208,7 @@
                 "i18n",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-inputfilter",
@@ -9370,7 +9259,7 @@
                 "inputfilter",
                 "zf2"
             ],
-            "time": "2015-09-09 15:44:54"
+            "time": "2015-09-09T15:44:54+00:00"
         },
         {
             "name": "zendframework/zend-json",
@@ -9424,7 +9313,7 @@
                 "json",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-loader",
@@ -9469,7 +9358,7 @@
                 "loader",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-log",
@@ -9531,7 +9420,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-math",
@@ -9582,7 +9471,7 @@
                 "math",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-modulemanager",
@@ -9640,7 +9529,7 @@
                 "modulemanager",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-mvc",
@@ -9728,7 +9617,7 @@
                 "mvc",
                 "zf2"
             ],
-            "time": "2015-09-14 16:32:50"
+            "time": "2015-09-14T16:32:50+00:00"
         },
         {
             "name": "zendframework/zend-serializer",
@@ -9781,7 +9670,7 @@
                 "serializer",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-server",
@@ -9828,7 +9717,7 @@
                 "server",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-servicemanager",
@@ -9878,7 +9767,7 @@
                 "servicemanager",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-soap",
@@ -9930,7 +9819,7 @@
                 "soap",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -9985,7 +9874,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2015-07-21 13:55:46"
+            "time": "2015-07-21T13:55:46+00:00"
         },
         {
             "name": "zendframework/zend-text",
@@ -10032,7 +9921,7 @@
                 "text",
                 "zf2"
             ],
-            "time": "2015-05-07 14:55:31"
+            "time": "2015-05-07T14:55:31+00:00"
         },
         {
             "name": "zendframework/zend-uri",
@@ -10080,7 +9969,7 @@
                 "uri",
                 "zf2"
             ],
-            "time": "2015-09-14 16:17:10"
+            "time": "2015-09-14T16:17:10+00:00"
         },
         {
             "name": "zendframework/zend-validator",
@@ -10145,7 +10034,7 @@
                 "validator",
                 "zf2"
             ],
-            "time": "2015-09-08 21:04:17"
+            "time": "2015-09-08T21:04:17+00:00"
         },
         {
             "name": "zendframework/zend-view",
@@ -10222,10 +10111,61 @@
                 "view",
                 "zf2"
             ],
-            "time": "2015-06-16 15:22:37"
+            "time": "2015-06-16T15:22:37+00:00"
         }
     ],
     "packages-dev": [
+        {
+            "name": "bitexpert/magento2-force-customer-login",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bitExpert/magento2-force-login.git",
+                "reference": "24ea7bdf2553fcf8059570d039e2bc3381260596"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bitExpert/magento2-force-login/zipball/24ea7bdf2553fcf8059570d039e2bc3381260596",
+                "reference": "24ea7bdf2553fcf8059570d039e2bc3381260596",
+                "shasum": ""
+            },
+            "require": {
+                "magento/module-customer": "100.0.*",
+                "php": "~5.5.0|~5.6.0|~7.0.0"
+            },
+            "require-dev": {
+                "phing/phing": "^2.8.0",
+                "phpunit/phpunit": "~5.0",
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "bitExpert\\ForceCustomerLogin\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Stephan Hochdörfer",
+                    "email": "S.Hochdoerfer@bitExpert.de",
+                    "homepage": "http://www.bitExpert.de"
+                },
+                {
+                    "name": "Florian Horn",
+                    "email": "F.Horn@bitExpert.de",
+                    "homepage": "http://www.bitExpert.de"
+                }
+            ],
+            "description": "Magento2 Module to force the login for frontend customers.",
+            "time": "2016-05-12T08:24:46+00:00"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
@@ -10278,7 +10218,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14 21:17:01"
+            "time": "2015-06-14T21:17:01+00:00"
         },
         {
             "name": "fabpot/php-cs-fixer",
@@ -10332,7 +10272,7 @@
                 }
             ],
             "description": "A tool to automatically fix PHP code style",
-            "time": "2015-12-01 22:34:33"
+            "time": "2015-12-01T22:34:33+00:00"
         },
         {
             "name": "league/climate",
@@ -10381,7 +10321,7 @@
                 "php",
                 "terminal"
             ],
-            "time": "2015-01-18 14:31:58"
+            "time": "2015-01-18T14:31:58+00:00"
         },
         {
             "name": "lusitanian/oauth",
@@ -10448,7 +10388,7 @@
                 "oauth",
                 "security"
             ],
-            "time": "2015-10-07 00:20:04"
+            "time": "2015-10-07T00:20:04+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -10488,7 +10428,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2015-10-16 08:49:58"
+            "time": "2015-10-16T08:49:58+00:00"
         },
         {
             "name": "phpmd/phpmd",
@@ -10553,7 +10493,7 @@
                 "phpmd",
                 "pmd"
             ],
-            "time": "2015-09-24 14:37:49"
+            "time": "2015-09-24T14:37:49+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -10615,7 +10555,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-06 15:47:00"
+            "time": "2015-10-06T15:47:00+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -10660,7 +10600,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2013-10-10 15:34:57"
+            "time": "2013-10-10T15:34:57+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -10701,7 +10641,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -10742,7 +10682,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2015-06-21T08:01:12+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -10791,7 +10731,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-09-15 10:49:45"
+            "time": "2015-09-15T10:49:45+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -10865,7 +10805,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-05-02 07:13:40"
+            "time": "2014-05-02T07:13:40+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -10921,7 +10861,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-10-02 06:51:40"
+            "time": "2015-10-02T06:51:40+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -10985,7 +10925,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2015-07-26 15:48:44"
+            "time": "2015-07-26T15:48:44+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -11037,7 +10977,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-08 07:14:41"
+            "time": "2015-12-08T07:14:41+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -11087,7 +11027,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-12-02 08:37:27"
+            "time": "2015-12-02T08:37:27+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -11153,7 +11093,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2015-06-21 07:55:53"
+            "time": "2015-06-21T07:55:53+00:00"
         },
         {
             "name": "sebastian/recursion-context",
@@ -11206,7 +11146,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2015-11-11 19:50:13"
+            "time": "2015-11-11T19:50:13+00:00"
         },
         {
             "name": "sebastian/version",
@@ -11241,7 +11181,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2015-06-21 13:59:46"
+            "time": "2015-06-21T13:59:46+00:00"
         },
         {
             "name": "sjparkinson/static-review",
@@ -11294,7 +11234,7 @@
                 }
             ],
             "description": "An extendable framework for version control hooks.",
-            "time": "2014-09-22 08:40:36"
+            "time": "2014-09-22T08:40:36+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -11369,7 +11309,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-05-01 03:07:07"
+            "time": "2014-05-01T03:07:07+00:00"
         },
         {
             "name": "symfony/config",
@@ -11419,7 +11359,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-03 15:33:41"
+            "time": "2016-01-03T15:33:41+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -11481,7 +11421,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-12 17:46:01"
+            "time": "2016-01-12T17:46:01+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -11530,7 +11470,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-13 10:28:07"
+            "time": "2016-01-13T10:28:07+00:00"
         },
         {
             "name": "symfony/stopwatch",
@@ -11579,7 +11519,7 @@
             ],
             "description": "Symfony Stopwatch Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-30 23:35:59"
+            "time": "2015-10-30T23:35:59+00:00"
         }
     ],
     "aliases": [],
