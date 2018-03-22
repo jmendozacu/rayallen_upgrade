@@ -26,9 +26,9 @@ define([
     $('.panel.header .header.links').clone().appendTo('#store\\.links');
 
     keyboardHandler.apply();
-});
 
-$(function($){
+    // I.CUBE Fix by merging Kensium code with default magento "theme.js"
+    // Error fixed "$ is not a function" message across the gundogdirect website
     $(".word-rotate").each(function() {
 
         var $this = $(this),
