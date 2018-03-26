@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -48,8 +48,9 @@ class QuoteRemoveItemObserver implements ObserverInterface
         $item = $observer->getEvent()->getQuoteItem();
 
         // Additional request checks to mark only explicitly deleted items
-        if ($this->_request->getActionName() == 'delete'
-            && $this->_request->getParam('id') == $item->getId()
+        if (($this->_request->getActionName() == 'delete'
+            && $this->_request->getParam('id') == $item->getId())
+            || $this->_request->getActionName() == 'removeItem'
         ) {
             if (!$item->getParentId()
                 && $this->promoItemHelper->isPromoItem($item)

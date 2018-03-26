@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -15,20 +15,23 @@ class Item extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @var \Magento\Store\Model\StoreManagerInterface
      */
-    protected $_storeManager;
+    private $storeManager;
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         parent::__construct($context);
-        $this->_storeManager = $storeManager;
+        $this->storeManager = $storeManager;
     }
 
-    public function getRuleId(\Magento\Quote\Model\Quote\Item $item)
+    /**
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @return mixed|null
+     */
+    public function getRuleId(\Magento\Quote\Model\Quote\Item\AbstractItem $item)
     {
-        if (!($ruleId = $item->getData('ampromo_rule_id')))
-        {
+        if (!($ruleId = $item->getData('ampromo_rule_id'))) {
             $buyRequest = $item->getBuyRequest();
 
             $ruleId = isset($buyRequest['options']['ampromo_rule_id'])
@@ -40,10 +43,15 @@ class Item extends \Magento\Framework\App\Helper\AbstractHelper
         return $ruleId;
     }
 
-    public function isPromoItem(\Magento\Quote\Model\Quote\Item $item)
+    /**
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @return bool
+     */
+    public function isPromoItem(\Magento\Quote\Model\Quote\Item\AbstractItem $item)
     {
-        if ($this->_storeManager->getStore()->getCode() == \Magento\Store\Model\Store::ADMIN_CODE)
+        if ($this->storeManager->getStore()->getCode() == \Magento\Store\Model\Store::ADMIN_CODE) {
             return false;
+        }
 
         return $this->getRuleId($item) !== null;
     }

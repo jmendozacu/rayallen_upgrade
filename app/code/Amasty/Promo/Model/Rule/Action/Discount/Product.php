@@ -1,43 +1,50 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
+
 namespace Amasty\Promo\Model\Rule\Action\Discount;
 
+/**
+ * Action name: Auto add promo items with products
+ */
 class Product extends AbstractDiscount
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function _getFreeItemsQty(
         \Magento\SalesRule\Model\Rule $rule,
-        \Magento\Quote\Model\Quote $quote
+        \Magento\Quote\Model\Quote\Item\AbstractItem $item
     ) {
-        $qty = 0;
+        $qty    = 0;
         $amount = max(1, $rule->getDiscountAmount());
-        $step = max(1, $rule->getDiscountStep());
-        foreach ($quote->getItemsCollection() as $item) {
-            if (!$item)
+        $step   = max(1, $rule->getDiscountStep());
+        foreach ($item->getQuote()->getAllVisibleItems() as $item) {
+            if (!$item || $this->promoItemHelper->isPromoItem($item) || $item->getProduct()->getParentProductId()) {
                 continue;
+            }
 
-            if ($this->promoItemHelper->isPromoItem($item))
+            if (!$rule->getActions()->validate($item)) {
+                // if condition not valid for Parent, but valid for child then collect qty of child
+                foreach ($item->getChildren() as $child) {
+                    if ($rule->getActions()->validate($child)) {
+                        $qty += $child->getTotalQty();
+                    }
+                }
                 continue;
+            }
 
-            if (!$rule->getActions()->validate($item))
-                continue;
-
-            if ($item->getParentItemId())
-                continue;
-
-            if ($item->getProduct()->getParentProductId())
-                continue;
-
-            $qty = $qty + $item->getQty();
+            $qty += $item->getQty();
         }
+        $item->getAddress()->setDiscountDescription($rule->getName());
 
         $qty = floor($qty / $step) * $amount;
         $max = $rule->getDiscountQty();
-        if ($max){
+        if ($max) {
             $qty = min($max, $qty);
         }
 

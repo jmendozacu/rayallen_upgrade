@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -21,98 +21,100 @@ class CollectTotalsAfterObserver implements ObserverInterface
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry;
-
-    /**
-     * @var \Magento\Checkout\Model\Cart
-     */
-    protected $cart;
+    private $_coreRegistry;
 
     /**
      * @var \Amasty\Promo\Helper\Cart
      */
-    protected $promoCartHelper;
+    private $promoCartHelper;
 
     /**
      * @var \Amasty\Promo\Helper\Item
      */
-    protected $promoItemHelper;
+    private $promoItemHelper;
 
     /**
      * @var \Amasty\Promo\Model\Registry
      */
-    protected $promoRegistry;
+    private $promoRegistry;
 
     public function __construct(
         \Magento\Framework\Registry $registry,
-        \Magento\Checkout\Model\Cart $cart,
         \Amasty\Promo\Helper\Cart $promoCartHelper,
         \Amasty\Promo\Helper\Item $promoItemHelper,
         \Amasty\Promo\Model\Registry $promoRegistry
-    )
-    {
+    ) {
         $this->_coreRegistry = $registry;
-        $this->cart = $cart;
         $this->promoCartHelper = $promoCartHelper;
         $this->promoItemHelper = $promoItemHelper;
         $this->promoRegistry = $promoRegistry;
     }
 
-
+    /**
+     * @param \Magento\Framework\Event\Observer $observer
+     * @throws \Exception
+     */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         $allowedItems = $this->promoRegistry->getPromoItems();
-
         $toAdd = $this->_coreRegistry->registry('ampromo_to_add');
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $observer->getQuote();
 
         if (is_array($toAdd)) {
             foreach ($toAdd as $item) {
                 $this->promoCartHelper->addProduct(
                     $item['product'],
-                    $item['qty']
+                    $item['qty'],
+                    false,
+                    [],
+                    $item['discount'],
+                    isset($item['discount']) && !empty($item['discount']) ? $item['discount']['minimal_price'] : null,
+                    $quote
                 );
             }
         }
 
         $this->_coreRegistry->unregister('ampromo_to_add');
 
-        foreach ($observer->getQuote()->getAllItems() as $item) {
+        foreach ($quote->getAllItems() as $item) {
             if ($this->promoItemHelper->isPromoItem($item)) {
-                if ($item->getParentItemId())
+                if ($item->getParentItemId()) {
                     continue;
+                }
 
                 $sku = $item->getProduct()->getData('sku');
 
                 $ruleId = $this->promoItemHelper->getRuleId($item);
 
                 if (isset($allowedItems['_groups'][$ruleId])) { // Add one of
-
                     if ($allowedItems['_groups'][$ruleId]['qty'] <= 0) {
-                        $this->cart->removeItem($item->getId());
-                    }
-                    else if ($item->getQty() > $allowedItems['_groups'][$ruleId]['qty']) {
+                        $quote->removeItem($item->getId());
+                    } elseif ($item->getQty() > $allowedItems['_groups'][$ruleId]['qty']) {
                         $item->setQty($allowedItems['_groups'][$ruleId]['qty']);
                     }
 
                     $allowedItems['_groups'][$ruleId]['qty'] -= $item->getQty();
-                }
-                else if (isset($allowedItems[$sku])) { // Add all of
-
+                } elseif (isset($allowedItems[$sku])) { // Add all of
                     if ($allowedItems[$sku]['qty'] <= 0) {
-                        $this->cart->removeItem($item->getId());
-                    }
-                    else if ($item->getQty() > $allowedItems[$sku]['qty']) {
+                        $quote->removeItem($item->getId());
+                    } elseif ($item->getQty() > $allowedItems[$sku]['qty']) {
                         $item->setQty($allowedItems[$sku]['qty']);
                     }
 
                     $allowedItems[$sku]['qty'] -= $item->getQty();
-                }
-                else {
-                    $this->cart->removeItem($item->getId());
+                } else {
+                    $quote->removeItem($item->getId());
+                    $quote->getShippingAddress()->setData('cached_items_all', $quote->getAllItems());
+                    $quote->getShippingAddress()->setCollectShippingRates(true);
+                    $quote->collectTotals();
                 }
             }
         }
 
-        $this->promoCartHelper->updateQuoteTotalQty();
+        $this->promoCartHelper->updateQuoteTotalQty(
+            false,
+            $quote
+        );
     }
 }

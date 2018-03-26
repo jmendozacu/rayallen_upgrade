@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -20,13 +20,11 @@ class CalculatorFactory
         \Amasty\Promo\Model\Rule::PER_PRODUCT   => 'Amasty\Promo\Model\Rule\Action\Discount\Product',
         \Amasty\Promo\Model\Rule::WHOLE_CART    => 'Amasty\Promo\Model\Rule\Action\Discount\Cart',
         \Amasty\Promo\Model\Rule::SPENT         => 'Amasty\Promo\Model\Rule\Action\Discount\Spent',
-        \Amasty\Promo\Model\Rule::CART_PERCENTAGE_ACTION         => 'Amasty\Promo\Model\Rule\Action\Discount\CartPercentage',
     ];
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->_objectManager = $objectManager;
     }
 
@@ -38,7 +36,7 @@ class CalculatorFactory
         if (isset($this->classByType[$type])) {
             return $this->_objectManager->create($this->classByType[$type]);
         }
-        else
-            return $proceed($type);
+
+        return $proceed($type);
     }
 }

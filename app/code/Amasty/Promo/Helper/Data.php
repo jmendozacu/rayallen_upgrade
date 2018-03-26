@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -32,7 +32,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     protected $_productsCache = null;
 
-    protected $_allowedTypes = ['simple', 'configurable', 'virtual', 'bundle'];
+    protected $_allowedTypes = [
+        'simple',
+        'configurable',
+        'virtual',
+        'bundle',
+        'downloadable'
+    ];
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -51,8 +57,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getNewItems()
     {
-        if ($this->_productsCache === null)
-        {
+        if ($this->_productsCache === null) {
             $items = $this->promoRegistry->getLimits();
 
             $groups = $items['_groups'];
@@ -84,8 +89,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $products->removeItemByKey($key);
                 }
 
-                if (!$product->isInStock() || !$product->isSalable()
-                    || !$this->promoCartHelper->checkAvailableQty($product, 1)
+                if ($product->getTypeId() == 'simple' && (!$product->isInStock() || !$product->isSalable()
+                    || !$this->promoCartHelper->checkAvailableQty($product, 1))
                 ) {
                     $this->promoMessagesHelper->addAvailabilityError($product);
 
@@ -96,16 +101,57 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $option->setProduct($product);
                     $product->addOption($option);
                 }
+
+                if (isset($items[$product->getSku()])) {
+                    $product->setAmpromoDiscount($items[$product->getSku()]['discount']);
+                }
             }
 
-            if (sizeof($products) > 0) {
+            if ($products->getSize() > 0) {
                 $this->_productsCache = $products;
-            }
-            else {
+            } else {
                 $this->_productsCache = false;
             }
         }
 
         return $this->_productsCache;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAllowedProductQty()
+    {
+        $result = [];
+        $items = $this->promoRegistry->getLimits();
+        $qty = 0;
+        if (isset($items['_groups'])) {
+            $discountData = [];
+            $item = array_shift($items['_groups']);
+            if (isset($item['sku'])) {
+                foreach ($item['sku'] as $sku) {
+                    $discountData[$sku] = ['discount' => $item['discount']];
+                }
+            }
+
+            if (isset($item['qty'])) {
+                $qty += $item['qty'];
+
+            }
+            unset($items['_groups']);
+            foreach ($items as $item) {
+                if (isset($item['qty'])) {
+                    $qty += $item['qty'];
+                }
+            }
+            $discountData += $items;
+
+            $result += [
+                'common_qty' => $qty,
+                'triggered_products' => $discountData
+            ];
+        }
+
+        return $result;
     }
 }

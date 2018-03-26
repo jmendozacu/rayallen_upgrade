@@ -1,47 +1,75 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
 namespace Amasty\Promo\Model\Rule\Action\Discount;
 
+/**
+ * Action name: Auto add the same product
+ */
 class SameProduct extends AbstractDiscount
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function _addFreeItems(
         \Magento\SalesRule\Model\Rule $rule,
-        \Magento\Quote\Model\Quote\Item $item,
+        \Magento\Quote\Model\Quote\Item\AbstractItem $item,
         $qty
     ) {
-        if ($this->promoItemHelper->isPromoItem($item))
+        if ($this->promoItemHelper->isPromoItem($item)) {
             return;
-
-        $discountStep   = max(1, $rule->getDiscountStep());
-        $maxDiscountQty = 100000;
-        if ($rule->getDiscountQty()){
-            $maxDiscountQty = intVal(max(1, $rule->getDiscountQty()));
         }
 
+        $discountStep   = max(1, $rule->getDiscountStep());
         $discountAmount = max(1, $rule->getDiscountAmount());
+        $maxDiscountQty = 100000;
+        if ($rule->getDiscountQty()) {
+            $maxDiscountQty = (int) max(1, $rule->getDiscountQty());
+        }
+
         $qty = min(
             floor($item->getQty() / $discountStep) * $discountAmount,
             $maxDiscountQty
         );
 
-        if ($item->getParentItemId())
+        if ($item->getParentItemId()) {
             return;
+        }
 
-        if ($item['product_type'] == 'downloadable')
+        if ($item['product_type'] == 'downloadable') {
             return;
+        }
 
-        if ($qty < 1)
+        if ($qty < 1) {
             return;
+        }
+
+        if ($this->_skip($rule, $item)) {
+            return;
+        }
+        $ampromoRule = $this->ruleFactory->create();
+
+        $ampromoRule = $ampromoRule->loadBySalesrule($rule);
+
+        $discountData = [
+            'discount_item' => $ampromoRule->getItemsDiscount(),
+            'minimal_price' => $ampromoRule->getMinimalItemsPrice(),
+        ];
+        if ($item->getProductType() === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+            $sku = $item->getSku();
+        } else {
+            $sku = $item->getProduct()->getData('sku');
+        }
 
         $this->promoRegistry->addPromoItem(
-            $item->getProduct()->getData('sku'),
+            $sku,
             $qty,
-            $rule->getId()
+            $rule->getId(),
+            $discountData
         );
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -13,7 +13,6 @@ use Magento\Framework\Event\ObserverInterface;
 /**
  * Revert 'deleted' status and auto add all simple products without required options
  */
-
 class AddressCollectTotalsAfterObserver implements ObserverInterface
 {
     /**
@@ -49,15 +48,13 @@ class AddressCollectTotalsAfterObserver implements ObserverInterface
         \Amasty\Promo\Helper\Item $promoItemHelper,
         \Amasty\Promo\Model\Registry $promoRegistry,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    )
-    {
-        $this->_coreRegistry = $registry;
+    ) {
+        $this->_coreRegistry   = $registry;
         $this->_productFactory = $productFactory;
         $this->promoItemHelper = $promoItemHelper;
-        $this->promoRegistry = $promoRegistry;
-        $this->scopeConfig = $scopeConfig;
+        $this->promoRegistry   = $promoRegistry;
+        $this->scopeConfig     = $scopeConfig;
     }
-
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
@@ -70,20 +67,20 @@ class AddressCollectTotalsAfterObserver implements ObserverInterface
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        if ($addAutomatically)
-        {
-            $toAdd  = $this->promoRegistry->getPromoItems();
+        if ($addAutomatically) {
+            $toAdd = $this->promoRegistry->getPromoItems();
             unset($toAdd['_groups']);
 
-            foreach ($items as $item)
-            {
+            foreach ($items as $item) {
                 $sku = $item->getProduct()->getData('sku');
 
-                if (!isset($toAdd[$sku]))
+                if (!isset($toAdd[$sku])) {
                     continue;
+                }
 
-                if ($this->promoItemHelper->isPromoItem($item))
+                if ($this->promoItemHelper->isPromoItem($item)) {
                     $toAdd[$sku]['qty'] -= $item->getQty();
+                }
             }
 
             $deleted = $this->promoRegistry->getDeletedItems();
@@ -97,10 +94,10 @@ class AddressCollectTotalsAfterObserver implements ObserverInterface
 
                     if (isset($collectorData[$product->getId()])) {
                         $collectorData[$product->getId()]['qty'] += $item['qty'];
-                    }
-                    else {
+                    } else {
                         $collectorData[$product->getId()] = [
                             'product' => $product,
+                            'discount' => $item['discount']['discount_item'],
                             'qty'     => $item['qty']
                         ];
                     }

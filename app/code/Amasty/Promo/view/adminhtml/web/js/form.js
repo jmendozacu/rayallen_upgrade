@@ -1,59 +1,90 @@
-define(['jquery'], function ($) {
+define([
+    'jquery',
+    'uiRegistry'
+], function ($, registry) {
     var ampromoForm = {
-        update: function () {
-            this.showFields(['rule_discount_qty', 'rule_discount_step', 'rule_apply_to_shipping']);
-            this.hideFields(['rule_ampromo_sku', 'rule_ampromo_type', 'rule_simple_free_shipping']);
+        update: function (type) {
+            var action = '';
+            this.resetFields(type);
+            var actionFieldSet = $('#' + type +'rule_actions_fieldset_').parent();
+            window.amPromoHide = 0;
 
-            var actionFieldset = $('#rule_actions_fieldset').parent();
+            actionFieldSet.show();
+            if (typeof window.amRulesHide !="undefined" && window.amRulesHide == 1) {
+                actionFieldSet.hide();
+            }
 
-            actionFieldset.show();
+            var selector = $('[data-index="simple_action"] select');
+            if (type !== 'sales_rule_form') {
+                action = selector[1] ? selector[1].value : selector[0].value;
+            } else {
+                action = selector.val();
+            }
 
-            var action = $('#rule_simple_action').val();
+            if (action.match(/^ampromo/)) {
+                this.hideFields(['simple_free_shipping', 'apply_to_shipping'], type);
+            }
 
+            this.hideBannersTab();
             switch (action) {
                 case 'ampromo_cart':
-                    actionFieldset.hide();
+                    actionFieldSet.hide();
+                    window.amPromoHide = 1;
 
-                    this.hideFields([
-                        'rule_simple_free_shipping',
-                        'rule_discount_qty',
-                        'rule_discount_step',
-                        'rule_apply_to_shipping'
-                    ]);
-
-                    this.showFields(['rule_ampromo_sku', 'rule_ampromo_type']);
+                    this.hideFields(['discount_qty', 'discount_step'], type);
+                    this.showFields(['ampromorule[sku]', 'ampromorule[type]'], type);
                     break;
                 case 'ampromo_items':
-                    this.hideFields(['rule_simple_free_shipping', 'rule_apply_to_shipping']);
-                    this.showFields(['rule_ampromo_sku', 'rule_ampromo_type']);
+                    this.showFields(['ampromorule[sku]', 'ampromorule[type]'], type);
+                    this.showBannersTab();
                     break;
                 case 'ampromo_product':
-                    this.hideFields(['rule_simple_free_shipping', 'rule_apply_to_shipping']);
-                    break;
-                case 'ampromo_percentage':
-                    this.showFields(['rule_simple_free_shipping', 'rule_apply_to_shipping']);
-                    this.hideFields(['rule_ampromo_sku', 'rule_ampromo_type']);
+                    this.showBannersTab();
                     break;
                 case 'ampromo_spent':
-                    actionFieldset.hide();
+                    actionFieldSet.hide();
+                    window.amPromoHide = 1;
 
-                    this.hideFields(['rule_simple_free_shipping', 'rule_apply_to_shipping']);
-                    this.showFields(['rule_ampromo_sku', 'rule_ampromo_type']);
+                    this.showFields(['ampromorule[sku]', 'ampromorule[type]'], type);
                     break;
             }
         },
-
-        hideFields: function (names) {
-            return this.toggleFields(false, names);
+        showBannersTab: function(){
+            jQuery('[data-index=ampromorule_top_banner]').show();
+            jQuery('[data-index=ampromorule_after_product_banner]').show();
+        },
+        hideBannersTab: function(){
+            jQuery('[data-index=ampromorule_top_banner]').hide();
+            jQuery('[data-index=ampromorule_after_product_banner]').hide();
+        },
+        resetFields: function (type) {
+            this.showFields([
+                'discount_qty', 'discount_step', 'apply_to_shipping', 'simple_free_shipping'
+            ], type);
+            this.hideFields(['ampromorule[sku]', 'ampromorule[type]'], type);
         },
 
-        showFields: function (names) {
-            return this.toggleFields(true, names);
+        hideFields: function (names, type) {
+            return this.toggleFields('hide', names, type);
         },
 
-        toggleFields: function (status, names) {
-            $.each(names, function (i, name) {
-                $('#' + name).parents('.field').toggle(status);
+        showFields: function (names, type) {
+            return this.toggleFields('show', names, type);
+        },
+
+        addPrefix: function (names, type) {
+            for (var i = 0; i < names.length; i++) {
+                names[i] = type + '.' + type + '.' + 'actions.' + names[i];
+            }
+
+            return names;
+        },
+
+        toggleFields: function (method, names, type) {
+            registry.get(this.addPrefix(names, type), function () {
+                for (var i = 0; i < arguments.length; i++) {
+                    arguments[i][method]();
+                }
             });
         }
     };
