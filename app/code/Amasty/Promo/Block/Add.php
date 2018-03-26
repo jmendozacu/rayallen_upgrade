@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -13,25 +13,41 @@ class Add extends \Magento\Framework\View\Element\Template
      * @var \Amasty\Promo\Helper\Data
      */
     protected $promoHelper;
+    /**
+     * @var \Magento\Framework\Url\Helper\Data
+     */
+    protected $urlHelper;
+    /**
+     * @var \Amasty\Promo\Helper\Config
+     */
+    private $config;
 
+    /**
+     * Add constructor.
+     *
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Amasty\Promo\Helper\Data $promoHelper
+     * @param \Amasty\Promo\Helper\Config $config
+     * @param \Magento\Framework\Url\Helper\Data $urlHelper
+     * @param array $data
+     */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        array $data = [],
-        \Amasty\Promo\Helper\Data $promoHelper
+        \Amasty\Promo\Helper\Data $promoHelper,
+        \Amasty\Promo\Helper\Config $config,
+        \Magento\Framework\Url\Helper\Data $urlHelper,
+        array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->promoHelper = $promoHelper;
+        $this->urlHelper = $urlHelper;
+        $this->config = $config;
     }
 
-    protected function _toHtml()
+    public function hasItems()
     {
-        $items = $this->promoHelper->getNewItems();
-
-        if ($items)
-            return parent::_toHtml();
-        else
-            return '';
+        return (bool)$this->promoHelper->getNewItems();
     }
 
     public function getMessage()
@@ -51,6 +67,32 @@ class Add extends \Magento\Framework\View\Element\Template
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
 
-        return $auto;
+        return $auto && $this->hasItems();
+    }
+    
+    public function getCurrentBase64Url()
+    {
+        return $this->urlHelper->getCurrentBase64Url();
+    }
+
+    /**
+     * @return null
+     */
+    public function getAvailableProductQty()
+    {
+        return $this->promoHelper->getAllowedProductQty();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormActionUrl()
+    {
+        return $this->getUrl('amasty_promo/cart/add');
+    }
+
+    public function getPopupMode()
+    {
+        return $this->config->getScopeValue("messages/gift_selection_method");
     }
 }

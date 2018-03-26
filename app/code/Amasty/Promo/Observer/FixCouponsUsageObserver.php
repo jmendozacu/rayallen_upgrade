@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -18,7 +18,7 @@ namespace Amasty\Promo\Observer;
  */
 class FixCouponsUsageObserver extends \Magento\SalesRule\Observer\SalesOrderAfterPlaceObserver
 {
-    public function salesOrderAfterPlace(\Magento\Framework\Event\Observer $observer)
+    public function execute(\Magento\Framework\Event\Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
 

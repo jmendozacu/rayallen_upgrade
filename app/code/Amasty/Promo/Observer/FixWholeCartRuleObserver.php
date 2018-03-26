@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -18,11 +18,6 @@ use Magento\Framework\Event\ObserverInterface;
 class FixWholeCartRuleObserver implements ObserverInterface
 {
     /**
-     * @var \Magento\Checkout\Model\Cart
-     */
-    protected $cart;
-
-    /**
      * @var \Amasty\Promo\Helper\Item
      */
     protected $promoItemHelper;
@@ -33,15 +28,11 @@ class FixWholeCartRuleObserver implements ObserverInterface
     protected $promoRegistry;
 
     public function __construct(
-        \Magento\Checkout\Model\Cart $cart,
         \Amasty\Promo\Helper\Item $promoItemHelper,
         \Amasty\Promo\Model\Registry $promoRegistry
-    )
-    {
-        $this->cart = $cart;
+    ) {
         $this->promoItemHelper = $promoItemHelper;
         $this->promoRegistry = $promoRegistry;
-
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -57,7 +48,7 @@ class FixWholeCartRuleObserver implements ObserverInterface
         }
 
         if (!$hasNonfreeItems) {
-            $this->cart->truncate();
+            $observer->getQuote()->removeAllItems();
         }
     }
 }

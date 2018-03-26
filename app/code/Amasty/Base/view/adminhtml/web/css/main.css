@@ -18,3 +18,7 @@
     margin-right: 12px;
     vertical-align: top;
 }
+
+#amasty_base_extensions table td.value, #amasty_base_information table td.value{
+    vertical-align: bottom;
+}

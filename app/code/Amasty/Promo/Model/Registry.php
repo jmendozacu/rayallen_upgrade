@@ -1,18 +1,19 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
-namespace Amasty\Promo\Model;
 
+namespace Amasty\Promo\Model;
 
 class Registry extends \Magento\Framework\Model\AbstractModel
 {
     protected $_hasItems = false;
     protected $_locked = false;
     protected $_isHandled = [];
+    protected $autoAddTypes = ['simple', 'virtual', 'downloadable'];
 
     /**
      * @var \Magento\Checkout\Model\Session
@@ -46,20 +47,34 @@ class Registry extends \Magento\Framework\Model\AbstractModel
      */
     protected $promoMessagesHelper;
 
+    /**
+     * @var \Amasty\Promo\Helper\Config
+     */
+    private $config;
+
+    /**
+     * @var \Magento\Store\Model\Store
+     */
+    private $store;
+
     public function __construct(
         \Magento\Checkout\Model\Session $resourceSession,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Amasty\Promo\Helper\Item $promoItemHelper,
-        \Amasty\Promo\Helper\Messages $promoMessagesHelper
+        \Amasty\Promo\Helper\Messages $promoMessagesHelper,
+        \Amasty\Promo\Helper\Config $config,
+        \Magento\Store\Model\Store $store
     ) {
-        $this->_checkoutSession = $resourceSession;
-        $this->scopeConfig = $scopeConfig;
-        $this->_productFactory = $productFactory;
-        $this->_storeManager = $storeManager;
-        $this->promoItemHelper = $promoItemHelper;
+        $this->_checkoutSession    = $resourceSession;
+        $this->scopeConfig         = $scopeConfig;
+        $this->_productFactory     = $productFactory;
+        $this->_storeManager       = $storeManager;
+        $this->promoItemHelper     = $promoItemHelper;
         $this->promoMessagesHelper = $promoMessagesHelper;
+        $this->config = $config;
+        $this->store = $store;
     }
 
     public function getApplyAttempt($ruleId)
@@ -67,49 +82,57 @@ class Registry extends \Magento\Framework\Model\AbstractModel
         if (isset($this->_isHandled[$ruleId])) {
             return false;
         }
-        else {
-            $this->_isHandled[$ruleId] = true;
+        $this->_isHandled[$ruleId] = true;
 
-            return true;
-        }
+        return true;
     }
 
-    public function addPromoItem($sku, $qty, $ruleId)
+    /**
+     * @param $sku
+     * @param $qty
+     * @param $ruleId
+     * @param $discountData
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function addPromoItem($sku, $qty, $ruleId, $discountData)
     {
-        if ($this->_locked)
+        if ($this->_locked) {
             return;
+        }
 
-        if (!$this->_hasItems)
+        if (!$this->_hasItems) {
             $this->reset();
+        }
+
+        $discountData = $this->getCurrencyDiscount($discountData);
 
         $this->_hasItems = true;
-
-
-        $items = $this->_checkoutSession->getAmpromoItems();
-        if ($items === null)
-            $items = ['_groups' => []];
-
+        $items = $this->getPromoItems();
         $autoAdd = false;
 
-        $addAutomatically = $this->scopeConfig->isSetFlag(
-            'ampromo/general/auto_add',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        $addAutomatically = $this->config->getScopeValue("general/auto_add");
+        $isFullDiscount = ($discountData['discount_item'] === "100%"
+            || $discountData['discount_item'] === null
+            || $discountData['discount_item'] === "")
+            && !$discountData['minimal_price'];
+
+        if (is_array($sku) && count($sku) == 1) {
+            $sku = $sku[0];
+        }
 
         if (!is_array($sku)) {
-            if ($addAutomatically) {
-
+            if ($addAutomatically && $isFullDiscount) {
                 $collection = $this->_productFactory->create()->getCollection()
                     ->addAttributeToSelect(['name', 'status', 'required_options'])
                     ->addAttributeToFilter('sku', $sku)
-                    ->setPage(1, 1)
-                ;
+                    ->setPage(1, 1);
 
                 $product = $collection->getFirstItem();
 
                 $currentWebsiteId = $this->_storeManager->getWebsite()->getId();
                 if (!is_array($product->getWebsiteIds())
-                    || !in_array($currentWebsiteId, $product->getWebsiteIds())){
+                    || !in_array($currentWebsiteId, $product->getWebsiteIds())
+                ) {
                     // Ignore products from other websites
                     return;
                 }
@@ -117,8 +140,9 @@ class Registry extends \Magento\Framework\Model\AbstractModel
                 if (!$product || !$product->isInStock() || !$product->isSalable()) {
                     $this->promoMessagesHelper->addAvailabilityError($product);
                 } else {
-                    if (in_array($product->getTypeId(), ['simple', 'virtual'])
-                        && !$product->getTypeInstance(true)->hasRequiredOptions($product)) {
+                    if (in_array($product->getTypeId(), $this->autoAddTypes)
+                        && !$product->getTypeInstance(true)->hasRequiredOptions($product)
+                    ) {
                         $autoAdd = true;
                     }
                 }
@@ -128,20 +152,35 @@ class Registry extends \Magento\Framework\Model\AbstractModel
                 $items[$sku]['qty'] += $qty;
             } else {
                 $items[$sku] = [
-                    'sku' => $sku,
-                    'qty' => $qty,
-                    'auto_add' => $autoAdd
+                    'sku'      => $sku,
+                    'qty'      => $qty,
+                    'auto_add' => $autoAdd,
+                    'discount' => $discountData
                 ];
             }
-        }
-        else {
+        } else {
             $items['_groups'][$ruleId] = [
                 'sku' => $sku,
-                'qty' => $qty
+                'qty' => $qty,
+                'discount' => $discountData
             ];
         }
 
         $this->_checkoutSession->setAmpromoItems($items);
+    }
+
+    /**
+     * @param $discountData
+     * @return mixed
+     */
+    private function getCurrencyDiscount($discountData)
+    {
+        preg_match('/^-*\d+.*\d*$/', $discountData['discount_item'], $discount);
+        if (isset($discount[0]) && is_numeric($discount[0])) {
+            $discountData['discount_item'] = $discount[0] * $this->store->getCurrentCurrencyRate();
+        }
+
+        return $discountData;
     }
 
     public function getPromoItems()
@@ -163,31 +202,35 @@ class Registry extends \Magento\Framework\Model\AbstractModel
 
     public function getLimits()
     {
-        $quote = $this->_checkoutSession->getQuote();
+        $allowed = null;
+        $quote   = $this->_checkoutSession->getQuote();
 
-        $allowed = $this->getPromoItems();
+        if ($quote->getId() > 0) {
+            $allowed = $this->getPromoItems();
+            foreach ($quote->getAllItems() as $item) {
+                $sku = $item->getProduct()->getData('sku');
 
-        foreach ($quote->getAllItems() as $item)
-        {
-            $sku = $item->getProduct()->getData('sku');
+                if ($this->promoItemHelper->isPromoItem($item)) {
+                    $ruleId = $this->promoItemHelper->getRuleId($item);
 
-            if ($this->promoItemHelper->isPromoItem($item)) {
-                $ruleId = $this->promoItemHelper->getRuleId($item);
+                    if (isset($allowed['_groups'][$ruleId])) {
+                        if ($item->getParentItem()) {
+                            continue;
+                        }
 
-                if (isset($allowed['_groups'][$ruleId]))
-                {
-                    if ($item->getParentItem())
-                        continue;
+                        $allowed['_groups'][$ruleId]['qty'] -= $item->getQty();
+                        if ($allowed['_groups'][$ruleId]['qty'] <= 0) {
+                            unset($allowed['_groups'][$ruleId]);
+                        }
+                    } else {
+                        if (isset($allowed[$sku])) {
+                            $allowed[$sku]['qty'] -= $item->getQty();
 
-                    $allowed['_groups'][$ruleId]['qty'] -= $item->getQty();
-                    if ($allowed['_groups'][$ruleId]['qty'] <= 0)
-                        unset($allowed['_groups'][$ruleId]);
-                }
-                else if (isset($allowed[$sku])) {
-                    $allowed[$sku]['qty'] -= $item->getQty();
-
-                    if ($allowed[$sku]['qty'] <= 0)
-                        unset($allowed[$sku]);
+                            if ($allowed[$sku]['qty'] <= 0) {
+                                unset($allowed[$sku]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -199,8 +242,9 @@ class Registry extends \Magento\Framework\Model\AbstractModel
     {
         $deletedItems = $this->_checkoutSession->getAmpromoDeletedItems();
 
-        if (!$deletedItems)
+        if (!$deletedItems) {
             $deletedItems = [];
+        }
 
         $deletedItems[$sku] = true;
 
@@ -211,8 +255,9 @@ class Registry extends \Magento\Framework\Model\AbstractModel
     {
         $deletedItems = $this->_checkoutSession->getAmpromoDeletedItems();
 
-        if (!$deletedItems || !isset($deletedItems[$sku]))
+        if (!$deletedItems || !isset($deletedItems[$sku])) {
             return;
+        }
 
         unset($deletedItems[$sku]);
 
@@ -223,8 +268,9 @@ class Registry extends \Magento\Framework\Model\AbstractModel
     {
         $deletedItems = $this->_checkoutSession->getAmpromoDeletedItems();
 
-        if (!$deletedItems)
+        if (!$deletedItems) {
             $deletedItems = [];
+        }
 
         return $deletedItems;
     }

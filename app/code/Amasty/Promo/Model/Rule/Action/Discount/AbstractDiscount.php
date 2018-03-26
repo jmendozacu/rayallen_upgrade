@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -9,11 +9,6 @@ namespace Amasty\Promo\Model\Rule\Action\Discount;
 
 abstract class AbstractDiscount extends \Magento\SalesRule\Model\Rule\Action\Discount\AbstractDiscount
 {
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    protected $_objectManager;
-
     /**
      * @var \Amasty\Promo\Model\Registry
      */
@@ -25,35 +20,42 @@ abstract class AbstractDiscount extends \Magento\SalesRule\Model\Rule\Action\Dis
     protected $promoItemHelper;
 
     /**
-     * @param \Magento\SalesRule\Model\Validator $validator
-     * @param \Magento\SalesRule\Model\Rule\Action\Discount\DataFactory $discountDataFactory
-     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Amasty\Promo\Helper\Item $promoItemHelper
-     * @param \Amasty\Promo\Model\Registry $promoRegistry
-     * 
+     * @var \Amasty\Promo\Helper\Config
      */
+    protected $config;
+
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     */
+    protected $productCollectionFactory;
+
+    /**
+     * @var \Amasty\Promo\Model\RuleFactory
+     */
+    protected $ruleFactory;
+
+    protected $_itemsWithDiscount;
+
     public function __construct(
         \Magento\SalesRule\Model\Validator $validator,
         \Magento\SalesRule\Model\Rule\Action\Discount\DataFactory $discountDataFactory,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Amasty\Promo\Helper\Item $promoItemHelper,
-        \Amasty\Promo\Model\Registry $promoRegistry
+        \Amasty\Promo\Model\Registry $promoRegistry,
+        \Amasty\Promo\Helper\Config $config,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
+        \Amasty\Promo\Model\RuleFactory $ruleFactory
     ) {
         parent::__construct($validator, $discountDataFactory, $priceCurrency);
-
-        $this->_objectManager = $objectManager;
-        $this->promoItemHelper = $promoItemHelper;
-        $this->promoRegistry = $promoRegistry;
+        $this->promoItemHelper          = $promoItemHelper;
+        $this->config                   = $config;
+        $this->promoRegistry            = $promoRegistry;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->ruleFactory = $ruleFactory;
     }
 
     /**
-     * @param \Magento\SalesRule\Model\Rule $rule
-     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @param float $qty
-     * @return \Magento\SalesRule\Model\Rule\Action\Discount\Data
-     *
+     * {@inheritdoc}
      */
     public function calculate($rule, $item, $qty)
     {
@@ -66,67 +68,138 @@ abstract class AbstractDiscount extends \Magento\SalesRule\Model\Rule\Action\Dis
     }
 
     /**
-     * @param \Magento\SalesRule\Model\Rule $rule
-     * @param \Magento\Quote\Model\Quote\Item $item
-     * @param $qty
-     *
+     * @param \Magento\SalesRule\Model\Rule                $rule
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @param int                                          $qty
      */
     protected function _addFreeItems(
         \Magento\SalesRule\Model\Rule $rule,
-        \Magento\Quote\Model\Quote\Item $item,
+        \Magento\Quote\Model\Quote\Item\AbstractItem $item,
         $qty
     ) {
-        if (!$this->promoRegistry->getApplyAttempt($rule->getId()))
+        if (!$this->promoRegistry->getApplyAttempt($rule->getId())) {
             return;
-
-        $ampromoRule = $this->_objectManager->get('Amasty\Promo\Model\Rule');
+        }
+        /** @var \Amasty\Promo\Model\Rule $ampromoRule */
+        $ampromoRule = $this->ruleFactory->create();
 
         $ampromoRule = $ampromoRule->loadBySalesrule($rule);
 
         $promoSku = $ampromoRule->getSku();
-        if (!$promoSku)
+        if (!$promoSku) {
             return;
+        }
 
-        $quote = $item->getQuote();
-
-        $qty = $this->_getFreeItemsQty($rule, $quote);
-        if (!$qty)
+        $qty = $this->_getFreeItemsQty($rule, $item);
+        if (!$qty) {
             return;
+        }
 
-        if ($ampromoRule->getType() == \Amasty\Promo\Model\Rule::RULE_TYPE_ONE)
-        {
+        if ($this->_skip($rule, $item)) {
+            return;
+        }
+        $discountData = [
+            'discount_item' => $ampromoRule->getItemsDiscount(),
+            'minimal_price' => $ampromoRule->getMinimalItemsPrice(),
+        ];
+
+        if ($ampromoRule->getType() == \Amasty\Promo\Model\Rule::RULE_TYPE_ONE) {
             $this->promoRegistry->addPromoItem(
                 preg_split('/\s*,\s*/', $promoSku, -1, PREG_SPLIT_NO_EMPTY),
                 $qty,
-                $rule->getId()
+                $rule->getId(),
+                $discountData
             );
-        }
-        else
-        {
+        } else {
             $promoSku = explode(',', $promoSku);
-            foreach ($promoSku as $sku){
+            foreach ($promoSku as $sku) {
                 $sku = trim($sku);
-                if (!$sku){
+                if (!$sku) {
                     continue;
                 }
-
-                $this->promoRegistry->addPromoItem($sku, $qty, $rule->getId());
+                $this->promoRegistry->addPromoItem($sku, $qty, $rule->getId(), $discountData);
             }
         }
     }
 
     /**
      * @param \Magento\SalesRule\Model\Rule $rule
-     * @param \Magento\Quote\Model\Quote $quote
-     * @return mixed
-     *
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @return int|float
      */
     protected function _getFreeItemsQty(
         \Magento\SalesRule\Model\Rule $rule,
-        \Magento\Quote\Model\Quote $quote
+        \Magento\Quote\Model\Quote\Item\AbstractItem $item
     ) {
-        $qty = max(1, $rule->getDiscountAmount());
+        return max(1, $rule->getDiscountAmount());
+    }
 
-        return $qty;
+    /**
+     * @param \Magento\SalesRule\Model\Rule                $rule
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     *
+     * @return bool
+     */
+    protected function _skip(
+        \Magento\SalesRule\Model\Rule $rule,
+        \Magento\Quote\Model\Quote\Item\AbstractItem $item
+    ) {
+        if (!$this->config->getScopeValue('limitations/skip_special_price')) {
+            return false;
+        }
+
+        if ($item->getProductType() == 'bundle') {
+            return false;
+        }
+
+        if ($this->_itemsWithDiscount === null || count($this->_itemsWithDiscount) == 0) {
+            $productIds               = [];
+            $this->_itemsWithDiscount = [];
+
+            foreach ($this->_getAllItems($item) as $addressItem) {
+                $productIds[] = $addressItem->getProductId();
+            }
+
+            if (!$productIds) {
+                return false;
+            }
+
+            // load products with Special Price
+            $productsCollection = $this->productCollectionFactory->create()
+                ->addPriceData()
+                ->addAttributeToFilter('entity_id', ['in' => $productIds])
+                ->addAttributeToFilter('price', ['gt' => new \Zend_Db_Expr('final_price')]);
+
+            $this->_itemsWithDiscount = array_merge($this->_itemsWithDiscount, $productsCollection->getAllIds());
+        }
+
+        if ($this->config->getScopeValue('limitations/skip_special_price_configurable')
+            && $item->getProductType() == "configurable"
+        ) {
+            foreach ($item->getChildren() as $child) {
+                if (in_array($child->getProduct()->getId(), $this->_itemsWithDiscount)) {
+                    return true;
+                }
+            }
+        }
+
+        if ($this->config->getScopeValue('limitations/skip_special_price')
+            && $item->getProductType() == "simple"
+            && in_array($item->getProductId(), $this->_itemsWithDiscount)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     *
+     * @return \Magento\Quote\Model\Quote\Address\Item[]
+     */
+    protected function _getAllItems(\Magento\Quote\Model\Quote\Item\AbstractItem $item)
+    {
+        return $item->getAddress()->getAllItems();
     }
 }

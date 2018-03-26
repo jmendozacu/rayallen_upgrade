@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Amasty Team
- * @copyright Copyright (c) 2016 Amasty (https://www.amasty.com)
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
  * @package Amasty_Promo
  */
 
@@ -15,19 +15,17 @@ class SalesRule
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry;
-
+    protected $coreRegistry;
 
     public function __construct(
         \Magento\Framework\Registry $registry
     ) {
-        $this->_coreRegistry = $registry;
+        $this->coreRegistry = $registry;
     }
 
-
-    public function afterSave(\Magento\SalesRule\Model\Rule $subject, $result)
+    public function afterAfterSave(\Magento\SalesRule\Model\Rule $subject, $result)
     {
-        $this->_coreRegistry->register('ampromo_current_salesrule', $subject, true);
+        $this->coreRegistry->register('ampromo_current_salesrule', $subject, true);
 
         return $result;
     }
