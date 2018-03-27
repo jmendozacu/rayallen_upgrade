@@ -14,9 +14,6 @@ abstract class Quote extends \Magento\Backend\App\Action
      */
     protected $_collectionFactory;
 
-    /**
-     * @param \Magento\Backend\App\Action\Context $context
-     */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory $collectionFactory
