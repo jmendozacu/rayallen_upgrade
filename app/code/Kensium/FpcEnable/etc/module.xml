@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
+    <module name="Kensium_FpcEnable" setup_version="1.0.0" schema_version="1.0.0">
+        <sequence>
+            <module name="Kensium_FpcDisable"/>
+            <module name="Kensium_Amconnector"/>
+            <module name="Kensium_Help"/>
+            <module name="Kensium_OrderLogs"/>
+            <module name="Kensium_Scheduler"/>
+            <module name="Kensium_Synclog"/>
+            <module name="Kensium_Syncnow"/>
+            <module name="Kensium_Orderstatus"/>
+            <module name="Kensium_OrderAttribute"/>
+            <module name="Kensium_Csvenvelopes"/>
+            <module name="Kensium_Attributemanager"/>
+        </sequence>
+    </module>
+</config>

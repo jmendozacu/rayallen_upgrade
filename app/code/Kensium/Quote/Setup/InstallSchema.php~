@@ -1,0 +1,177 @@
+<?php
+/**
+ * Kensium_Quote extension
+ *                     NOTICE OF LICENSE
+ * 
+ *                     This source file is subject to the MIT License
+ *                     that is bundled with this package in the file LICENSE.txt.
+ *                     It is also available through the world-wide-web at this URL:
+ *                     http://opensource.org/licenses/mit-license.php
+ * 
+ *                     @category  Kensium
+ *                     @package   Kensium_Quote
+ *                     @copyright Copyright (c) 2016
+ *                     @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Kensium\Quote\Setup;
+
+class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+{
+    /**
+     * install tables
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param \Magento\Framework\Setup\ModuleContextInterface $context
+     * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function install(\Magento\Framework\Setup\SchemaSetupInterface $setup, \Magento\Framework\Setup\ModuleContextInterface $context)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        if (!$installer->tableExists('kensium_quote_quote')) {
+            $table = $installer->getConnection()->newTable(
+                $installer->getTable('kensium_quote_quote')
+            )
+            ->addColumn(
+                'quote_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                [
+                    'identity' => true,
+                    'nullable' => false,
+                    'primary'  => true,
+                    'unsigned' => true,
+                ],
+                'Quote ID'
+            )
+            ->addColumn(
+                'fname',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote First Name'
+            )
+            ->addColumn(
+                'lname',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Last Name'
+            )
+            ->addColumn(
+                'bname',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Business/Organization Name'
+            )
+            ->addColumn(
+                'address',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Address'
+            )
+            ->addColumn(
+                'city',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote City'
+            )
+            ->addColumn(
+                'state',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote State/Province'
+            )
+            ->addColumn(
+                'zip',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable => false'],
+                'Quote ZIP'
+            )
+            ->addColumn(
+                'country',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Country'
+            )
+            ->addColumn(
+                'phone',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable => false'],
+                'Quote Phone'
+            )
+            ->addColumn(
+                'fax',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable => false'],
+                'Quote FAX'
+            )
+            ->addColumn(
+                'email',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Email'
+            )
+            ->addColumn(
+                'quantity',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable => false'],
+                'Quote Quantity'
+            )
+            ->addColumn(
+                'item',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Item#'
+            )
+            ->addColumn(
+                'description',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable => false'],
+                'Quote Description'
+            )
+
+            ->addColumn(
+                'created_at',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                null,
+                [],
+                'Quote Created At'
+            )
+            ->addColumn(
+                'updated_at',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                null,
+                [],
+                'Quote Updated At'
+            )
+            ->setComment('Quote Table');
+            $installer->getConnection()->createTable($table);
+
+            $installer->getConnection()->addIndex(
+                $installer->getTable('kensium_quote_quote'),
+                $setup->getIdxName(
+                    $installer->getTable('kensium_quote_quote'),
+                    ['fname','lname','bname','address','city','state','country','email','item','description'],
+                    \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_FULLTEXT
+                ),
+                ['fname','lname','bname','address','city','state','country','email','item','description'],
+                \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_FULLTEXT
+            );
+        }
+        $installer->endSetup();
+    }
+}
