@@ -3,14 +3,15 @@
 /**
  * @author Amasty Team
  * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
- * @package Amasty_Rgrid
+ * @package Amasty_RulesPro
  */
 -->
+
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Amasty_Rgrid" setup_version="1.0.0">
+    <module name="Amasty_RulesPro" setup_version="1.0.0">
         <sequence>
-            <module name="Magento_Rule"/>
-            <module name="Magento_SalesRuleStaging"/>
+            <module name="Amasty_Rules"/>
+            <module name="Magento_CustomerSegment"/>
         </sequence>
     </module>
 </config>

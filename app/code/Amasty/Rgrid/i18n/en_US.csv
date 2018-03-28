@@ -8,7 +8,7 @@
 "Percent of product price discount","Percent of product price discount"
 "Fixed amount discount","Fixed amount discount"
 "Fixed amount discount for whole cart","Fixed amount discount for whole cart"
-"Buy X get Y free (discount amount is Y)","Buy X get Y free (discount amount is Y)"
+"Buy N products, and get next products with discount","Buy N products, and get next products with discount"
 "Auto add promo items with products","Auto add promo items with products"
 "Auto add promo items for the whole cart","Auto add promo items for the whole cart"
 "Auto add the same product","Auto add the same product"
@@ -25,11 +25,8 @@
 "Fixed Price: Each 5 items for $50","Fixed Price: Each 5 items for $50"
 "Percent Discount: Each 5 items with 10% off","Percent Discount: Each 5 items with 10% off"
 "Percent Discount: Buy X get Y Free","Percent Discount: Buy X get Y Free"
-"Fixed Discount:  Buy X get Y with $10 Off .","Fixed Discount:  Buy X get Y with $10 Off ."
+"Fixed Discount:  Buy Y get Y with $10 Off","Fixed Discount:  Buy Y get Y with $10 Off"
 "Fixed Price: Buy X get Y for $9.99","Fixed Price: Buy X get Y for $9.99"
-"Percent Discount: Buy X get N of Y Free","Percent Discount: Buy X get N of Y Free"
-"Fixed Discount:  Buy X get N of Y with $10 Off .","Fixed Discount:  Buy X get N of Y with $10 Off ."
-"Fixed Price: Buy X get N of Y for $9.99","Fixed Price: Buy X get N of Y for $9.99"
 "Percent Discount","Percent Discount"
 "Fixed Discount","Fixed Discount"
 "Fixed Price","Fixed Price"
@@ -40,10 +37,10 @@ Enable,Enable
 Disable,Disable
 "Top Priority","Top Priority"
 "Lowest Priority","Lowest Priority"
-"Rule Action","Rule Action"
+"Rule Type","Rule Type"
 Stop,Stop
 No,No
 Yes,Yes
-Amount,Amount
+"Discount Amount","Discount Amount"
 Action,Action
 Duplicate,Duplicate

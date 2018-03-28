@@ -10,19 +10,32 @@ namespace Amasty\Rgrid\Controller\Adminhtml\Promo\Quote;
 class Duplicate extends \Amasty\Rgrid\Controller\Adminhtml\Promo\Quote
 {
     /**
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @var \Magento\SalesRule\Api\RuleRepositoryInterface
      */
+    public $ruleRepository;
+
+    public function __construct(
+        \Magento\Backend\App\Action\Context $context,
+        \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory $collectionFactory,
+        \Magento\SalesRule\Api\RuleRepositoryInterface $ruleRepository
+    ) {
+        parent::__construct($context, $collectionFactory);
+        $this->ruleRepository = $ruleRepository;
+    }
+
+    /**
+     * @return \Magento\Backend\Model\View\Result\Redirect
+    */
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
         if ($id) {
             try {
-                $collection = $this->_collectionFactory->create();
-                $rule = $collection->getItemById($id);
-                $rule->setId(null);
-                $rule->save();
+                $rule = $this->ruleRepository->getById($id);
+                $rule->setRuleId(null);
+                $rule = $this->ruleRepository->save($rule);
                 $this->messageManager->addSuccessMessage(__('The rule has been duplicated.'));
-                $this->_redirect('sales_rule/*/edit', ['id' => $rule->getId()]);
+                $this->_redirect('sales_rule/*/edit', ['id' => $rule->getRuleId()]);
                 return;
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());

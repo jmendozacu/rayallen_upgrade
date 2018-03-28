@@ -82,7 +82,7 @@
                     </arguments>
                 </block>
 
-                <block class="Magento\Backend\Block\Widget\Grid\Column" as="action">
+                <block class="Magento\Backend\Block\Widget\Grid\Column" as="actionGrid">
                     <arguments>
                         <argument name="header" xsi:type="string" translate="true">Action</argument>
                         <argument name="type" xsi:type="string">action</argument>
