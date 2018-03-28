@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Kensium. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="kensium::Testimonial" title="Testimonials" module="Kensium_Testimonial" sortOrder="90" resource="Kensium_Testimonial::sample"/>
+        <add id="kensium_testimonial::kensium_testimonial" title="Testimonials" module="Kensium_Testimonial" sortOrder="10" parent="kensium::Testimonial" action="kensium_testimonial/testimonial" resource="Kensium_Testimonial::kensium_testimonial"/>
+    </menu>
+</config>

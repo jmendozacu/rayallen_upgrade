@@ -1,0 +1,252 @@
+
+
+<?php if ($this->sessionGeneric->getData('suc_msg')!=null && $this->sessionGeneric->getData('suc_msg') !='' ) { ?>
+    <div class="messages"><div class="message message-success success"><div data-ui-id="messages-message-success"><?php echo $this->sessionGeneric->getData('suc_msg'); ?></div></div></div>
+    <?php
+    $this->sessionGeneric->setData('suc_msg','');
+
+}
+?>
+
+<?php if ($this->sessionGeneric->getData('err_msg')!=null && $this->sessionGeneric->getData('err_msg') !='' ) { ?>
+    <div class="messages"><div class="message message-warning warning"><div data-ui-id="messages-message-warning"><?php echo $this->sessionGeneric->getData('err_msg'); ?></div></div></div>
+    <?php
+    $this->sessionGeneric->setData('err_msg','');
+
+}
+
+?>
+
+
+<h3> <?php /* @escapeNotVerified */ echo __('Quick Order')?></h3>
+
+<form id="quickfromid" method="post" action="<?php echo $block->urlBase(); ?>quickorder/Quick/TestForm"  >
+
+    <div class="row">
+        <div class="col-sm-6">
+            <label> <?php /* @escapeNotVerified */ echo __('Product SKU:')?></label>
+            <input type="text" name="sku[]"  class="errorClssku" style="display:block;" placeholder=""  />
+            <br><span class="errspan" ></span>
+        </div>
+        <div class="col-sm-6">
+            <label> <?php /* @escapeNotVerified */ echo __('Quantity:')?></label>
+            <input type="number" name="quantity[]" class="errorClsQuna" style="display:block;" placeholder=""  />
+            <br><span class="errspan" ></span>
+        </div>
+    </div>
+
+    <?php for($i=2;$i<=$block->multipleLimit;$i++){ //we are starting the for loop from 2 because first element is showen by  default to the user
+
+        ?>
+        <div class="noneDisp row quickContDiv<?php echo $i; ?>" >
+            <div class="col-sm-6">
+                <label> <?php /* @escapeNotVerified */ echo __('Product SKU:')?></label>
+                <input type="text" name="sku[]" class="skucls<?php echo $i; ?> noneDisp errorClssku "  placeholder=""  />
+                <br><span class="errspan" ></span>
+            </div>
+            <div class="col-sm-6">
+                <label> <?php /* @escapeNotVerified */ echo __('Quantity:')?></label>
+                <input type="number" name="quantity[]" class="quantcls<?php echo $i;  ?> noneDisp errorClsQuna " placeholder=""  />
+                <br><span class="errspan" ></span>
+            </div></div>
+    <?php
+    } ?>
+
+    <a href="javascript:void(0)"  style="display:none;" class="removeIndex" data-removeIndex = "<?php echo $i; ?>" > <?php /* @escapeNotVerified */ echo __('Remove')?></a>
+    <div class="quick-btn">
+        <input type="submit" value="Submit" />
+
+        <input type="button" class="addMultiBut" value="Add Multiple" />
+
+        <input type="button" class="remMultiBut" value="Remove" />
+    </div>
+</form>
+<input type="hidden" id="multilimit" value ="<?php echo $block->multipleLimit; ?>" />
+
+
+<style>
+    .noneDisp{
+        display:none;
+    }
+    #quickfromid label {
+        display: inline-block !important;
+        float: left;
+        height: 38px;
+        line-height: 38px;
+    }
+
+    #quickfromid input[type="text"], #quickfromid input[type="number"] {
+        display: inline-block !important;
+        margin-left: 15px;
+        width: 60%;
+    }
+    .quick-btn > input {
+        background: #006fa4 none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 3px;
+        color: #fff;
+        font-weight: 600;
+        margin-right: 5px;
+        padding: 7px 15px;
+    }
+    .quick-btn {
+        margin-top: 15px;
+        padding-top: 10px;
+        text-align: center;
+    }
+    .noneDisp.row{
+        margin-top: 15px;
+    }
+</style>
+
+<script type="text/javascript">
+    require([
+        'jquery', // jquery Library
+        'jquery/ui', // Jquery UI Library
+        'jquery/validate', // Jquery Validation Library
+        'mage/translate' // Magento text translate (Validation message translte as per language)
+    ], function($){
+
+
+
+
+
+        $(function(){
+            //  alert('yes the data');
+            addValidate();
+            rmAddCount = 1; // starts with 1 because 1st product is always visible to the user
+            maxLimitItems = <?php echo $block->multipleLimit; ?>;
+            $('.addMultiBut').on('click',function(){
+                addValidate();
+                if (rmAddCount < $("#multilimit").val()){
+                    rmAddCount = rmAddCount+1;
+                    divId = "quickContDiv"+rmAddCount;
+                    skucls = "skucls"+rmAddCount;
+                    quantcls = "quantcls"+rmAddCount;
+
+                    $('.'+divId).css('display','block');
+                    $('.'+skucls).css('display','block');
+                    $('.'+quantcls).css('display','block');
+                }
+            });
+
+
+            $('.remMultiBut').on('click',function(){
+
+                if (rmAddCount >0){
+
+                    divId = "quickContDiv"+rmAddCount;
+                    skucls = "skucls"+rmAddCount;
+                    quantcls = "quantcls"+rmAddCount;
+
+                    $('.'+divId).css('display','none');
+                    $('.'+skucls).val('');
+                    $('.'+quantcls).val('');
+                    $('.'+skucls).css('display','none');
+                    $('.'+quantcls).css('display','none');
+
+                    $('.'+skucls).next().next('.errspan').empty();
+
+                    rmAddCount = rmAddCount-1;
+                    //addValidate();
+                }
+            });
+
+
+            function addValidate()
+            {
+                //   alert('Yes adding the validations here');
+                $("#quickfromid").validate({
+                    rules: {
+                        'sku[]': {required:true},
+                        'quantity[]': {required:true,number:true}
+
+                    },
+
+                    invalidHandler: function(form, validator)
+                    { //it works for the first default elements
+                        var errors = validator.numberOfInvalids();
+                        // console.log("error:"+errors);
+                        if (errors) {
+                            //alert('yes there is an error');
+                            validator.errorList[0].element.focus();
+                        }
+                        $(".errorClssku").each(function() {
+                            // alert('this is sku error here');
+                            if($(this).val() == "" && $(this).val().length < 1 && $(this).css('display') == 'block') {
+                                //   alert('on error');
+
+                                $(this).addClass('error');
+                                $(this).next().next('.errspan').empty().append('Please Enter SKU');
+                            } else {
+                                //    alert('not on error');
+                                $(this).removeClass('error');
+                                $(this).next().next('.errspan').empty()
+                            }
+                        });
+
+                        $(".errorClsQuna").each(function() { //each input element that takes the quantity
+                            // alert('this is sku error here');
+                            if($(this).val() == "" && $(this).val().length < 1 && $(this).css('display') == 'block') {
+                                $(this).addClass('error');
+                                $(this).next().next('.errspan').empty().append('Please Enter Quantity Number');
+                            } else {
+                                //    alert('not on error');
+                                $(this).removeClass('error');
+                                $(this).next().next('.errspan').empty()
+                            }
+                        });
+                    },
+
+                    submitHandler:function(form)
+                    { //it is working for the dynamically added elements
+                        var isValid = true;
+                        //   alert('submit handler');
+                        $(".errorClssku").each(function() {
+                            //  alert($(this).css('display'));
+                            if($(this).val() == "" && $(this).val().length < 1 && $(this).css('display') == 'block' ) {
+
+                                $(this).addClass('error');
+                                //  $(this).after('<label for="quantity[]" generated="true" class="error" id="quantity[]-error" style="display: inline;">Please enter an SKU</label>');
+                                $(this).next().next('.errspan').empty().append('Please Enter SKU');
+                                isValid = false;
+                            } else {
+                                //alert('nope');
+                                $(this).removeClass('error');
+                                $(this).next().next('.errspan').empty();
+                            }
+                        });
+
+                        $(".errorClsQuna").each(function() {
+                            // alert('this is sku error here');
+                            if($(this).val() == "" && $(this).val().length < 1 && $(this).css('display') == 'block') {
+                                // alert('on error');
+
+                                $(this).addClass('error');
+                                $(this).next().next('.errspan').empty().append('Please Enter Quantity Number');
+                            } else {
+                                //    alert('not on error');
+                                $(this).removeClass('error');
+                                $(this).next().next('.errspan').empty();
+                            }
+                        });
+
+                        if(isValid) {
+                            form.submit();
+                        }
+                    },
+                    errorPlacement:function(error,element)
+                    {
+
+                    }
+                });
+            }
+        })
+    });
+
+
+
+
+</script>
+
+

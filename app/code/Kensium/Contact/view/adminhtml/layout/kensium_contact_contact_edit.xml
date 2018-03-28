@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Kensium_Contact extension
+ *                     NOTICE OF LICENSE
+ * 
+ *                     This source file is subject to the MIT License
+ *                     that is bundled with this package in the file LICENSE.txt.
+ *                     It is also available through the world-wide-web at this URL:
+ *                     http://opensource.org/licenses/mit-license.php
+ * 
+ *                     @category  Kensium
+ *                     @package   Kensium_Contact
+ *                     @copyright Copyright (c) 2016
+ *                     @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Kensium\Contact\Block\Adminhtml\Contact\Edit" name="kensium_contact_contact_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Kensium\Contact\Block\Adminhtml\Contact\Edit\Tabs" name="kensium_contact_contact_tabs">
+                <block class="Kensium\Contact\Block\Adminhtml\Contact\Edit\Tab\Contact" name="kensium_contact_contact_edit_tab_contact"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">contact</argument>
+                    <argument name="block" xsi:type="string">kensium_contact_contact_edit_tab_contact</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

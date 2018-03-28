@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Quick Order</title>
+    </head>
+     <body>
+        <!--<referenceContainer name="content">
+			<block class="Kensium\QuickOrder\Block\Quick\Order" name="quick_order" template="quick/order.phtml">
+			</block>
+        </referenceContainer>-->
+         <referenceContainer name="content">
+             <block class="Magento\AdvancedCheckout\Block\Customer\Sku" name="checkout.customer.sku" template="widget/sku.phtml">
+                 <action method="setIsTitleHidden">
+                     <argument name="value" xsi:type="string">true</argument>
+                 </action>
+             </block>
+         </referenceContainer>
+    </body>
+</page>
