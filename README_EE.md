@@ -52,3 +52,10 @@ php ./dev/tools/build-ee.php -- --command unlink
 ```
 
 ### Step 3: Install the Magento software from the `magento2ce` repository.
+
+***Note:***
+When `magento2ee` is cloned and linked outside the `magento2ce` folder, by default EE modules will not be registered in your Magento installation. To get them registered, you need to change the path to them in `ComponentRegistrar`.
+For this, add the following code to the `register()` method in `magento2ce/lib/internal/Magento/Framework/Component/ComponentRegistrar.php`:
+```
+$path = str_replace('magento2ee', 'magento2ce', $path);
+```
