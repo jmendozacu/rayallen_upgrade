@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../vendor/magento/mtf/etc/variations.xsd">
     <testCase name="Magento\Banner\Test\TestCase\AssignCatalogRuleToBannerEntityTest" summary="Apply Catalog Price Rules to Products and Connected with Banner" ticketId="MAGETWO-12389">
         <variation name="AssignCatalogRuleToBannerEntityTestVariation1">
-            <data name="products" xsi:type="string">catalogProductSimple::product_10_dollar,configurableProduct::two_variations_with_fixed_price</data>
+            <data name="tag" xsi:type="string">severity:S1</data>
+            <data name="products/0" xsi:type="string">catalogProductSimple::product_10_dollar</data>
+            <data name="products/1" xsi:type="string">configurableProduct::two_variations_with_fixed_price</data>
             <data name="widget" xsi:type="string">banner_rotator</data>
             <data name="banner/dataset" xsi:type="string">default</data>
             <data name="customer/dataset" xsi:type="string">customer_US</data>
             <data name="catalogPriceRule/data/name" xsi:type="string">rule_name%isolation%</data>
-            <data name="catalogPriceRule/data/is_active" xsi:type="string">Active</data>
             <data name="catalogPriceRule/data/website_ids" xsi:type="string">Main Website</data>
             <data name="catalogPriceRule/data/customer_group_ids" xsi:type="string">General</data>
             <data name="catalogPriceRule/data/conditions" xsi:type="string">[Category|is|%category_1%]</data>
@@ -39,7 +40,7 @@
             <constraint name="Magento\CatalogRule\Test\Constraint\AssertCatalogPriceRuleAppliedCatalogPage" />
             <constraint name="Magento\CatalogRule\Test\Constraint\AssertCatalogPriceRuleAppliedProductPage" />
             <constraint name="Magento\CatalogRule\Test\Constraint\AssertCatalogPriceRuleAppliedShoppingCart" />
-            <constraint name="Magento\CatalogRule\Test\Constraint\AssertCatalogPriceRuleAppliedOnepageCheckout" />
+            <constraint name="Magento\CatalogRule\Test\Constraint\AssertCatalogPriceRuleOnOnepageCheckout" />
         </variation>
     </testCase>
 </config>

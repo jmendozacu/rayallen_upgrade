@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,14 +22,13 @@ use Magento\TargetRule\Test\Fixture\TargetRule;
  * 5. Click 'Save' button.
  * 6. Perform all asserts.
  *
- * @group Target_Rules_(MX)
+ * @group Target_Rules
  * @ZephyrId MAGETWO-24807
  */
 class UpdateTargetRuleEntityTest extends AbstractTargetRuleEntityTest
 {
     /* tags */
     const MVP = 'yes';
-    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -39,6 +38,7 @@ class UpdateTargetRuleEntityTest extends AbstractTargetRuleEntityTest
      * @param CatalogProductSimple $promotedProduct
      * @param TargetRule $initialTargetRule
      * @param TargetRule $targetRule
+     * @param string|null $conditionEntity
      * @param CustomerSegment|null $customerSegment
      * @return array
      */
@@ -47,6 +47,7 @@ class UpdateTargetRuleEntityTest extends AbstractTargetRuleEntityTest
         CatalogProductSimple $promotedProduct,
         TargetRule $initialTargetRule,
         TargetRule $targetRule,
+        $conditionEntity = null,
         CustomerSegment $customerSegment = null
     ) {
         // Preconditions:
@@ -56,7 +57,7 @@ class UpdateTargetRuleEntityTest extends AbstractTargetRuleEntityTest
         if ($customerSegment && $customerSegment->hasData()) {
             $customerSegment->persist();
         }
-        $replace = $this->getReplaceData($product, $promotedProduct, $customerSegment);
+        $replace = $this->getReplaceData($product, $promotedProduct, $conditionEntity, $customerSegment);
 
         // Steps
         $filter = ['name' => $initialTargetRule->getName()];

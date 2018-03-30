@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -36,7 +36,7 @@ class Items extends \Magento\Backend\Test\Block\Widget\Tab
      * @param SimpleElement|null $element
      * @return $this
      */
-    public function fillFormTab(array $fields, SimpleElement $element = null)
+    public function setFieldsData(array $fields, SimpleElement $element = null)
     {
         $items = isset($fields['items']['value']) ? $fields['items']['value'] : [];
         $context = $element ? $element : $this->_rootElement;
@@ -57,7 +57,7 @@ class Items extends \Magento\Backend\Test\Block\Widget\Tab
      * @param SimpleElement|null $element
      * @return array
      */
-    public function getDataFormTab($fields = null, SimpleElement $element = null)
+    public function getFieldsData($fields = null, SimpleElement $element = null)
     {
         if (null === $fields || isset($fields['items'])) {
             $context = $element ? $element : $this->_rootElement;
@@ -82,7 +82,7 @@ class Items extends \Magento\Backend\Test\Block\Widget\Tab
     protected function getItemRow(SimpleElement $element)
     {
         return $this->blockFactory->create(
-            'Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items\Item',
+            \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items\Item::class,
             ['element' => $element]
         );
     }

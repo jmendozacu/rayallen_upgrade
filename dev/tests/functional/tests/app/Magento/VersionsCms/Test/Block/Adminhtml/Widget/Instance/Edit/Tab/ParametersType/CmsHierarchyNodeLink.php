@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -23,7 +23,10 @@ class CmsHierarchyNodeLink extends ParametersForm
     protected $hierarchyNodeLinkForm = './ancestor::body//*[contains(@id, "responseCntoptions_fieldset")]';
 
     /**
-     * Select node on widget options tab.
+     * Select node on widget options tab
+     *
+     * If CMS page is assigned to CMS Hierarchy Node then use CMS page identifier,
+     * otherwise use CMS Hierarchy Node identifier.
      *
      * @param array $entities
      * @return void
@@ -34,7 +37,13 @@ class CmsHierarchyNodeLink extends ParametersForm
             $this->_rootElement->find($this->selectEntity)->click();
             $this->getTemplateBlock()->waitLoader();
             $elementNew = $this->_rootElement->find($this->hierarchyNodeLinkForm, Locator::SELECTOR_XPATH);
-            $entities['value'] = $entity->getIdentifier();
+
+            /** @var \Magento\VersionsCms\Test\Fixture\CmsHierarchy $entity */
+            $nodeIdentifier = isset($entity->getNodesData()[0]['identifier'])
+                ? $entity->getNodesData()[0]['identifier']
+                : $entity->getIdentifier();
+            $entities['value'] = $nodeIdentifier;
+
             $hierarchyFields['entities'] = $entities;
             $this->getHierarchyNodeLinkForm()->_fill($hierarchyFields, $elementNew);
             $this->getTemplateBlock()->waitLoader();

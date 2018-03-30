@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\PersistentHistory\Model;
 
-class CustomerEmulatorTest extends \PHPUnit_Framework_TestCase
+class CustomerEmulatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\TestFramework\ObjectManager
@@ -42,11 +42,11 @@ class CustomerEmulatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $this->_customerSession = $this->_objectManager->create('Magento\Customer\Model\Session');
-        $this->_persistentSessionHelper = $this->_objectManager->create('Magento\Persistent\Helper\Session');
-        $this->_wishlistData = $this->_objectManager->create('Magento\Wishlist\Helper\Data');
+        $this->_customerSession = $this->_objectManager->create(\Magento\Customer\Model\Session::class);
+        $this->_persistentSessionHelper = $this->_objectManager->create(\Magento\Persistent\Helper\Session::class);
+        $this->_wishlistData = $this->_objectManager->create(\Magento\Wishlist\Helper\Data::class);
         $this->_model = $this->_objectManager->create(
-            'Magento\PersistentHistory\Model\CustomerEmulator',
+            \Magento\PersistentHistory\Model\CustomerEmulator::class,
             [
                 'customerSession' => $this->_customerSession,
                 'persistentSession' => $this->_persistentSessionHelper,
@@ -54,11 +54,12 @@ class CustomerEmulatorTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->_sessionFactory = $this->_objectManager->create('Magento\Persistent\Model\SessionFactory');
+        $this->_sessionFactory = $this->_objectManager->create(\Magento\Persistent\Model\SessionFactory::class);
     }
 
     /**
      * @magentoDataFixture Magento/Customer/_files/customer.php
+     * @magentoDataFixture Magento/Customer/_files/customer_address.php
      * @magentoConfigFixture current_store persistent/options/customer 1
      * @magentoConfigFixture current_store persistent/options/enabled 1
      * @magentoConfigFixture current_store persistent/options/wishlist 1

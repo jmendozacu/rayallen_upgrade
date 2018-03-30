@@ -1,18 +1,17 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\VisualMerchandiser\Test\Block\Adminhtml\Category\Tab\Merchandiser;
 
-use Magento\Backend\Test\Block\Widget\Tab;
-use Magento\VisualMerchandiser\Test\Block\Adminhtml\Widget\Grid\TileGrid;
+use Magento\Ui\Test\Block\Adminhtml\Section;
 
 /**
  * VisualMerchandiser tile view
  */
-class Tile extends Tab
+class Tile extends Section
 {
     /**
      * @var string
@@ -22,12 +21,12 @@ class Tile extends Tab
     /**
      * Returns role grid.
      *
-     * @return TileGrid
+     * @return \Magento\VisualMerchandiser\Test\Block\Adminhtml\Widget\Grid\TileGrid
      */
     public function getProductGrid()
     {
         return $this->blockFactory->create(
-            'Magento\VisualMerchandiser\Test\Block\Adminhtml\Widget\Grid\TileGrid',
+            \Magento\VisualMerchandiser\Test\Block\Adminhtml\Widget\Grid\TileGrid::class,
             ['element' => $this->_rootElement->find($this->tileGrid)]
         );
     }

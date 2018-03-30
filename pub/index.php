@@ -2,10 +2,9 @@
 /**
  * Public alias for the application entry point
  *
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
@@ -25,10 +24,6 @@ HTML;
     exit(1);
 }
 
-//$_SERVER['MAGE_MODE']='developer';
-//ini_set('display_errors',1);
-
-
 $params = $_SERVER;
 $params[Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS] = [
     DirectoryList::PUB => [DirectoryList::URL_PATH => ''],
@@ -38,5 +33,5 @@ $params[Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS] = [
 ];
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $params);
 /** @var \Magento\Framework\App\Http $app */
-$app = $bootstrap->createApplication('Magento\Framework\App\Http');
+$app = $bootstrap->createApplication(\Magento\Framework\App\Http::class);
 $bootstrap->run($app);

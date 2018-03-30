@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,6 +9,7 @@ namespace Magento\CustomerCustomAttributes\Test\Block\Adminhtml\Customer\Attribu
 use Magento\Mtf\Client\Locator;
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Backend\Test\Block\Widget\Tab;
+use Magento\CustomerCustomAttributes\Test\Block\Adminhtml\Customer\Attribute\Edit\Tab\Options\Option;
 
 /**
  * Manage Options form on New Customer Attribute Page.
@@ -27,7 +28,7 @@ class Options extends Tab
      *
      * @var string
      */
-    protected $targetElement = '//*[@class="ui-sortable"]/tr[%d]';
+    protected $targetElement = '//*[contains(@class,"ui-sortable")]/tr[%d]';
 
     /**
      * Options value locator.
@@ -59,7 +60,7 @@ class Options extends Tab
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function fillFormTab(array $fields, SimpleElement $element = null)
+    public function setFieldsData(array $fields, SimpleElement $element = null)
     {
         $fixtureOptions = isset($fields['option']['value']) ? $fields['option']['value'] : [];
         foreach ($fixtureOptions as $key => $option) {
@@ -71,7 +72,7 @@ class Options extends Tab
                 unset($option['order']);
             }
             $this->blockFactory->create(
-                'Magento\CustomerCustomAttributes\Test\Block\Adminhtml\Customer\Attribute\Edit\Tab\Options\Option',
+                Option::class,
                 ['element' => $row]
             )->fillOptions($option);
         }

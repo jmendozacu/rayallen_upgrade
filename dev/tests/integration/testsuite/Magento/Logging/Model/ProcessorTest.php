@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Logging\Model;
@@ -27,14 +27,14 @@ class ProcessorTest extends \Magento\TestFramework\TestCase\AbstractController
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create('Magento\Logging\Model\Event')->getCollection();
+            ->create(\Magento\Logging\Model\Event::class)->getCollection();
         $eventCountBefore = count($collection);
 
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
-        $objectManager->get('Magento\Backend\Model\UrlInterface')->turnOffSecretKey();
+        $objectManager->get(\Magento\Backend\Model\UrlInterface::class)->turnOffSecretKey();
 
-        $this->_auth = $objectManager->get('Magento\Backend\Model\Auth');
+        $this->_auth = $objectManager->get(\Magento\Backend\Model\Auth::class);
         $this->_auth->login(
             \Magento\TestFramework\Bootstrap::ADMIN_NAME,
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
@@ -45,12 +45,12 @@ class ProcessorTest extends \Magento\TestFramework\TestCase\AbstractController
             array_merge(
                 $post,
                 [
-                    'form_key' => $objectManager->get('Magento\Framework\Data\Form\FormKey')->getFormKey()
+                    'form_key' => $objectManager->get(\Magento\Framework\Data\Form\FormKey::class)->getFormKey()
                 ]
             )
         );
         $this->dispatch($url);
-        $collection = $objectManager->create('Magento\Logging\Model\Event')->getCollection();
+        $collection = $objectManager->create(\Magento\Logging\Model\Event::class)->getCollection();
 
         // Number 2 means we have "login" event logged first and then the tested one.
         $eventCountAfter = $eventCountBefore + 2;
@@ -80,7 +80,15 @@ class ProcessorTest extends \Magento\TestFramework\TestCase\AbstractController
             ],
             ['backend/admin/user/delete/user_id/2', 'delete'],
             ['backend/admin/user_role/editrole/rid/2', 'view'],
-            ['backend/admin/user_role/saverole', 'save', ['rolename' => 'newrole2', 'gws_is_all' => '1']],
+            [
+                'backend/admin/user_role/saverole',
+                'save',
+                [
+                    'rolename' => 'newrole2',
+                    'gws_is_all' => '1',
+                    'current_password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
+                ]
+            ],
             ['backend/admin/user_role/delete/rid/2', 'delete'],
             ['backend/tax/tax/ajaxDelete', 'delete', ['class_id' => 2, 'isAjax' => true]],
             [

@@ -1,17 +1,19 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogEvent\Controller;
 
 /**
  * @magentoAppArea adminhtml
+ * @magentoDbIsolation enabled
+ * @magentoAppIsolation enabled
  */
 class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
     /**
-     * Covers \Magento\CatalogEvent\Block\Adminhtml\Catalog\Category\Edit\Buttons::addButtons for Add Event button
+     * Covers \Magento\CatalogEvent\Block\Adminhtml\Catalog\Category\Edit\AddEventButton for Add Event button
      *
      * @magentoDataFixture Magento/Catalog/_files/categories.php
      */
@@ -19,13 +21,13 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
     {
         $this->dispatch('backend/catalog/category/edit/id/3');
         $this->assertContains(
-            'onclick="setLocation(\'http://localhost/index.php/backend/admin/catalog_event/new/category_id/',
+            'onclick="setLocation(\'http://localhost/index.php/backend/admin/catalog_event/new/category/1/category_id/',
             $this->getResponse()->getBody()
         );
     }
 
     /**
-     * Covers \Magento\CatalogEvent\Block\Adminhtml\Catalog\Category\Edit\Buttons::addButtons for Edit Event button
+     * Covers \Magento\CatalogEvent\Block\Adminhtml\Catalog\Category\Edit\AddEventButton for Edit Event button
      *
      * @magentoDataFixture Magento/Catalog/_files/categories.php
      * @magentoDataFixture eventDataFixture
@@ -43,7 +45,7 @@ class CategoryTest extends \Magento\TestFramework\TestCase\AbstractBackendContro
     {
         /** @var $event \Magento\CatalogEvent\Model\Event */
         $event = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\CatalogEvent\Model\Event'
+            \Magento\CatalogEvent\Model\Event::class
         );
         $event->setStoreId(0);
         $event->setCategoryId('3');

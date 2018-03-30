@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Solr\Controller\Adminhtml;
@@ -16,7 +16,6 @@ class SearchTest extends \Magento\TestFramework\TestCase\AbstractBackendControll
      */
     public function testRelatedGridAction()
     {
-        $this->markTestSkipped('Solr module disabled');
         $filter = base64_encode('search_query=lap');
         $this->getRequest()->setParam('filter', $filter);
 

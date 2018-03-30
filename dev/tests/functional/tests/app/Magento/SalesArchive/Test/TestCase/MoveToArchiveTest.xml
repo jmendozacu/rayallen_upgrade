@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
  -->
@@ -27,7 +27,7 @@
         <variation name="MoveToArchiveTestVariation2">
             <data name="description" xsi:type="string">move order in status Completed to Archive, verify order moved from order grid Archive grid</data>
             <data name="configArchive" xsi:type="string">salesarchive_pending_closed</data>
-            <data name="steps" xsi:type="string">invoice, shipment, credit memo</data>
+            <data name="steps" xsi:type="string">shipment, invoice, credit memo</data>
             <data name="order/dataset" xsi:type="string">default</data>
             <data name="order/data/price/dataset" xsi:type="string">full_invoice</data>
             <data name="order/data/entity_id/products" xsi:type="string">catalogProductSimple::default</data>
@@ -57,7 +57,7 @@
         <variation name="MoveToArchiveTestVariation4">
             <data name="description" xsi:type="string">open Archive Completed order and verify all buttons present</data>
             <data name="configArchive" xsi:type="string">salesarchive_complete</data>
-            <data name="steps" xsi:type="string">invoice, shipment</data>
+            <data name="steps" xsi:type="string">shipment, invoice</data>
             <data name="order/dataset" xsi:type="string">default</data>
             <data name="order/data/price/dataset" xsi:type="string">full_invoice</data>
             <data name="order/data/entity_id/products" xsi:type="string">catalogProductSimple::default</data>
@@ -84,7 +84,7 @@
         <variation name="MoveToArchiveTestVariation6">
             <data name="description" xsi:type="string">move order in status Complete to Archive, verify Archive Credit Memo in grid and items on Archive Credit Memo page</data>
             <data name="configArchive" xsi:type="string">salesarchive_all_statuses</data>
-            <data name="steps" xsi:type="string">invoice, shipment, credit memo</data>
+            <data name="steps" xsi:type="string">shipment, invoice, credit memo</data>
             <data name="order/dataset" xsi:type="string">default</data>
             <data name="order/data/price/dataset" xsi:type="string">full_invoice</data>
             <data name="order/data/entity_id/products" xsi:type="string">catalogProductSimple::default</data>

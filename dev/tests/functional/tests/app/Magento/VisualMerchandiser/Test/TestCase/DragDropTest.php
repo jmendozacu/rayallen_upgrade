@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,8 +14,6 @@ use Magento\Mtf\TestCase\Injectable;
 class DragDropTest extends Injectable
 {
     /* tags */
-    const DOMAIN = 'MX';
-    const TEST_TYPE = 'acceptance_test';
     /* end tags */
 
     /**
@@ -56,6 +54,6 @@ class DragDropTest extends Injectable
         $this->catalogCategoryIndex->open();
         $this->catalogCategoryIndex->getTreeCategories()->selectCategory($category);
 
-        $this->merchandiser->getEditForm()->openTab('category_products');
+        $this->merchandiser->getEditForm()->openSection('category_products');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -62,7 +62,7 @@ class Grid extends \Magento\Backend\Test\Block\Widget\Grid
         if ($selectItem->isVisible()) {
             $selectItem->find($this->editLink)->click();
         } else {
-            throw new \Exception('Searched item was not found.');
+            throw new \Exception("Searched item was not found by filter\n" . print_r($filter, true));
         }
     }
 
@@ -81,7 +81,7 @@ class Grid extends \Magento\Backend\Test\Block\Widget\Grid
         if ($selectItem->isVisible()) {
             return $selectItem->find($this->editLink)->getText();
         } else {
-            throw new \Exception('Searched item was not found.');
+            throw new \Exception("Searched item was not found by filter\n" . print_r($filter, true));
         }
     }
 }

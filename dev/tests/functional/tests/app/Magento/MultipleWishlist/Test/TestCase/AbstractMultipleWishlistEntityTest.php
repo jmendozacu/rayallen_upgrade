@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\MultipleWishlist\Test\TestCase;
 
-use Magento\Backend\Test\Page\Adminhtml\AdminCache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Fixture\Category;
 use Magento\Catalog\Test\Page\Product\CatalogProductView;
 use Magento\Cms\Test\Page\CmsIndex;
@@ -163,7 +163,7 @@ abstract class AbstractMultipleWishlistEntityTest extends Injectable
     protected function loginCustomer(Customer $customer)
     {
         $customerLogin = $this->objectManager->create(
-            'Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
+            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
             ['customer' => $customer]
         );
         $customerLogin->run();
@@ -192,7 +192,7 @@ abstract class AbstractMultipleWishlistEntityTest extends Injectable
     public function setupConfiguration($configData, $rollback = false)
     {
         $this->objectManager->create(
-            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
             ['configData' => $configData, 'rollback' => $rollback]
         )->run();
     }

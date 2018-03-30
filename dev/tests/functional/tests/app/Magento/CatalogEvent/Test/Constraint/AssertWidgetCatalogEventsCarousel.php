@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\CatalogEvent\Test\Constraint;
 
-use Magento\Backend\Test\Page\Adminhtml\AdminCache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 use Magento\CatalogEvent\Test\Fixture\CatalogEventEntity;
 use Magento\Cms\Test\Page\CmsIndex;
@@ -48,13 +48,12 @@ class AssertWidgetCatalogEventsCarousel extends AbstractConstraint
         $event2->persist();
         $cmsIndex->open();
         $categoryName = $event2->getCategoryId();
-        $cmsIndex->getTopmenu()->selectCategoryByName($categoryName);
         \PHPUnit_Framework_Assert::assertTrue(
             $catalogCategoryView->getWidgetView()->isWidgetVisible($widget, $categoryName),
             'Widget is absent on Category page.'
         );
 
-        $cmsIndex->getWidgetView()->clickToWidget($widget, 'Go To Sale');
+        $cmsIndex->getCatalogEventWidgetView()->openInterestedEvent($categoryName);
         $pageTitle = $cmsIndex->getCmsPageBlock()->getPageTitle();
         \PHPUnit_Framework_Assert::assertEquals(
             $categoryName,

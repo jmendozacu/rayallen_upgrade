@@ -1,11 +1,14 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ScheduledImportExport\Model;
 
-class ImportTest extends \PHPUnit_Framework_TestCase
+use Magento\ImportExport\Model\Import;
+use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+
+class ImportTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @magentoDbIsolation enabled
@@ -14,13 +17,13 @@ class ImportTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\TestFramework\ObjectManager $objectManager */
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $productModel = $objectManager->create('Magento\Catalog\Model\Product');
+        $productModel = $objectManager->create(\Magento\Catalog\Model\Product::class);
         $product = $productModel->loadByAttribute('sku', 'product_100500');
         // fixture
         $this->assertFalse($product);
 
         $model = $objectManager->create(
-            'Magento\ScheduledImportExport\Model\Import',
+            \Magento\ScheduledImportExport\Model\Import::class,
             [
                 'data' => [
                     'entity' => 'catalog_product',
@@ -29,7 +32,7 @@ class ImportTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $operation = $objectManager->get('Magento\ScheduledImportExport\Model\Scheduled\Operation');
+        $operation = $objectManager->get(\Magento\ScheduledImportExport\Model\Scheduled\Operation::class);
         $operation->setFileInfo(
             [
                 'file_name' => 'product.csv',

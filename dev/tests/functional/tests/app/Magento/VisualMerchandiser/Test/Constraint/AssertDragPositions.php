@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -29,38 +29,35 @@ class AssertDragPositions extends AbstractConstraint
      */
     public function processAssert(CatalogCategoryMerchandiser $merchandiser)
     {
+        $merchandiser->getEditForm()->openSection('category_products');
         $merchandiser->getMerchandiserApp()->openTab('mode_grid');
 
         /** @var Grid $tab */
         $tab = $merchandiser->getMerchandiserApp()->getTab('mode_grid');
         $grid = $tab->getProductGrid();
 
-        $src = $grid->getItemByIndex(1);
-        $skuToTest = $src->find('.col-sku')->getText();
-
-        $src->dragAndDrop($grid->getItemByIndex(3));
-
-        $sku = $grid->getItemByIndex(3)->find('.col-sku')->getText();
+        $skuExpected = $grid->getSkuByIndex(1);
+        $grid->dragAndDrop(1, 3);
+        $skuActual = $grid->getSkuByIndex(3);
 
         \PHPUnit_Framework_Assert::assertEquals(
-            $skuToTest,
-            $sku,
-            "Re-positioned SKU was wrong"
+            $skuExpected,
+            $skuActual,
+            "Re-positioned SKU was wrong. Expected: $skuExpected; Actual: $skuActual"
         );
 
         $merchandiser->getFormPageActions()->save();
 
-        $merchandiser->getEditForm()->openTab('category_products');
+        $merchandiser->getEditForm()->openSection('category_products');
         $merchandiser->getMerchandiserApp()->openTab('mode_grid');
-
         /** @var Grid $tab */
         $tab = $merchandiser->getMerchandiserApp()->getTab('mode_grid');
-        $sku = $tab->getProductGrid()->getItemByIndex(3)->find('.col-sku')->getText();
+        $skuActual = $tab->getProductGrid()->getSkuByIndex(3);
 
         \PHPUnit_Framework_Assert::assertEquals(
-            $skuToTest,
-            $sku,
-            "Saving the positions did not work"
+            $skuExpected,
+            $skuActual,
+            "Saving the positions did not work. Expected: $skuExpected; Actual: $skuActual"
         );
     }
 

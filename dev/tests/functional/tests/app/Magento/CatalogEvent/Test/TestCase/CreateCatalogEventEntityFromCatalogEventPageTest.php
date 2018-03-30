@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,14 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 6. Save Event.
  * 7. Perform all assertions.
  *
- * @group Catalog_Events_(MX)
+ * @group Catalog_Events
  * @ZephyrId MAGETWO-24573
  */
 class CreateCatalogEventEntityFromCatalogEventPageTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const DOMAIN = 'MX';
+    const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 
     /**

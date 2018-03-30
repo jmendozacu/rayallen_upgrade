@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -17,6 +17,36 @@
                 <item name="scope" xsi:type="string">default</item>
                 <item name="scope_id" xsi:type="number">0</item>
                 <item name="value" label="Yes" xsi:type="string">1</item>
+            </field>
+        </dataset>
+
+        <dataset name="display_excluding_including_tax">
+            <field name="tax/classes/wrapping_tax_class" xsi:type="array">
+                <item name="scope" xsi:type="string">default</item>
+                <item name="scope_id" xsi:type="number">0</item>
+                <item name="label" xsi:type="string">Taxable Goods</item>
+                <item name="value" xsi:type="number">2</item>
+            </field>
+            <field name="tax/cart_display/gift_wrapping" xsi:type="array">
+                <item name="scope" xsi:type="string">default</item>
+                <item name="scope_id" xsi:type="number">0</item>
+                <item name="label" xsi:type="string">Including and Excluding Tax</item>
+                <item name="value" xsi:type="number">3</item>
+            </field>
+        </dataset>
+
+        <dataset name="display_excluding_including_tax_rollback">
+            <field name="tax/classes/wrapping_tax_class" xsi:type="array">
+                <item name="scope" xsi:type="string">default</item>
+                <item name="scope_id" xsi:type="number">0</item>
+                <item name="label" xsi:type="string">None</item>
+                <item name="value" xsi:type="number">0</item>
+            </field>
+            <field name="tax/cart_display/gift_wrapping" xsi:type="array">
+                <item name="scope" xsi:type="string">default</item>
+                <item name="scope_id" xsi:type="number">0</item>
+                <item name="label" xsi:type="string">Excluding Tax</item>
+                <item name="value" xsi:type="number">1</item>
             </field>
         </dataset>
     </repository>

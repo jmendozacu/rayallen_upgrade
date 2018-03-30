@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 -->
@@ -15,6 +15,23 @@
                 <item name="dataset" xsi:type="string">nodeWithOnePage</item>
             </field>
             <field name="top_menu_visibility" xsi:type="string">No</field>
+            <field name="pager_visibility" xsi:type="string">Yes</field>
+            <field name="meta_cs_enabled" xsi:type="string">Yes</field>
+            <field name="meta_first_last" xsi:type="string">Yes</field>
+            <field name="meta_next_previous" xsi:type="string">Yes</field>
+            <field name="meta_chapter_section" xsi:type="string">Both</field>
+            <field name="pager_frame" xsi:type="string">50</field>
+            <field name="menu_visibility" xsi:type="string">Yes</field>
+            <field name="menu_ordered" xsi:type="string">Ordered</field>
+        </dataset>
+        <dataset name="with_cms_node">
+            <field name="identifier" xsi:type="string">Node_%isolation%</field>
+            <field name="label" xsi:type="string">node-%isolation%</field>
+            <field name="menu_brief" xsi:type="string">Neighbours and Children</field>
+            <field name="nodes_data" xsi:type="array">
+                <item name="dataset" xsi:type="string">nodeWithCmsPage</item>
+            </field>
+            <field name="top_menu_visibility" xsi:type="string">Yes</field>
             <field name="pager_visibility" xsi:type="string">Yes</field>
             <field name="meta_cs_enabled" xsi:type="string">Yes</field>
             <field name="meta_first_last" xsi:type="string">Yes</field>

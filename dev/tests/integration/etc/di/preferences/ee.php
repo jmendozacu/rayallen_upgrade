@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 return [
-    'Magento\Framework\App\ResourceConnection\ConnectionAdapterInterface' =>
-        'Magento\TestFramework\ResourceConnections\Db\ConnectionAdapter\Mysql',
-    'Magento\ResourceConnections\DB\ConnectionAdapter\Mysql' =>
-        'Magento\TestFramework\ResourceConnections\Db\ConnectionAdapter\Mysql',
+    \Magento\Framework\App\ResourceConnection\ConnectionAdapterInterface::class =>
+        \Magento\TestFramework\ResourceConnections\Db\ConnectionAdapter\Mysql::class,
+    \Magento\ResourceConnections\DB\ConnectionAdapter\Mysql::class =>
+        \Magento\TestFramework\ResourceConnections\Db\ConnectionAdapter\Mysql::class,
 ];

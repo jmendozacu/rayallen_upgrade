@@ -1,11 +1,18 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogPermissions\Model\Permission;
 
-class IndexTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class IndexTest
+ * @package Magento\CatalogPermissions\Model\Permission
+ * @magentoDbIsolation disabled
+ * @magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class IndexTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\CatalogPermissions\Model\Permission\Index
@@ -17,15 +24,36 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     protected $indexer;
 
+    /**
+     * @var \Magento\Catalog\Model\Product
+     */
+    protected $product;
+
     protected function setUp()
     {
         $this->index = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\CatalogPermissions\Model\Permission\Index'
+            \Magento\CatalogPermissions\Model\Permission\Index::class
         );
         $this->indexer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Framework\Indexer\IndexerInterface'
+            \Magento\Framework\Indexer\IndexerInterface::class
         );
         $this->indexer->load(\Magento\CatalogPermissions\Model\Indexer\Category::INDEXER_ID);
+        $this->product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Catalog\Model\Product::class
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+        /** @var \Magento\Framework\Registry $registry */
+        $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            \Magento\Framework\Registry::class
+        );
+        $registry->unregister('current_category');
     }
 
     /**
@@ -38,7 +66,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
         $fixturePermission = [
             'category_id' => 6,
             'website_id' => \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-                'Magento\Store\Model\StoreManagerInterface'
+                \Magento\Store\Model\StoreManagerInterface::class
             )->getWebsite()->getId(),
             'customer_group_id' => 1,
             'grant_catalog_category_view' => \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
@@ -72,28 +100,30 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     public function testAddIndexToCategoryCollectionWithDefaultAllow()
     {
         /** @var \Magento\Customer\Model\Session $session */
-        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Customer\Model\Session');
+        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            \Magento\Customer\Model\Session::class
+        );
 
         $session->setCustomerGroupId(0);
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
         $categoryCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Category\Collection'
+            \Magento\Catalog\Model\ResourceModel\Category\Collection::class
         );
         $categoryCollection->addIsActiveFilter();
         $categoryCollection->load();
-        $this->assertCount(10, $categoryCollection->getItems());
-        $this->assertInstanceOf('Magento\Catalog\Model\Category', $categoryCollection->getItemById(6));
+        $this->assertCount(11, $categoryCollection->getItems());
+        $this->assertInstanceOf(\Magento\Catalog\Model\Category::class, $categoryCollection->getItemById(6));
 
         $this->indexer->reindexAll();
 
         $session->setCustomerGroupId(1);
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
         $categoryCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Category\Collection'
+            \Magento\Catalog\Model\ResourceModel\Category\Collection::class
         );
         $categoryCollection->addIsActiveFilter();
         $categoryCollection->load();
-        $this->assertCount(9, $categoryCollection->getItems());
+        $this->assertCount(10, $categoryCollection->getItems());
         $this->assertEquals(null, $categoryCollection->getItemById(6));
     }
 
@@ -110,7 +140,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
         $categoryCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Category\Collection'
+            \Magento\Catalog\Model\ResourceModel\Category\Collection::class
         );
         $categoryCollection->addIsActiveFilter();
         $categoryCollection->load();
@@ -120,7 +150,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
 
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
         $categoryCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Category\Collection'
+            \Magento\Catalog\Model\ResourceModel\Category\Collection::class
         );
         $categoryCollection->addIsActiveFilter();
         $categoryCollection->load();
@@ -138,16 +168,16 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     public function testGetRestrictedCategoryIdsWithDefaultDeny()
     {
         $websiteId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            'Magento\Store\Model\StoreManagerInterface'
+            \Magento\Store\Model\StoreManagerInterface::class
         )->getWebsite()->getId();
 
-        $this->assertCount(12, $this->index->getRestrictedCategoryIds(0, $websiteId));
-        $this->assertCount(12, $this->index->getRestrictedCategoryIds(1, $websiteId));
+        $this->assertCount(13, $this->index->getRestrictedCategoryIds(0, $websiteId));
+        $this->assertCount(13, $this->index->getRestrictedCategoryIds(1, $websiteId));
 
         $this->indexer->reindexAll();
 
-        $this->assertCount(11, $this->index->getRestrictedCategoryIds(0, $websiteId));
-        $this->assertCount(11, $this->index->getRestrictedCategoryIds(1, $websiteId));
+        $this->assertCount(12, $this->index->getRestrictedCategoryIds(0, $websiteId));
+        $this->assertCount(12, $this->index->getRestrictedCategoryIds(1, $websiteId));
     }
 
     /**
@@ -161,7 +191,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     public function testGetRestrictedCategoryIdsWithDefaultAllow()
     {
         $websiteId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            'Magento\Store\Model\StoreManagerInterface'
+            \Magento\Store\Model\StoreManagerInterface::class
         )->getWebsite()->getId();
 
         $this->assertCount(0, $this->index->getRestrictedCategoryIds(0, $websiteId));
@@ -184,35 +214,38 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     public function testAddIndexToProductCollectionWithDefaultAllow()
     {
         /** @var \Magento\Customer\Model\Session $session */
-        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Customer\Model\Session');
+        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            \Magento\Customer\Model\Session::class
+        );
 
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Category'
+            \Magento\Catalog\Model\Category::class
         );
         $category->load(6);
 
         $session->setCustomerGroupId(0);
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $categoryCollection */
+        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
         $productCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Product\Collection'
+            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
         );
         $productCollection->addCategoryFilter($category);
         $productCollection->load();
         $this->assertCount(1, $productCollection->getItems());
-        $this->assertInstanceOf('Magento\Catalog\Model\Product', $productCollection->getItemById(5));
+        $productId = $this->product->getIdBySku('12345-1');
+        $this->assertInstanceOf(\Magento\Catalog\Model\Product::class, $productCollection->getItemById($productId));
 
         $this->indexer->reindexAll();
 
         $session->setCustomerGroupId(1);
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $categoryCollection */
         $productCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Product\Collection'
+            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
         );
         $productCollection->addCategoryFilter($category);
         $productCollection->load();
         $this->assertCount(0, $productCollection->getItems());
-        $this->assertEquals(null, $productCollection->getItemById(5));
+        $this->assertEquals(null, $productCollection->getItemById($productId));
     }
 
     /**
@@ -226,36 +259,39 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddIndexToProductCollectionWithDefaultDeny()
     {
+        $productId = $this->product->getIdBySku('12345-1');
         /** @var \Magento\Customer\Model\Session $session */
-        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Customer\Model\Session');
+        $session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            \Magento\Customer\Model\Session::class
+        );
 
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Category'
+            \Magento\Catalog\Model\Category::class
         );
         $category->load(6);
 
         $session->setCustomerGroupId(0);
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $categoryCollection */
         $productCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Product\Collection'
+            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
         );
         $productCollection->addCategoryFilter($category);
         $productCollection->load();
         $this->assertCount(0, $productCollection->getItems());
-        $this->assertEquals(null, $productCollection->getItemById(5));
+        $this->assertEquals(null, $productCollection->getItemById($productId));
 
         $this->indexer->reindexAll();
 
         $session->setCustomerGroupId(1);
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $categoryCollection */
         $productCollection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\ResourceModel\Product\Collection'
+            \Magento\Catalog\Model\ResourceModel\Product\Collection::class
         );
         $productCollection->addCategoryFilter($category);
         $productCollection->load();
         $this->assertCount(0, $productCollection->getItems());
-        $this->assertEquals(null, $productCollection->getItemById(5));
+        $this->assertEquals(null, $productCollection->getItemById($productId));
     }
 
     /**
@@ -270,52 +306,50 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \Magento\Catalog\Model\Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Category'
+            \Magento\Catalog\Model\Category::class
         );
         $category->load(6);
 
         /** @var \Magento\Framework\Registry $registry */
-        $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get('Magento\Framework\Registry');
+        $registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+            \Magento\Framework\Registry::class
+        );
         $registry->register('current_category', $category);
 
-        /** @var \Magento\Catalog\Model\Product $product */
-        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Product'
-        );
-        $product->load(5);
+        $this->product->load('12345-1', 'sku');
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
         $this->indexer->reindexAll();
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayHasKey('grant_catalog_category_view', $product->getData());
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayHasKey('grant_catalog_category_view', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_category_view')
+            $this->product->getData('grant_catalog_category_view')
         );
-        $this->assertArrayHasKey('grant_catalog_product_price', $product->getData());
+        $this->assertArrayHasKey('grant_catalog_product_price', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_product_price')
+            $this->product->getData('grant_catalog_product_price')
         );
-        $this->assertArrayHasKey('grant_checkout_items', $product->getData());
+        $this->assertArrayHasKey('grant_checkout_items', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_checkout_items')
+            $this->product->getData('grant_checkout_items')
         );
     }
 
@@ -329,44 +363,48 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddIndexToProductStandaloneWithDefaultAllow()
     {
-        /** @var \Magento\Catalog\Model\Product $product */
-        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Product'
+        /** @var $permission \Magento\CatalogPermissions\Model\Permission */
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
+        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
+        $productRepository = $objectManager->create(
+            \Magento\Catalog\Api\ProductRepositoryInterface::class
         );
-        $product->load(5);
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->product = $productRepository->get('12345-1');
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
+
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
         $this->indexer->reindexAll();
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayHasKey('grant_catalog_category_view', $product->getData());
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayHasKey('grant_catalog_category_view', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_category_view')
+            $this->product->getData('grant_catalog_category_view')
         );
-        $this->assertArrayHasKey('grant_catalog_product_price', $product->getData());
+        $this->assertArrayHasKey('grant_catalog_product_price', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_product_price')
+            $this->product->getData('grant_catalog_product_price')
         );
-        $this->assertArrayHasKey('grant_checkout_items', $product->getData());
+        $this->assertArrayHasKey('grant_checkout_items', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_checkout_items')
+            $this->product->getData('grant_checkout_items')
         );
     }
 
@@ -380,44 +418,47 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddIndexToProductStandaloneWithDefaultDeny()
     {
-        /** @var \Magento\Catalog\Model\Product $product */
-        $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Catalog\Model\Product'
+        /** @var $permission \Magento\CatalogPermissions\Model\Permission */
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
+        $productRepository = $objectManager->create(
+            \Magento\Catalog\Api\ProductRepositoryInterface::class
         );
-        $product->load(5);
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->product = $productRepository->get('12345-1');
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
+
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
         $this->indexer->reindexAll();
 
-        $this->index->addIndexToProduct($product, 0);
-        $this->assertArrayNotHasKey('grant_catalog_category_view', $product->getData());
-        $this->assertArrayNotHasKey('grant_catalog_product_price', $product->getData());
-        $this->assertArrayNotHasKey('grant_checkout_items', $product->getData());
+        $this->index->addIndexToProduct($this->product, 0);
+        $this->assertArrayNotHasKey('grant_catalog_category_view', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_catalog_product_price', $this->product->getData());
+        $this->assertArrayNotHasKey('grant_checkout_items', $this->product->getData());
 
-        $this->index->addIndexToProduct($product, 1);
-        $this->assertArrayHasKey('grant_catalog_category_view', $product->getData());
+        $this->index->addIndexToProduct($this->product, 1);
+        $this->assertArrayHasKey('grant_catalog_category_view', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_category_view')
+            $this->product->getData('grant_catalog_category_view')
         );
-        $this->assertArrayHasKey('grant_catalog_product_price', $product->getData());
+        $this->assertArrayHasKey('grant_catalog_product_price', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_catalog_product_price')
+            $this->product->getData('grant_catalog_product_price')
         );
-        $this->assertArrayHasKey('grant_checkout_items', $product->getData());
+        $this->assertArrayHasKey('grant_checkout_items', $this->product->getData());
         $this->assertEquals(
             \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY,
-            $product->getData('grant_checkout_items')
+            $this->product->getData('grant_checkout_items')
         );
     }
 
@@ -431,9 +472,9 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIndexForProductWithDefaultAllow()
     {
-        $productId = 5;
+        $productId = $this->product->getIdBySku('12345-1');
         $storeId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            'Magento\Store\Model\StoreManagerInterface'
+            \Magento\Store\Model\StoreManagerInterface::class
         )->getStore()->getId();
 
         $deny = \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY;
@@ -468,9 +509,9 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIndexForProductWithDefaultDeny()
     {
-        $productId = 5;
+        $productId = $this->product->getIdBySku('12345-1');
         $storeId = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            'Magento\Store\Model\StoreManagerInterface'
+            \Magento\Store\Model\StoreManagerInterface::class
         )->getStore()->getId();
 
         $deny = \Magento\CatalogPermissions\Model\Permission::PERMISSION_DENY;

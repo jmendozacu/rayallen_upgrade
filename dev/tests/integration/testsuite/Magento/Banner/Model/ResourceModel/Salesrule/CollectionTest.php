@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Banner\Model\ResourceModel\Salesrule;
 
 /**
- * @magentoDataFixture Magento/Banner/_files/banner_enabled_40_to_50_percent_off.php
  * @magentoDataFixture Magento/Banner/_files/banner_disabled_40_percent_off.php
+ * @magentoDataFixture Magento/Banner/_files/banner_enabled_40_to_50_percent_off.php
  */
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Banner\Model\ResourceModel\Salesrule\Collection
@@ -19,7 +19,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->_collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Banner\Model\ResourceModel\Salesrule\Collection'
+            \Magento\Banner\Model\ResourceModel\Salesrule\Collection::class
         );
     }
 
@@ -31,7 +31,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function testGetItems()
     {
         /** @var \Magento\Banner\Model\Banner $banner */
-        $banner = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Banner\Model\Banner');
+        $banner = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+            ->create(\Magento\Banner\Model\Banner::class);
         $banner->load('Get from 40% to 50% Off on Large Orders', 'name');
 
         $this->assertCount(1, $this->_collection->getItems());
@@ -40,9 +41,13 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRuleIdsFilter()
     {
+        $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $registry = $objectManager->get(\Magento\Framework\Registry::class);
+
         /** @var \Magento\SalesRule\Model\Rule $rule */
-        $rule = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\SalesRule\Model\Rule');
-        $rule->load('40% Off on Large Orders', 'name');
+        $rule = $objectManager->create(\Magento\SalesRule\Model\Rule::class);
+        $ruleId = $registry->registry('Magento/SalesRule/_files/cart_rule_40_percent_off');
+        $rule->load($ruleId);
 
         $this->_collection->addRuleIdsFilter([$rule->getId()]);
 

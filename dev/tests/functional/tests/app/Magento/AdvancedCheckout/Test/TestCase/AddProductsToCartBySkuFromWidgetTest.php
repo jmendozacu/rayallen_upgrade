@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\AdvancedCheckout\Test\TestCase;
 
 use Magento\AdvancedCheckout\Test\Fixture\AdvancedCheckoutWidget;
 use Magento\AdvancedCheckout\Test\Page\CustomerOrderSku;
-use Magento\Backend\Test\Page\Adminhtml\AdminCache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Checkout\Test\Page\CheckoutCart;
 use Magento\Cms\Test\Page\CmsIndex;
 use Magento\Customer\Test\Fixture\Customer;
@@ -30,7 +30,7 @@ use Magento\Mtf\Fixture\FixtureFactory;
  * 4. Click Add to Cart button.
  * 5. Perform all asserts.
  *
- * @group Add_by_SKU_(CS)
+ * @group Add_by_SKU
  * @ZephyrId MAGETWO-29781
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -39,7 +39,8 @@ class AddProductsToCartBySkuFromWidgetTest extends AbstractAdvancedCheckoutEntit
 {
     /* tags */
     const MVP = 'no';
-    const DOMAIN = 'CS';
+    const TEST_TYPE = 'extended_acceptance_test';
+    const SEVERITY = 'S1';
     /* end tags */
 
     /**
@@ -138,7 +139,7 @@ class AddProductsToCartBySkuFromWidgetTest extends AbstractAdvancedCheckoutEntit
         $products = $this->createProducts($products);
         $orderOptions = $this->prepareOrderOptions($products, $orderOptions);
         $this->widget = $this->fixtureFactory->create(
-            '\Magento\AdvancedCheckout\Test\Fixture\AdvancedCheckoutWidget',
+            \Magento\AdvancedCheckout\Test\Fixture\AdvancedCheckoutWidget::class,
             ['dataset' => 'order_by_sku']
         );
         $this->widget->persist();

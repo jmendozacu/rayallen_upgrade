@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,7 +20,7 @@ class Tab extends AbstractTab
      *
      * @var string
      */
-    protected $activeTab = './/div[@data-bind="visible: active" and not(contains(@style,"display: none"))]';
+    protected $activeTab = './/div[contains(@data-bind,"visible: active") and not(contains(@style,"display: none"))]';
 
     /**
      * Store credit balance XPath.
@@ -34,7 +34,14 @@ class Tab extends AbstractTab
      *
      * @var string
      */
-    protected $fieldSetStoreCredit = '#_customerbalancestorecreidt_fieldset';
+    protected $fieldSetStoreCredit = '#_customerbalancestorecredit_fieldset';
+
+    /**
+     * Store credit grid row XPath.
+     *
+     * @var string
+     */
+    private $storeCreditGridRow = '//*[@id="balanceGrid"]//td[%s]';
 
     /**
      * Fill data to fields on tab.
@@ -43,7 +50,7 @@ class Tab extends AbstractTab
      * @param SimpleElement|null $element
      * @return $this
      */
-    public function fillFormTab(array $fields, SimpleElement $element = null)
+    public function setFieldsData(array $fields, SimpleElement $element = null)
     {
         $this->waitForElementVisible($this->fieldSetStoreCredit);
         $data = $this->dataMapping($fields);
@@ -66,5 +73,17 @@ class Tab extends AbstractTab
             $storeCreditBalance . '[contains(.,"' . $value . '")]',
             Locator::SELECTOR_XPATH
         )->isVisible();
+    }
+
+    /**
+     * Return store credit status.
+     *
+     * @param int $rowNumber
+     * @return string
+     */
+    public function getStoreGridRow($rowNumber)
+    {
+        $row = $this->activeTab . sprintf($this->storeCreditGridRow, $rowNumber);
+        return $this->_rootElement->find($row, Locator::SELECTOR_XPATH)->getText();
     }
 }

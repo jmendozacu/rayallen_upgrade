@@ -2,7 +2,7 @@
 /**
  * Same as obsolete_constants.php, but specific to Magento EE
  *
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 return [
@@ -162,5 +162,9 @@ return [
         'XML_PATH_REBUILD_ON_PRODUCT_SAVE',
         'Magento\VisualMerchandiser\Observer\CatalogProductSaveAfter',
         'Magento\VisualMerchandiser\Model\Category\Builder::XML_PATH_REBUILD_ON_PRODUCT_SAVE'
+    ],
+    [
+        'CALLBACK',
+        'Magento\Framework\MessageQueue\ConsumerConfiguration'
     ]
 ];
