@@ -1,18 +1,23 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+use Magento\Framework\Exception\NoSuchEntityException;
 
-$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-/** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
-$product->load(1);
-$registry = $objectManager->get('Magento\Framework\Registry');
-if ($product->getId()) {
-    $registry->unregister('isSecureArea');
-    $registry->register('isSecureArea', true);
-    $product->delete();
-    $registry->unregister('isSecureArea');
-    $registry->register('isSecureArea', false);
+/** @var \Magento\Framework\Registry $registry */
+$registry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(\Magento\Framework\Registry::class);
+
+$registry->unregister('isSecureArea');
+$registry->register('isSecureArea', true);
+
+/** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
+$productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+    ->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+try {
+    $product = $productRepository->get('gift-card', false, null, true);
+    $productRepository->delete($product);
+} catch (NoSuchEntityException $e) {
 }
+$registry->unregister('isSecureArea');
+$registry->register('isSecureArea', false);

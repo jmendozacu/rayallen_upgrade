@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\AdvancedCheckout\Test\Constraint;
 
-use Magento\Backend\Test\Page\Adminhtml\AdminCache;
+use Magento\PageCache\Test\Page\Adminhtml\AdminCache;
 use Magento\Catalog\Test\Fixture\Category;
 use Magento\Catalog\Test\Page\Category\CatalogCategoryView;
 use Magento\Cms\Test\Page\CmsIndex;

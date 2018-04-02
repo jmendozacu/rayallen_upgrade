@@ -1,10 +1,13 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Rma\Controller;
 
+/**
+ * @magentoDbIsolation enabled
+ */
 class ReturnsTest extends \Magento\TestFramework\TestCase\AbstractController
 {
     /**
@@ -15,14 +18,14 @@ class ReturnsTest extends \Magento\TestFramework\TestCase\AbstractController
     protected function setUp()
     {
         parent::setUp();
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
         $this->_customerSession = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Customer\Model\Session',
+            \Magento\Customer\Model\Session::class,
             [$logger]
         );
         /** @var \Magento\Customer\Api\AccountManagementInterface $service */
         $service = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            'Magento\Customer\Api\AccountManagementInterface'
+            \Magento\Customer\Api\AccountManagementInterface::class
         );
         $customer = $service->authenticate('customer@example.com', 'password');
         $this->_customerSession->setCustomerDataAsLoggedIn($customer);
@@ -44,7 +47,7 @@ class ReturnsTest extends \Magento\TestFramework\TestCase\AbstractController
     public function testIsResponseContain($uri, $content)
     {
         /** @var $rma \Magento\Rma\Model\Rma */
-        $rma = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Rma\Model\Rma');
+        $rma = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Rma\Model\Rma::class);
         $rma->load(1, 'increment_id');
         $rma->setCustomerId($this->_customerSession->getCustomerId());
         $rma->save();

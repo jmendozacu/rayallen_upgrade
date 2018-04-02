@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -33,10 +33,10 @@ class AssertBannerNotInCartRule extends AbstractConstraint
         $promoQuoteIndex->open();
         $promoQuoteIndex->getGridPageActions()->addNew();
         $form = $quoteNew->getSalesRuleForm();
-        $form->openTab('related_banners');
+        $form->openSection('related_banners');
         $filter = ['banner_name' => $banner->getName()];
         \PHPUnit_Framework_Assert::assertFalse(
-            $form->getTab('related_banners')->getBannersGrid()->isRowVisible($filter),
+            $form->getSection('related_banners')->getBannersGrid()->isRowVisible($filter),
             'Banner is present in Cart Price Rule grid.'
         );
     }

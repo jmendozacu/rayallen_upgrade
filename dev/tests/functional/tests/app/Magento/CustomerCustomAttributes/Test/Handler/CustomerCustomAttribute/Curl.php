@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -41,6 +41,19 @@ class Curl extends AbstractCurl implements CustomerCustomAttributeInterface
             'File (attachment)' => 'file',
             'Image File' => 'image',
         ],
+        'is_required' => [
+            'Yes' => 1
+        ],
+        'is_visible' => [
+            'Yes' => 1
+        ],
+        'used_in_forms' => [
+            'Customer Address Registration' => 'customer_register_address',
+            'Customer Account Address' => 'customer_address_edit'
+        ],
+        'is_used_for_customer_segment' => [
+            'Yes' => 1
+        ]
     ];
 
     /**
@@ -61,9 +74,20 @@ class Curl extends AbstractCurl implements CustomerCustomAttributeInterface
         if (!strpos($response, 'data-ui-id="messages-message-success"')) {
             throw new \Exception("CustomerAttribute creating by curl handler was not successful! Response: $response");
         }
-        preg_match('`\/attribute_id\/(\d*?)\/`', $response, $match);
-
-        return ['attribute_id' => empty($match[1]) ? null : $match[1]];
+        preg_match('`\/attribute_id\/(\d*?)\/`', $response, $attributeId);
+        preg_match_all('`id":"(\d+)".*?"store\d+":"([^"]+)"`', $response, $match);
+        $options = [];
+        if (isset($data['option']['value'])) {
+            $i = 0;
+            foreach ($data['option']['value'] as $option) {
+                $options[$option[0]] = $match[1][$i];
+                $i++;
+            }
+        }
+        return [
+            'attribute_id' => empty($attributeId[1]) ? null : $attributeId[1],
+            'options' => $options
+        ];
     }
 
     /**
@@ -80,6 +104,14 @@ class Curl extends AbstractCurl implements CustomerCustomAttributeInterface
             $frontendLabels[] = $data['manage_title'];
         }
         $data['frontend_label'] = $frontendLabels;
+        if (isset($data['used_in_forms'])) {
+            foreach ($this->mappingData['used_in_forms'] as $key => $item) {
+                $index = array_search($key, $data['used_in_forms']);
+                if ($index !== false) {
+                    $data['used_in_forms'][$index] = $item;
+                }
+            }
+        }
 
         return $data;
     }

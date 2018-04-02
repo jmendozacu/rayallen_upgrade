@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,19 +15,36 @@ use Magento\Backend\Test\Block\FormPageActions as AbstractFormPageActions;
 class FormPageActions extends AbstractFormPageActions
 {
     /**
-     * "Add Event..." button
+     * Add Event button.
      *
      * @var string
      */
-    protected $addEvent = '[data-ui-id="category-edit-form-add-event-button"]';
+    protected $addEvent = '#add_event';
 
     /**
-     * Click on "Add Event..." button
+     * Edit Event button.
+     *
+     * @var string
+     */
+    protected $editEvent = '#edit_event';
+
+    /**
+     * Click on 'Add Event' button.
      *
      * @return void
      */
     public function addCatalogEvent()
     {
         $this->_rootElement->find($this->addEvent)->click();
+    }
+
+    /**
+     * Click 'Edit Event' button.
+     *
+     * @return void
+     */
+    public function editCatalogEvent()
+    {
+        $this->_rootElement->find($this->editEvent)->click();
     }
 }

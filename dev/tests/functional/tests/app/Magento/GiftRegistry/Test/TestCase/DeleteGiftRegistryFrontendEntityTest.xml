@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
  -->
@@ -9,18 +9,21 @@
     <testCase name="Magento\GiftRegistry\Test\TestCase\DeleteGiftRegistryFrontendEntityTest" summary="Delete Frontend Gift Registry" ticketId="MAGETWO-26648">
         <variation name="DeleteGiftRegistryFrontendEntityTestVariation1">
             <data name="giftRegistry/dataset" xsi:type="string">birthday</data>
+            <data name="tag" xsi:type="string">severity:S2</data>
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryNotInGrid" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInShoppingCart" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInWishlist" />
         </variation>
         <variation name="DeleteGiftRegistryFrontendEntityTestVariation2">
             <data name="giftRegistry/dataset" xsi:type="string">baby_registry</data>
+            <data name="tag" xsi:type="string">severity:S2</data>
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryNotInGrid" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInShoppingCart" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInWishlist" />
         </variation>
         <variation name="DeleteGiftRegistryFrontendEntityTestVariation3">
             <data name="giftRegistry/dataset" xsi:type="string">wedding</data>
+            <data name="tag" xsi:type="string">severity:S2</data>
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryNotInGrid" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInShoppingCart" />
             <constraint name="Magento\GiftRegistry\Test\Constraint\AssertGiftRegistryInactiveNotInWishlist" />

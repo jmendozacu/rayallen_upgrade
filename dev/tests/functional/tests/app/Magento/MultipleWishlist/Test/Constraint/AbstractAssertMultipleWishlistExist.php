@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -40,7 +40,7 @@ abstract class AbstractAssertMultipleWishlistExist extends AbstractConstraint
     }
 
     /**
-     * Assert wish list is exist or doesn't exist
+     * Assert wish list exists or doesn't exist
      *
      * @param bool $isPresent
      * @return void

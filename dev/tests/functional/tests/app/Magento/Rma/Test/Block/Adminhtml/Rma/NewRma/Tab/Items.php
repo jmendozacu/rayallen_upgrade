@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,6 +11,7 @@ use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Backend\Test\Block\Template;
 use Magento\Catalog\Test\Fixture\CatalogProductSimple;
 use Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Grid as ItemsGrid;
+use Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Item\AddDetails;
 use Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Order\Grid as OrderItemsGrid;
 
 /**
@@ -69,7 +70,7 @@ class Items extends \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function fillFormTab(array $fields, SimpleElement $element = null)
+    public function setFieldsData(array $fields, SimpleElement $element = null)
     {
         $items = isset($fields['items']['value']) ? $fields['items']['value'] : [];
 
@@ -88,6 +89,26 @@ class Items extends \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items
         }
 
         return $this;
+    }
+
+    /**
+     * Fill details modal window
+     *
+     * @param array $fields
+     * @param SimpleElement $element
+     * @return array
+     */
+    protected function fillDetailsForm(array $fields, SimpleElement $element)
+    {
+        if (isset($fields['additional_attributes'])) {
+            $this->blockFactory->create(
+                AddDetails::class,
+                ['element' => $element]
+            )->fillDetails($fields['additional_attributes']);
+            unset($fields['additional_attributes']);
+        }
+
+        return $fields;
     }
 
     /**
@@ -121,7 +142,7 @@ class Items extends \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items
     protected function getOrderItemsGrid()
     {
         return $this->blockFactory->create(
-            'Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Order\Grid',
+            \Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Order\Grid::class,
             ['element' => $this->_rootElement->find($this->orderItemsGrid)]
         );
     }
@@ -134,7 +155,7 @@ class Items extends \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items
     protected function getItemsGrid()
     {
         return $this->blockFactory->create(
-            'Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Grid',
+            \Magento\Rma\Test\Block\Adminhtml\Rma\NewRma\Tab\Items\Grid::class,
             ['element' => $this->_rootElement->find($this->rmaItemsGrid)]
         );
     }
@@ -165,7 +186,7 @@ class Items extends \Magento\Rma\Test\Block\Adminhtml\Rma\Edit\Tab\Items
     protected function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            '\Magento\Backend\Test\Block\Template',
+            \Magento\Backend\Test\Block\Template::class,
             ['element' => $this->_rootElement->find($this->templateBlock, Locator::SELECTOR_XPATH)]
         );
     }

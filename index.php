@@ -1,6 +1,4 @@
 <?php
-ini_set('memory_limit','512M');
-ini_set('max_execution_time', 80000);
 /**
  * Application entry point
  *
@@ -12,11 +10,11 @@ ini_set('max_execution_time', 80000);
  * $params[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = 'website';
  * $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $params);
  * \/** @var \Magento\Framework\App\Http $app *\/
- * $app = $bootstrap->createApplication('Magento\Framework\App\Http');
+ * $app = $bootstrap->createApplication(\Magento\Framework\App\Http::class);
  * $bootstrap->run($app);
  * --------------------------------------------
  *
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -34,19 +32,8 @@ try {
 HTML;
     exit(1);
 }
-//$_SERVER['MAGE_MODE']='developer';
-//ini_set('display_errors',1);
 
-/*$ip = $_SERVER['REMOTE_ADDR'];
-// these are the IP's that are  allowed to view the site:
-$allowed = array('183.82.3.50','69.162.124.234','182.73.138.105','62.4.6.49');
-if (!in_array($ip, $allowed)) {
-    include 'ray-allen-maintenance-page.html';
-    exit;
-}
-
-*/
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $_SERVER);
 /** @var \Magento\Framework\App\Http $app */
-$app = $bootstrap->createApplication('Magento\Framework\App\Http');
+$app = $bootstrap->createApplication(\Magento\Framework\App\Http::class);
 $bootstrap->run($app);

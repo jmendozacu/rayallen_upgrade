@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -35,7 +35,7 @@ class General extends \Magento\Backend\Test\Block\Widget\Tab
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getDataFormTab($fields = null, SimpleElement $element = null)
+    public function getFieldsData($fields = null, SimpleElement $element = null)
     {
         $context = $element ? $element : $this->_rootElement;
         return array_merge($this->getRequestDetails($context), ['comment' => $this->getCommentData()]);

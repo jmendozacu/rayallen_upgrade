@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Banner\Test\Block\Adminhtml\Banner\Edit\Tab;
@@ -41,7 +41,7 @@ class Content extends \Magento\Cms\Test\Block\Adminhtml\Page\Edit\Tab\Content
      * @param SimpleElement|null $element
      * @return $this
      */
-    public function fillFormTab(array $fields, SimpleElement $element = null)
+    public function setFieldsData(array $fields, SimpleElement $element = null)
     {
         if (isset($fields['store_contents_not_use'])) {
             foreach ($fields['store_contents_not_use']['value'] as $key => $storeContentUse) {
@@ -96,7 +96,7 @@ class Content extends \Magento\Cms\Test\Block\Adminhtml\Page\Edit\Tab\Content
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getDataFormTab($fields = null, SimpleElement $element = null)
+    public function getFieldsData($fields = null, SimpleElement $element = null)
     {
         $storeContent = [];
         $count = 0;

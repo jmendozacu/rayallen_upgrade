@@ -1,16 +1,39 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
+\Magento\TestFramework\Helper\Bootstrap::getInstance()->reinitialize();
 /** @var $permission \Magento\CatalogPermissions\Model\Permission */
+$objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+
+$productRepository = $objectManager->create(
+    \Magento\Catalog\Api\ProductRepositoryInterface::class
+);
+
+$categoryLinkRepository = $objectManager->create(
+    \Magento\Catalog\Api\CategoryLinkRepositoryInterface::class,
+    [
+        'productRepository' => $productRepository
+    ]
+);
+
+/** @var Magento\Catalog\Api\CategoryLinkManagementInterface $linkManagement */
+$categoryLinkManagement = $objectManager->create(
+    \Magento\Catalog\Api\CategoryLinkManagementInterface::class,
+    [
+        'productRepository' => $productRepository,
+        'categoryLinkRepository' => $categoryLinkRepository
+    ]
+);
+
 $permission = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    'Magento\CatalogPermissions\Model\Permission'
+    \Magento\CatalogPermissions\Model\Permission::class
 );
 $permission->setWebsiteId(
     \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        'Magento\Store\Model\StoreManagerInterface'
+        \Magento\Store\Model\StoreManagerInterface::class
     )->getWebsite()->getId()
 )->setCategoryId(
     6
@@ -26,11 +49,11 @@ $permission->setWebsiteId(
 
 /** @var $permissionAllow \Magento\CatalogPermissions\Model\Permission */
 $permissionAllow = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    'Magento\CatalogPermissions\Model\Permission'
+    \Magento\CatalogPermissions\Model\Permission::class
 );
 $permissionAllow->setWebsiteId(
     \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-        'Magento\Store\Model\StoreManagerInterface'
+        \Magento\Store\Model\StoreManagerInterface::class
     )->getWebsite()->getId()
 )->setCategoryId(
     12
@@ -45,15 +68,15 @@ $permissionAllow->setWebsiteId(
 )->save();
 
 $installer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    'Magento\Catalog\Setup\CategorySetup'
+    \Magento\Catalog\Setup\CategorySetup::class
 );
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
 $product->setTypeId(
     \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
 )->setId(
-    5
+    155
 )->setAttributeSetId(
     $installer->getAttributeSetId('catalog_product', 'Default')
 )->setStoreId(
@@ -63,7 +86,7 @@ $product->setTypeId(
 )->setName(
     'Simple Product Two Permission Test'
 )->setSku(
-    '12345'
+    '12345-1'
 )->setPrice(
     45.67
 )->setWeight(
@@ -77,3 +100,7 @@ $product->setTypeId(
 )->setStatus(
     \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED
 )->save();
+$categoryLinkManagement->assignProductToCategories(
+    $product->getSku(),
+    [6]
+);

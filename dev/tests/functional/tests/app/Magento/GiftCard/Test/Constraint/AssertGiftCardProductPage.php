@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,31 +9,33 @@ namespace Magento\GiftCard\Test\Constraint;
 use Magento\Catalog\Test\Constraint\AssertProductPage;
 
 /**
- * Class AssertGiftCardProductPage
  * Assert that displayed product data on product page(front-end) equals passed from fixture.
  */
 class AssertGiftCardProductPage extends AssertProductPage
 {
     /**
-     * Verify displayed product price on product page(front-end) equals passed from fixture
+     * Verify displayed product price on product page(front-end) equals passed from fixture.
      *
      * @return string|null
      */
     protected function verifyPrice()
     {
         $productData = $this->product->getData();
-        $priceOnPage = $this->productView->getPriceBlock()->getPrice();
-        $price = null;
+        $priceBlock = $this->productView->getPriceBlock();
+        if (!$priceBlock->isVisible()) {
+            return "Price block for '{$this->product->getName()}' product' is not visible.";
+        }
+        $actualPrice = $priceBlock->getPrice();
 
+        $expectedPrice = null;
         if (isset($productData['giftcard_amounts']) && 1 == count($productData['giftcard_amounts'])) {
             $amount = reset($productData['giftcard_amounts']);
-            $price = $amount['price'];
+            $expectedPrice = $amount['value'];
         }
-
-        if ($price == $priceOnPage) {
+        if ($expectedPrice == $actualPrice) {
             return null;
         }
         return "Displayed product price on product page(front-end) not equals passed from fixture. "
-        . "Actual: {$priceOnPage}, expected: {$price}.";
+        . "Actual: {$actualPrice}, expected: {$expectedPrice}.";
     }
 }

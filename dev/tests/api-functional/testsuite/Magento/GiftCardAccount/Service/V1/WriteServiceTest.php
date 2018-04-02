@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -30,11 +30,11 @@ class WriteServiceTest extends WebapiAbstract
     public function testDelete()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
+        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
         $quote->load('test_order_1', 'reserved_order_id');
         $quoteId = $quote->getId();
         $requestData = [
-            'quoteId' => $quoteId,
+            'cartId' => $quoteId,
             'giftCardCode' => 'giftcardaccount_fixture',
         ];
         $serviceInfo = [
@@ -51,7 +51,7 @@ class WriteServiceTest extends WebapiAbstract
         $result = $this->_webApiCall($serviceInfo, $requestData);
         $this->assertTrue($result);
         $quote->load('test_order_1', 'reserved_order_id');
-        $this->assertEquals(serialize([]), $quote->getGiftCards());
+        $this->assertEquals('[]', $quote->getGiftCards());
     }
 
     /**
@@ -61,7 +61,7 @@ class WriteServiceTest extends WebapiAbstract
     public function testSetCouponSuccess()
     {
         /** @var \Magento\Quote\Model\Quote $quote */
-        $quote = $this->objectManager->create('Magento\Quote\Model\Quote');
+        $quote = $this->objectManager->create(\Magento\Quote\Model\Quote::class);
         $quote->load('test_order_1', 'reserved_order_id');
         $quoteId = $quote->getId();
 

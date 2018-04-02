@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -21,6 +21,8 @@ use Magento\Mtf\ObjectManager;
 
 /**
  * Open created reminder and assert customer in Matched Customers grid.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AssertReminderMatchedCustomers extends AbstractConstraint
 {
@@ -149,7 +151,7 @@ class AssertReminderMatchedCustomers extends AbstractConstraint
     protected function addProductToCart(Customer $customer, $productQty)
     {
         ObjectManager::getInstance()->create(
-            '\Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep',
+            \Magento\Customer\Test\TestStep\LoginCustomerOnFrontendStep::class,
             ['customer' => $customer]
         )->run();
 
@@ -157,6 +159,7 @@ class AssertReminderMatchedCustomers extends AbstractConstraint
         $this->catalogProductView->getViewBlock()->fillOptions($this->product);
         $this->catalogProductView->getViewBlock()->setQty($productQty);
         $this->catalogProductView->getViewBlock()->clickAddToCart();
+        $this->catalogProductView->getMessagesBlock()->waitSuccessMessage();
     }
 
     /**
