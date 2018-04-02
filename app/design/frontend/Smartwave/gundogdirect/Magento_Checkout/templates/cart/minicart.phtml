@@ -14,17 +14,17 @@
        data-bind="scope: 'minicart_content'">
         <span class="text"><?php echo __('Shopping Cart'); ?></span>
         <span class="counter qty empty"
-              data-bind="css: { empty: cart().summary_count == 0 }, blockLoader: isLoading">
-            <span class="counter-number"><!-- ko text: '' --><!-- /ko --><!-- ko text: cart().summary_count --><!-- /ko --><!-- ko text: '' --><!-- /ko -->
+              data-bind="css: { empty: !!getCartParam('summary_count') == false }, blockLoader: isLoading">
+            <span class="counter-number"><!-- ko text: '' --><!-- /ko --><!-- ko text: getCartParam('summary_count') --><!-- /ko --><!-- ko text: '' --><!-- /ko -->
             </span>			
             <span class="counter-label">
-            <!-- ko if: cart().summary_count <= 1 -->
+            <!-- ko if: getCartParam('summary_count') <= 1 -->
                 <!-- ko i18n: 'item :' --><!-- /ko -->
             <!-- /ko -->
-            <!-- ko if: cart().summary_count > 1 -->
+            <!-- ko if: getCartParam('summary_count') > 1 -->
                 <!-- ko i18n: 'items :' --><!-- /ko -->
             <!-- /ko -->	
-			<span data-bind="html: cart().subtotal"></span>		
+			<span data-bind="html: getCartParam('subtotal')"></span>		
             </span>	
         </span>
     </a>
@@ -41,12 +41,12 @@
                 "parentClass":"active",
                 "buttons":[]}}'>
             <div id="minicart-content-wrapper" data-bind="scope: 'minicart_content'">
-				<!-- ko if: cart().summary_count >= 1 -->
+				<!-- ko if: getCartParam('summary_count') >= 1 -->
 				<div class="min-cart-subtotal">
 					<span class="label">
 					Cart Subtotal : 
 				</span>
-				<span data-bind="html: cart().subtotal"></span>
+				<span data-bind="html: getCartParam('subtotal')"></span>
 				</div>
 				<!-- /ko -->
                 <!-- ko template: getTemplate() --><!-- /ko -->
