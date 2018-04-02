@@ -27,7 +27,8 @@
     "require": {
         "magento/product-enterprise-edition": "2.2.3",
         "composer/composer": "@alpha",
-        "mirasvit/module-search-ultimate": "*"
+        "mirasvit/module-search-ultimate": "*",
+        "magento/extension-b2b": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.0",
