@@ -1,0 +1,10 @@
+{
+    "name": "mageworx/module-sitemapsuitemeta",
+    "version": "2.2.0",
+    "type": "metapackage",
+    "require": {
+        "mageworx/module-seoall": "2.1.4",
+        "mageworx/module-xmlsitemap": "2.2.0",
+        "mageworx/module-htmlsitemap": "2.1.9"
+    }
+}
