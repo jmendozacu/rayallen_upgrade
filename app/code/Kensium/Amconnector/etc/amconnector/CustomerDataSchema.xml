@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body>
+        <GetList xmlns="http://www.acumatica.com/entity/5.30.001/Default/">
+            <entity xsi:type="Customer">
+                <ID xsi:nil="true"/>
+                <Delete>false</Delete>
+                <AccountRef xsi:nil="true"/>
+                <ApplyOverdueCharges xsi:nil="true"/>
+                <AutoApplyPayments xsi:nil="true"/>
+                <BillingAddressSameAsMain xsi:nil="true"/>
+                <BillingContact xsi:nil="true"/>
+                <BillingContactSameAsMain xsi:nil="true"/>
+                <Contacts xsi:nil="true"/>
+                <CreditDaysPastDue xsi:nil="true"/>
+                <CreditLimit xsi:nil="true"/>
+                <CreditVerification xsi:nil="true"/>
+                <CurrencyID xsi:nil="true"/>
+                <CustomerClass xsi:nil="true"/>
+                <CustomerID xsi:nil="true"/>
+                <CustomerName xsi:nil="true"/>
+                <EnableWriteOffs xsi:nil="true"/>
+                <FirstInvoiceDate xsi:nil="true"/>
+                <FOBPoint xsi:nil="true"/>
+                <LastModified xsi:type="DateTimeSearch">
+                    <Value>FROMDATE</Value>
+                    <HasError>false</HasError>
+                    <Condition>IsBetween</Condition>
+                    <Value2>TODATE</Value2>
+                </LastModified>
+                <LeadTimedays xsi:nil="true"/>
+                <LocationName xsi:nil="true"/>
+                <MainContact xsi:nil="true"/>
+                <OpenOrdersBalance xsi:nil="true"/>
+                <OrderPriority xsi:nil="true"/>
+                <ParentRecord xsi:nil="true"/>
+                <PriceClassID xsi:nil="true"/>
+                <PrintInvoices xsi:nil="true"/>
+                <PrintStatements xsi:nil="true"/>
+                <RemainingCreditLimit xsi:nil="true"/>
+                <ResidentialDelivery xsi:nil="true"/>
+                <SaturdayDelivery xsi:nil="true"/>
+                <SendInvoicesbyEmail xsi:nil="true"/>
+                <SendStatementsbyEmail xsi:nil="true"/>
+                <ShippingAddressSameAsMain xsi:nil="true"/>
+                <ShippingBranch xsi:nil="true"/>
+                <ShippingContact xsi:nil="true"/>
+                <ShippingContactSameAsMain xsi:nil="true"/>
+                <ShippingRule xsi:nil="true"/>
+                <ShippingTerms xsi:nil="true"/>
+                <ShippingZoneID xsi:nil="true"/>
+                <ShipVia xsi:nil="true"/>
+                <StatementCycleID xsi:nil="true"/>
+                <Status xsi:nil="true"/>
+                <TaxRegistrationID xsi:nil="true"/>
+                <TaxZone xsi:nil="true"/>
+                <Terms xsi:nil="true"/>
+                <UnreleasedBalance xsi:nil="true"/>
+                <WarehouseID xsi:nil="true"/>
+                <WriteOffLimit xsi:nil="true"/>
+            </entity>
+            <returnFullEntities>true</returnFullEntities>
+        </GetList>
+    </soap:Body>
+</soap:Envelope>

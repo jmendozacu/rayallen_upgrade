@@ -1,0 +1,40 @@
+<!--@subject License Request @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"skin url=\"images/logo_email.gif\" _area='frontend'":"Email Logo Image"}
+@-->
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
+<!--@subject {{trans "License Request"}}  @-->
+{{template config_path="design/email/header_template"}}
+<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td align="center" valign="top" style="padding:20px 0 20px 0">
+                <!-- [ header starts here] -->
+                <table bgcolor="FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
+                    <tr>
+                        <td valign="top">
+                            <a href=""><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></td>
+                    </tr>
+                    <!-- [ middle starts here] -->
+                    <tr>
+                        <td valign="top">
+                            <h1 style="font-size:16px; font-weight:normal; line-height:22px; margin:0 0 11px 0;">License Request Details are :</h1>
+                            <p style="font-size:12px; margin:0;"><strong>Domain Name :</strong> {{var domain}}</p>
+                            <p style="font-size:12px; margin:0;"><strong>Ip Address :</strong> {{var ip_address}}</p>
+                            <p style="font-size:12px; margin:0;"><strong>Mac Id :</strong> {{var mac_id}}</p>
+                            <p style="font-size:12px; margin:0;"><strong>License Type :</strong> {{var license_type}}</p>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;"><center><p style="font-size:12px; margin:0;">Thank you again, <strong>{{var store.getFrontendName()}}</strong></p></center></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+{{template config_path="design/email/footer_template"}}

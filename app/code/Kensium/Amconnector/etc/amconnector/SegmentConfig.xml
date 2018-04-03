@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body>
+        <GetList xmlns="http://www.acumatica.com/entity/5.30.001/Default/">
+            <entity xsi:type="SegmentConfiguration">
+                <ID xsi:nil="true"/>
+                <Delete>false</Delete>
+                <Description xsi:nil="true"/>
+                <Length xsi:nil="true"/>
+                <MaxLength xsi:nil="true"/>
+                <NumberingID xsi:nil="true"/>
+                <OnTheFlyEntry xsi:nil="true"/>
+                <Parent xsi:nil="true"/>
+                <SegmentedKeyID xsi:nil="true"/>
+                <Segments xsi:nil="true"/>
+                <SegmentValues xsi:nil="true"/>
+                <SpecificModule xsi:nil="true"/>
+            </entity>
+            <returnFullEntities>true</returnFullEntities>
+        </GetList>
+    </soap:Body>
+</soap:Envelope>

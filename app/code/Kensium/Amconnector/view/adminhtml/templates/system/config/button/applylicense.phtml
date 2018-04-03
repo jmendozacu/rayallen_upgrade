@@ -1,0 +1,58 @@
+<?php
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+?>
+<script type="text/javascript">
+    //<![CDATA[
+    function apply() {
+        var licenseKey = document.getElementById('licence_keys').value;
+        var current_store_id = document.getElementById('current_store_id').value;
+        if (!licenseKey) {
+            alert("Invalid License Key. Please try again.");
+            return false;
+        }
+        new Ajax.Request('<?php echo $this->getAjaxUrl() ?>', {
+            method: 'get',
+            parameters: {license: licenseKey,current_store_id: current_store_id},
+            onSuccess: function (transport) {
+                if (transport.responseText) {
+                    location.reload();
+                }
+            }
+        });
+    }
+//    function checkUrl() {
+//        new Ajax.Request('<?php //echo $this->getServerCheckUrl() ?>//', {
+//            method: 'get',
+//            parameters: {serverUrl: document.getElementById('server_url').value},
+//            onSuccess: function (transport) {
+//                if (transport.responseText) {
+//                    location.reload();
+//                }
+//            }
+//
+//        });
+//    }
+//
+//    function testConnection() {
+//        new Ajax.Request('<?php //echo $this->getTestConnection() ?>//', {
+//            method: 'get',
+//            parameters: {serverUrl: document.getElementById('server_url').value},
+//            onSuccess: function (transport) {
+//                if (transport.responseText) {
+//                    location.reload();
+//                }
+//            }
+//        });
+//    }
+    //]]>
+</script>
+<div class="pp-buttons-container">
+    <div id="apply_license" class="message-validation hidden"></div>
+    <button id="<?php echo $block->getHtmlId(); ?>" onclick= "javascript:apply(); return false;">
+        <span><span><span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span></span></span>
+    </button>
+</div>
