@@ -7,7 +7,6 @@ class NewProducts extends \Magento\Catalog\Block\Product\ListProduct
     protected $productFactory;
 
     public function __construct(
-        \Magento\Catalog\Block\Product\Context $context,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Block\Product\Context $context,
