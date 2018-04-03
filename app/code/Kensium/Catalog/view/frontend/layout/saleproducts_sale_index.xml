@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
-    <body>
-        <referenceContainer name="content">
-            <block class="Kensium\Catalog\Block\SaleProducts" name="saleproducts" template="Kensium_Catalog::product/sale.phtml" >
-            </block>
-        </referenceContainer>
-    </body>
-</page><!--Magento\Framework\View\Element\Template (or) Kensium\Freecatalog\Block\Testimonial-->
