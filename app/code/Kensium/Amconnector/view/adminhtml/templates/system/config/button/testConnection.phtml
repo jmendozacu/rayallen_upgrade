@@ -1,0 +1,100 @@
+<?php
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+/**
+ * testConnection.phtml
+ */
+?>
+<?php
+    $ajaxUrl = explode('||',$block->getAjaxUrl());
+    $testConnectionUrl  = $ajaxUrl[0];
+    $checkUrl           = $ajaxUrl[1];
+    $confirmPasswordUrl = $ajaxUrl[2];
+    $logviewurl         = $ajaxUrl[3];
+    $baseurl            = $ajaxUrl[4];
+?>
+<script>
+        /* TEST CONNECTION */
+        require(["jquery","jquery/ui","Kensium_Amconnector/js/jquery.colorbox-min"], function (jQuery) {
+         jQuery(document).ready(function() {
+             
+        });
+    });
+        function testConnection() {
+                var logviewurl = '<?php echo $logviewurl; ?>';
+                var baseurl = '<?php echo $baseurl; ?>';
+                var connectionurl = '<?php echo $testConnectionUrl; ?>';
+                var synctitle = 'Test Connection';
+                jQuery.colorbox({html:"",rel:'group3',href: logviewurl,iframe:true, innerWidth:"50%", innerHeight:"50%",title:"<div style  = 'float:left;width:100%;background-size:100% 100%;height:50px;background-image:url("+baseurl+"adminhtml/Magento/backend/en_US/Kensium_Amconnector/images/header_bg.gif);' > <span style='height: 36px; width: 35px; padding: 2px; text-align: center; margin: 6px -5px 0px 10px; float: left; background:#fff url("+baseurl+"adminhtml/Magento/backend/en_US/Kensium_Amconnector/images/amconnector/amconnector_medium.png) no-repeat 2px 2px; border-radius: 20px;' ></span>  <span style = 'float:left;font-size:20px;font-weight:bold;color:white;padding: 14px; ' >Acumatica - " + synctitle + "</span> </div>",onClosed:function() { location.reload(true); }});
+                jQuery.ajax({
+                    url:connectionurl,
+                    method:"GET",
+                    data: {
+                        serverUrl:document.getElementById('amconnectorcommon_amconnectoracucon_serverUrl').value,
+                        userName:document.getElementById('amconnectorcommon_amconnectoracucon_userName').value,
+                        password:document.getElementById('amconnectorcommon_amconnectoracucon_password').value,
+                        confirmPassword:document.getElementById('amconnectorcommon_amconnectoracucon_confirmPassword').value,
+                        company:document.getElementById('amconnectorcommon_amconnectoracucon_companyName').value,
+                        store:'<?php echo $this->getRequest()->getParam('store', NULL) ?>'
+                    }
+                });
+        }
+    /**
+     * Server Url validation
+     * It will display proper message for Valid / Invalid Server URL
+     *
+     */
+    function checkUrl() {
+        new Ajax.Request('<?php /* @escapeNotVerified */ echo $checkUrl; ?>', {
+            method:     'get',
+            parameters: { serverUrl : document.getElementById('amconnectorcommon_amconnectoracucon_serverUrl').value},
+            onSuccess: function(transport){
+                if (transport.responseText == 1){
+                    document.getElementById('statussuccessMsg').innerHTML = "Server URL is validated.";
+                    document.getElementById('statusMessage').innerHTML = "";
+                }
+                if (transport.responseText == 2){
+                    document.getElementById('statusMessage').innerHTML = "Invalid Server URL";
+                    document.getElementById('statussuccessMsg').innerHTML = "";
+                }
+                if (transport.responseText == 0){
+                    document.getElementById('statusMessage').innerHTML = " ";
+                    document.getElementById('statussuccessMsg').innerHTML = "";
+                }
+            }
+        });
+    }
+    /**
+     *  Compare password and confirm password
+     *  If both are not equal then it will display error
+     */
+    function confirmPassword() {
+        document.getElementById('errorConfirmPassword').innerHTML =  "";
+        new Ajax.Request('<?php echo $confirmPasswordUrl; ?>', {
+            method:     'get',
+            parameters: {
+                password    : document.getElementById('amconnectorcommon_amconnectoracucon_password').value ,
+                cPassword   : document.getElementById('amconnectorcommon_amconnectoracucon_confirmPassword').value
+            },
+            onSuccess: function(transport){
+                if (transport.responseText){
+                    if (transport.responseText == 0){
+                        document.getElementById('errorConfirmPassword').innerHTML =  "Invalid Password. Please try again.";
+                    }
+                    if (transport.responseText == 1){
+                        document.getElementById('errorConfirmPassword').innerHTML =  "";
+                    }
+                }
+            }
+        });
+    }
+</script>
+<div class="pp-buttons-container">
+    <div id="connection_status" class="message-validation hidden"></div>
+    <button id="<?php echo $block->getHtmlId(); ?>" onclick="javascript:testConnection(); return false;">
+        <span><span><span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span></span></span>
+    </button>
+</div>

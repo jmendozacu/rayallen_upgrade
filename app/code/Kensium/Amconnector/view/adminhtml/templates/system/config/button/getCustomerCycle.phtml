@@ -1,0 +1,46 @@
+<?php
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+/**
+ * getCustomerCycle.phtml
+ */
+?>
+<script>
+    require(['prototype'], function () {
+        function getCustomerCycleData() {
+            var websiteCode = '<?php echo $this->getRequest()->getParam("website"); ?>';
+            var store = '<?php echo $this->getRequest()->getParam("store"); ?>';
+            if(websiteCode != ''){
+                var website = websiteCode;
+                var storeCode = "";
+            }else{
+                var website = 'default';
+                var storeCode = "";
+            }
+            if(store != ''){
+                var website = "stores";
+                var storeCode = store;
+            }
+            params = {
+                scope : website,
+                store : storeCode
+            };
+            new Ajax.Request('<?php /* @escapeNotVerified */ echo $block->getAjaxUrl() ?>', {
+                parameters: params,
+                onSuccess: function (response) {
+                    location.reload();
+                }
+            });
+        }
+        window.getCustomerCycleData = getCustomerCycleData;
+    });
+</script>
+<div class="pp-buttons-container">
+    <div id="connection_status" class="message-validation hidden"></div>
+    <button id="<?php echo $block->getHtmlId(); ?>" onclick="javascript:getCustomerCycleData(); return false;">
+        <span><span><span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span></span></span>
+    </button>
+</div>

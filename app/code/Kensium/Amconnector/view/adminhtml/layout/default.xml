@@ -1,0 +1,9 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <!-- for css file -->
+        <css src="Kensium_Amconnector::css/colorbox.css"/>
+        <css src="Kensium_Amconnector::css/amconnector.css"/>
+        <link src="requirejs/require.js"/>
+        <link src="Kensium_Amconnector/js/amconnector.js"/>
+    </head>
+</page>

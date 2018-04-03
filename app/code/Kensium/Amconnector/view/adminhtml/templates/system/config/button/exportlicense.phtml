@@ -1,0 +1,94 @@
+<?php
+/**
+ * @category   Amconnector
+ * @package    Kensium_Amconnector
+ * @copyright  Copyright (c) 2016 Kensium Solution Pvt.Ltd. (http://www.kensiumsolutions.com/)
+ */
+/**
+ * exportlicense.phtml
+ */
+?>
+<script type="text/javascript">
+    function getSelectedOptions(element) {
+        // validate element
+        if (!element || !element.options)
+            return []; //or null?
+
+        // return HTML5 implementation of selectedOptions instead.
+        if (element.selectedOptions)
+            return element.selectedOptions;
+
+        // you are here because your browser doesn't have the HTML5 selectedOptions
+        var opts = element.options;
+        var selectedOptions = [];
+        for (var i = 0; i < opts.length; i++) {
+            if (opts[i].selected) {
+                selectedOptions.push(opts[i]);
+            }
+        }
+        return selectedOptions;
+    }
+    //Export license request
+    function exportcheck(url) {
+
+        var domain = getSelectedOptions(document.getElementById("amconnectorlicense_licenserequest_domainnames"));
+        var domains = "";
+        for (var i = 0; i < domain.length; i++) {
+            domains += domain[i].value + ",";
+        }
+
+        var macid = getSelectedOptions(document.getElementById("amconnectorlicense_licenserequest_macids"));
+        var macids = "";
+        for (var i = 0; i < macid.length; i++) {
+            macids += macid[i].value + ",";
+        }
+
+        var ipaddress = document.getElementById('amconnectorlicense_licenserequest_ipaddress').value;
+        var email = document.getElementById('amconnectorlicense_licenserequest_emailrecipient').value;
+        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        if (!re.test(email)) {
+            alert("Please provide a valid email address.");
+            return false;
+        }
+        var license_type = document.getElementById('amconnectorlicense_licenserequest_licensetype').value;
+        var terms = document.getElementById('terms').checked;
+        if (terms) {
+            terms = 1;
+        } else {
+            alert("Please Accept Terms & Conditions to proceed further.");
+            return false;
+        }
+        var comments = document.getElementById('amconnectorlicense_licenserequest_comments').value;
+        console.log("domains =="+domains);
+        console.log("macids =="+macids);
+        console.log("ipaddress =="+ipaddress);
+        console.log("email =="+email);
+        console.log("license_type =="+license_type);
+        console.log("terms =="+terms);
+        //return false;
+        new Ajax.Request('<?php echo $this->getAjaxUrl() ?>', {
+            method: 'post',
+            parameters: {
+                domain: domains,
+                macid: macids,
+                ipaddress: ipaddress,
+                email: email,
+                license_type: license_type,
+                terms: terms,
+                comment: comments
+            },
+
+            onSuccess: function (transport) {
+                setLocation(url);
+            }
+        });
+
+    }
+    //]]>
+</script>
+<div class="pp-buttons-container">
+    <div id="export_license_request" class="message-validation hidden"></div>
+    <button id="<?php echo $block->getHtmlId(); ?>" onclick= "javascript:exportcheck(url); return false;">
+        <span><span><span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span></span></span>
+    </button>
+</div>

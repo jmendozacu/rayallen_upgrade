@@ -1,0 +1,8 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="admin_system_config_changed_section_amconnectorsync">
+        <observer name="amconnectorSyncObserver" instance="Kensium\Amconnector\Observer" />
+    </event>
+    <!--event name="controller_action_catalog_product_save_entity_after">
+        <observer name="product_updated_at" instance="Kensium\Amconnector\Observer\SaveProductUpdatedAt"/>
+    </event!-->
+</config>

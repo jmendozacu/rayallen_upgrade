@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="error_log_email_template" label="Error Email" file="error_log_email.html" type="html" module="Kensium_Amconnector" area="adminhtml"/>
+    <template id="amconnector_log_cleaning_template" label="Archive File Email" file="amconnector_log_cleaning.html" type="text" module="Kensium_Amconnector" area="adminhtml"/>
+    <template id="amconnector_log_cleaning_error_template" label="Archive File Error Email" file="amconnector_log_error_cleaning.html" type="text" module="Kensium_Amconnector" area="adminhtml"/>
+    <template id="license_request" label="Success Email" file="license_request.html" type="html" module="Kensium_Amconnector" area="adminhtml"/>
+    <template id="license_delete_request" label="Error Email" file="license_delete_request.html" type="html" module="Kensium_Amconnector" area="adminhtml"/>
+</config>
