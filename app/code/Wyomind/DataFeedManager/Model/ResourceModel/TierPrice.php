@@ -9,21 +9,35 @@ namespace Wyomind\DataFeedManager\Model\ResourceModel;
 
 class TierPrice extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    
+    /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    public function __construct(
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
+        $connectionName = null
+    ) {
+        $this->metadataPool = $metadataPool;
+        parent::__construct($context, $connectionName);
+    }
+
     public function _construct()
     {
         $this->_init('datafeedmanager_feeds', 'id');
     }
-    
+
     public function getTierPrices($websiteId)
     {
+        $linkField = $this->metadataPool->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)->getLinkField();
         $connection = $this->getConnection();
         $sql = $connection->select();
-        
+
         $tableCpetp = $connection->getTableName("catalog_product_entity_tier_price");
-        
-        $sql->from(["cpetp" => $tableCpetp], ["entity_id", "all_groups", "customer_group_id", "value", "qty"]);
-        $sql->order(["cpetp.entity_id", "cpetp.customer_group_id", "cpetp.qty"]);
+
+        $sql->from(["cpetp" => $tableCpetp], [$linkField, "all_groups", "customer_group_id", "value", "qty"]);
+        $sql->order(["cpetp.{$linkField}", "cpetp.customer_group_id", "cpetp.qty"]);
         $sql->where("cpetp.website_id=" . $websiteId . " OR cpetp.website_id=0");
         $result = $connection->fetchAll($sql);
 
@@ -37,7 +51,7 @@ class TierPrice extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 $tierPrices[$tp["entity_id"]][$tp["customer_group_id"]][] = ["qty" => $tp['qty'], "value" => $tp['value']];
             }
         }
-        
+
         return $tierPrices;
     }
 }

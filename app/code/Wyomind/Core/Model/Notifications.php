@@ -1,30 +1,61 @@
 <?php
 
 /**
- * Copyright © 2015 Wyomind. All rights reserved.
+ * Copyright © 2017 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
  */
 
 namespace Wyomind\Core\Model;
 
 /**
- * License Notifications
+ * License backend Notifications
  */
 class Notifications extends \Magento\AdminNotification\Model\System\Message
 {
 
-    const SOAP_URL = "https://www.wyomind.com/services/licenses/webservice.soap.php";
-    const SOAP_URI = "https://www.wyomind.com/";
-    const WS_URL = "https://www.wyomind.com/license_activation/?licensemanager=%s&";
-
+    /**
+     * @var array
+     */
     protected $_values = [];
-    protected $_version = "3.0.4";
+
+    /**
+     * @var string
+     */
+    public $version = "";
+
+    /**
+     * @var array
+     */
     protected $_warnings = [];
+
+    /**
+     * @var \Wyomind\Core\Helper\Data
+     */
     protected $_coreHelper = null;
+
+    /**
+     * @var
+     */
     protected $_cacheManager = null;
-    protected $_directoryRead = null;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Directory\ReadFactory array
+     */
+    protected $_directoryRead = [];
+
+    /**
+     * @var \Magento\Framework\App\Filesystem\DirectoryList
+     */
     protected $_directoryList = null;
+
+    /**
+     * @var boolean
+     */
     protected $_refreshCache = false;
+
+    /**
+     * @var array
+     */
     protected $_messages = [
         "activation_key_warning" => "Your activation key is not yet registered.<br>Go to <a href='%s'>Stores > Configuration > Wyomind > %s</a>.",
         "license_code_warning" => "Your license is not yet activated.<br><a target='_blank' href='%s'>Activate it now !</a>",
@@ -34,14 +65,41 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
         "ws_failure" => "<b style='color:red'>%s</b>",
         "ws_no_allowed" => "Your server doesn't allow remote connections.<br><a target='_blank' href='%s'>Please go to Wyomind license manager</a>",
         "upgrade" => "<u>Extension upgrade from v%s to v%s</u>.<br> Your license must be updated.<br>Please clean all caches and reload this page.",
-        "license_warning" => "License Notification",
-        "flag" => "Your license has been deactivated because of wrong activation key or license code.<br>Go to <a href='%s'>Stores > Configuration > Wyomind > %s</a>."
+        "license_warning" => "License Notification"
     ];
 
+    /**
+     * @var string
+     */
+    protected $_magentoVersion = 0;
+
+    /**
+     * @var \Wyomind\Core\Logger\Logger
+     */
+    protected $_logger = null;
+
+    /**
+     * @var boolean
+     */
+    protected $_logEnabled = false;
+
+    /**
+     * @var \Magento\Backend\Model\Auth\Session
+     */
+    protected $_auth = null;
+
+    /**
+     * @var \Magento\Framework\HTTP\PhpEnvironment\Request
+     */
+    public $request = null;
+    protected $_configResourceModel = null;
+    protected $_encryptor = null;
+    protected $_licenseHelper = null;
+
     public function __construct(
-        \Magento\Framework\Model\Context $context,
+    \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Module\ModuleList $moduleList,
+        \Wyomind\Core\Helper\License $licenseHelper,
         \Magento\Framework\App\Config\MutableScopeConfigInterface $scopeConfig,
         \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Framework\Session\SessionManagerInterface $session,
@@ -49,52 +107,71 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
         \Magento\Framework\Filesystem\Directory\ReadFactory $directoryRead,
         \Magento\Framework\Filesystem\File\ReadFactory $fileRead,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        \Wyomind\Core\Logger\Logger $logger,
+        \Magento\Backend\Model\Auth\Session $auth,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $request,
+        \Wyomind\Core\Model\ResourceModel\Config $configResourceModel,
+        \Magento\Framework\Encryption\EncryptorInterface $encryptor,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    ) {
+    )
+    {
 
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
 
-
-        $this->_moduleList = $moduleList;
+        $this->_magentoVersion = $coreHelper->getMagentoVersion();
         $this->_scopeConfig = $scopeConfig;
         $this->_urlBuilder = $urlBuilder;
         $this->_cacheManager = $context->getCacheManager();
         $this->_session = $session;
         $this->_coreHelper = $coreHelper;
+        $this->_logEnabled = $this->_coreHelper->isLogEnabled();
+        $this->_logger = $logger;
+        $this->_auth = $auth;
+        $this->_configResourceModel = $configResourceModel;
+        $this->_encryptor = $encryptor;
         $root = $directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::ROOT);
         if (file_exists($root . "/vendor/wyomind/")) {
-            $this->_directoryRead = $directoryRead->create($root . "/vendor/wyomind/");
-        } else {
-            $this->_directoryRead = $directoryRead->create($root . "/app/code/Wyomind/");
+            $this->_directoryRead[$root . "/vendor/wyomind/"] = $directoryRead->create($root . "/vendor/wyomind/");
         }
+        if (file_exists($root . "/app/code/Wyomind/")) {
+            $this->_directoryRead[$root . "/app/code/Wyomind/"] = $directoryRead->create($root . "/app/code/Wyomind/");
+        }
+
         $this->_httpRead = $fileRead;
         $this->_directoryList = $directoryList;
 
-        $this->_version = $this->_moduleList->getOne("Wyomind_Core")['setup_version'];
+        $this->_licenseHelper = $licenseHelper;
+
+        $this->version = $licenseHelper->getCoreVersion();
 
         $this->_refreshCache = false;
 
-        $this->getValues();
-        foreach ($this->_values as $ext) {
-            $this->checkActivation($ext);
-        }
+        if ($request->getParam("isAjax") !== "true") {
+            $this->getValues();
+            foreach ($this->_values as $ext) {
+                $this->checkActivation($ext);
+            }
 
-        if ($this->_refreshCache) {
-            $this->_cacheManager->clean(['config']);
+            if ($this->_refreshCache) {
+                $this->_cacheManager->clean(['config']);
+            }
+            $session->setData("wyomind_core_warnings", serialize($this->_warnings));
+        } else {
+            $this->_warnings = unserialize($session->getData("wyomind_core_warnings"));
         }
     }
-    
-    public function isModuleEnabled($module) {
-        $module = strtolower($module);
-        $list = $this->_moduleList->getNames();
-        foreach ($list as $mod) {
-            if (strtolower($mod) == "wyomind_".$module) {
-                return true;
-            }
+
+    /**
+     * Add a line in the log
+     * @param string $msg
+     */
+    public function notice($msg)
+    {
+        if ($this->_logEnabled) {
+            $this->_logger->notice($msg);
         }
-        return false;
     }
 
     /**
@@ -104,14 +181,24 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
     {
         $dir = ".";
         $ret = [];
-        foreach ($this->_directoryRead->read($dir) as $file) {
-            if ($this->_directoryRead->isDirectory($file) && $file != "." && $file != "..") {
-                if ($this->_directoryRead->isFile($file . "/etc/config.xml")) {
-                    $namespace = strtolower(str_replace("./", "", $file));
-                    if ($this->isModuleEnabled(str_replace("./", "", $file))) { // disabled ?
-                        $label = $this->_coreHelper->getStoreConfig($namespace . "/license/extension_label");
-                        $version = $this->_coreHelper->getStoreConfig($namespace . "/license/extension_version");
-                        $ret[] = ["label" => $label, "value" => $file, "version" => $version];
+        foreach ($this->_directoryRead as $root => $directoryRead) {
+            foreach ($directoryRead->read($dir) as $file) {
+                if ($file !== "./Core" && $file !== "./core") {
+                    if ($directoryRead->isDirectory($file) && $file != "." && $file != "..") {
+                        if ($directoryRead->isFile($file . "/etc/config.xml")) {
+                            $namespace = strtolower(str_replace("./", "", $file));
+                            $xml = simplexml_load_file($root . $file . "/etc/module.xml");
+                            $modules = $xml->xpath('/config/module');
+                            $moduleName = "Wyomind_" . ucfirst($namespace);
+                            foreach ($modules as $module) {
+                                $moduleName = (string) $module['name'];
+                            }
+                            if ($this->_coreHelper->moduleIsEnabled($moduleName)) { // disabled ?
+                                $label = $this->_coreHelper->getStoreConfig($namespace . "/license/extension_label");
+                                $version = $this->_coreHelper->getStoreConfig($namespace . "/license/extension_version");
+                                $ret[] = ["label" => $label, "value" => $file, "version" => $version];
+                            }
+                        }
                     }
                 }
             }
@@ -141,18 +228,18 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
 
     /**
      * Add a license warning
-     * @param type $name
-     * @param type $type
-     * @param type $vars
+     * @param string $name
+     * @param string $type
+     * @param array $vars
      */
     protected function addWarning(
-        $name,
+    $name,
         $type,
         $vars = []
-    ) {
-
+    )
+    {
         if ($type) {
-            $output = $this->sprintfArray($this->_messages[$type], $vars);
+            $output = $this->_licenseHelper->sprintfArray($type, $vars);
         } else {
             $output = implode(" " . $vars);
         }
@@ -162,64 +249,89 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
     }
 
     /**
-     * Print array
-     * @param string $format
-     * @param array  $arr
-     * @return string
-     */
-    protected function sprintfArray(
-        $format,
-        $arr
-    ) {
-        return call_user_func_array("sprintf", array_merge((array) $format, $arr));
-    }
-
-    /**
      * Check if extension can be registered
-     * @param string $extension
+     * @param array $extension
      */
-    protected function checkActivation($extension)
+    public function checkActivation($extension)
     {
-        $wsUrl = sprintf(self::WS_URL, $this->_version);
+
+        $wsUrl = sprintf(\Wyomind\Core\Helper\License::WS_URL, $this->version);
 
         $ext = "" . strtolower(str_replace("./", "", $extension["value"]));
 
-        $activationKey = $this->_coreHelper->getDefaultConfigUncrypted($ext . "/license/activation_key");
-        $activationFlag = $this->_coreHelper->getDefaultConfig($ext . "/license/activation_flag");
         $licensingMethod = $this->_coreHelper->getDefaultConfig($ext . "/license/get_online_license");
-        $licenseCode = $this->_coreHelper->getDefaultConfigUncrypted($ext . "/license/activation_code");
-        $domain = $this->_coreHelper->getDefaultConfig("web/secure/base_url");
-
-        $registeredVersion = $this->_coreHelper->getDefaultConfig($ext . "/license/version");
         $currentVersion = $extension["version"];
 
-        $magentoVersion = \Magento\Framework\AppInterface::VERSION;
+        $registeredVersion = $this->_configResourceModel->getDefaultValueByPath($ext . "/license/version");
 
-        $wsParam = "&rv=" . $registeredVersion . "&cv=" . $currentVersion . "&namespace=" . $ext . "&activation_key=" . $activationKey . "&domain=" . $domain . "&magento=" . $magentoVersion;
+        if ($registeredVersion == "") {
+            $registeredVersion = $this->_coreHelper->getDefaultConfig($ext . "/license/version");
+        }
+        $activationKey = $this->_encryptor->decrypt($this->_configResourceModel->getDefaultValueByPath($ext . "/license/activation_key"));
+
+        
+
+        if ($activationKey == "") {
+            $activationKey = $this->_coreHelper->getDefaultConfig($ext . "/license/activation_key");
+            if ($activationKey != "") {
+                $this->_coreHelper->setDefaultConfigCrypted($ext . "/license/activation_key", $activationKey);
+            }
+        }
+
+        $licenseCode = $this->_encryptor->decrypt($this->_configResourceModel->getDefaultValueByPath($ext . "/license/activation_code"));
+        if ($licenseCode == "") {
+            $licenseCode = $this->_coreHelper->getDefaultConfigUncrypted($ext . "/license/activation_code");
+        }
+
+        $domain = str_replace("{{unsecure_base_url}}", $this->_configResourceModel->getDefaultValueByPath("web/unsecure/base_url"), $this->_configResourceModel->getDefaultValueByPath("web/secure/base_url"));
+        if ($domain == "") {
+            $domain = str_replace("{{unsecure_base_url}}", $this->_coreHelper->getDefaultConfig("web/unsecure/base_url"), $this->_coreHelper->getDefaultConfig("web/secure/base_url"));
+        }
+
+        $wsParam = "&rv=" . $registeredVersion . "&cv=" . $currentVersion . "&namespace=" . $ext . "&activation_key=" . $activationKey . "&domain=" . $domain . "&magento=" . $this->_magentoVersion;
         $soapParams = [
             "method" => "get",
-            "rv" => $registeredVersion,
-            "cv" => $currentVersion,
+            "rv" => ($registeredVersion != null) ? $registeredVersion : "",
+            "cv" => ($currentVersion != null) ? $currentVersion : "",
             "namespace" => $ext,
             "activation_key" => $activationKey,
             "domain" => $domain,
-            "magento" => $magentoVersion,
-            "licensemanager" => $this->_version
+            "magento" => $this->_magentoVersion,
+            "licensemanager" => $this->version
         ];
-
-        // licence supprimée car mauvais ak ou ac
-        if ($activationFlag == "1") {
-            $this->addWarning($extension["label"], "flag", [$this->_urlBuilder->getUrl("adminhtml/system_config/edit/section/" . $ext . "/"), $extension["label"]]);
-        } elseif ($registeredVersion != "" && $registeredVersion != $currentVersion && $licenseCode) { // Extension upgrade
+        // licence deleted because wrong ak or ac
+        if ($registeredVersion != "" && $registeredVersion != $currentVersion && $licenseCode) { // Extension upgrade
+            $this->notice("------------------------------------------");
+            $this->notice("Checking registration of the license");
+            $this->notice("Upgrade " . $extension['label'] . " from " . $registeredVersion . " to " . $currentVersion);
+            $this->notice("Activation key: " . $activationKey);
+            if ($this->_auth->getUser() != null) {
+                $this->notice("User: " . $this->_auth->getUser()->getUsername());
+            }
             $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
+            $this->_coreHelper->setDefaultConfig($ext . "/license/version", $currentVersion);
             $this->addWarning($extension["label"], "upgrade", [$registeredVersion, $currentVersion]);
             $this->_session->setData("update_" . $extension["value"], "true");
             $this->_refreshCache = true;
         } elseif (!$activationKey) { // no activation key not yet registered
+            $this->notice("------------------------------------------");
+            $this->notice("Checking registration of the license");
+            $this->notice("Extension " . $extension['label'] . " not registered yet");
+            $this->notice("Activation key: " . $activationKey);
+            if ($this->_auth->getUser() != null) {
+                $this->notice("User: " . $this->_auth->getUser()->getUsername());
+            }
             $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
             $this->addWarning($extension["label"], "activation_key_warning", [$this->_urlBuilder->getUrl("adminhtml/system_config/edit/section/" . $ext . "/"), ($extension["label"])]);
             $this->_refreshCache = true;
         } elseif ($activationKey && (!$licenseCode || empty($licenseCode)) && !$licensingMethod) { // not yet activated --> manual activation
+            $this->notice("------------------------------------------");
+            $this->notice("Checking registration of the license");
+            $this->notice("Extension " . $extension['label'] . " not registered yet (manual)");
+            $this->notice("Activation key: " . $activationKey);
+            if ($this->_auth->getUser() != null) {
+                $this->notice("User: " . $this->_auth->getUser()->getUsername());
+            }
             $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
             if ($this->_session->getData("update_" . $extension["value"]) != "true") {
                 $this->addWarning($extension["label"], "license_code_warning", [$wsUrl . "method=post" . $wsParam]);
@@ -228,27 +340,45 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
             }
             $this->_refreshCache = true;
         } elseif ($activationKey && (!$licenseCode || empty($licenseCode)) && $licensingMethod) { // not yet activated --> automatic activation
+            $this->notice("------------------------------------------");
+            $this->notice("Checking module license registration");
+            $this->notice("Automatic registration for " . $extension['label'] . "");
+            $this->notice("Activation key: " . $activationKey);
+            if ($this->_auth->getUser() != null) {
+                $this->notice("User: " . $this->_auth->getUser()->getUsername());
+            }
+
             try {
-                $options = ['location' => self::SOAP_URL,'uri' => self::SOAP_URI];
+                $options = ['location' => \Wyomind\Core\Helper\License::SOAP_URL, 'uri' => \Wyomind\Core\Helper\License::SOAP_URI];
                 if (!class_exists("\SoapClient")) {
                     throw new \Exception();
                 }
                 $api = new \SoapClient(null, $options);
+
                 $ws = $api->checkActivation($soapParams);
+
                 $wsResult = json_decode($ws);
+
                 switch ($wsResult->status) {
                     case "success":
-                        $this->addWarning($extension["label"], "ws_success", [$wsResult->message], true);
+                        $this->notice("The license has been registered.");
+                        $this->notice("License code: " . $wsResult->activation);
+                        $this->notice("Version: " . $wsResult->version);
+                        $this->addWarning($extension["label"], "ws_success", [$wsResult->message]);
                         $this->_coreHelper->setDefaultConfig($ext . "/license/version", $wsResult->version);
                         $this->_coreHelper->setDefaultConfigCrypted($ext . "/license/activation_code", $wsResult->activation);
                         $this->_refreshCache = true;
                         break;
                     case "error":
+                        $this->notice("Version: " . $wsResult->version);
+                        $this->notice("The license cannot be registered: " . $wsResult->message);
                         $this->addWarning($extension["label"], "ws_failure", [$wsResult->message]);
                         $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
                         $this->_refreshCache = true;
                         break;
                     default:
+                        $this->notice("Version: " . $wsResult->version);
+                        $this->notice("The license cannot be registered (other error): " . $wsUrl . "method=post" . $wsParam);
                         $this->addWarning($extension["label"], "ws_error", [$wsUrl . "method=post" . $wsParam]);
                         $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
                         $this->_coreHelper->setDefaultConfig($ext . "/license/get_online_license", "0");
@@ -256,6 +386,7 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
                         break;
                 }
             } catch (\Exception $e) {
+                $this->notice("Soap request not allowed. Switching to manual activation");
                 $this->addWarning($extension["label"], "ws_no_allowed", [$wsUrl . "method=post" . $wsParam]);
                 $this->_coreHelper->setDefaultConfig($ext . "/license/activation_code", "");
                 $this->_coreHelper->setDefaultConfig($ext . "/license/get_online_license", "0");
@@ -288,9 +419,8 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
         $html = null;
         $count = count($this->_warnings);
         for ($i = 0; $i < $count; $i++) {
-            $html.="<div style='padding-bottom:5px;" . (($i != 0) ? "margin-top:5px;" : "") . "" . (($i < $count - 1) ? "border-bottom:1px solid gray;" : "") . "'>" . $this->_warnings[$i] . "</div>";
+            $html .= "<div style='padding-bottom:5px;" . (($i != 0) ? "margin-top:5px;" : "") . "" . (($i < $count - 1) ? "border-bottom:1px solid gray;" : "") . "'>" . $this->_warnings[$i] . "</div>";
         }
-
         return $html;
     }
 
@@ -301,4 +431,5 @@ class Notifications extends \Magento\AdminNotification\Model\System\Message
     {
         return count($this->_warnings) > 0;
     }
+
 }

@@ -48,7 +48,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
                 [
                     'label' => __('Generate'),
                     'class' => 'save',
-                    'onclick' => "jQuery('#generate_i').val('1'); jQuery('#edit_form').submit();",
+                    'onclick' => "require([\"dfm_configuration\"], function (configuration) {configuration.generate(); });",
                 ]
             );
         }
@@ -58,7 +58,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
             [
                 'label' => __('Save'),
                 'class' => 'save',
-                'onclick' => "jQuery('#back_i').val('1'); jQuery('#edit_form').submit();",
+                'onclick' => "if (jQuery('#categories').val() == '') jQuery('#categories').val('[]');jQuery('#back_i').val('1'); jQuery('#edit_form').submit();",
             ]
         );
     }

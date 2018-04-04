@@ -30,4 +30,17 @@
             </argument>
         </arguments>
     </type>
+    
+    
+    <!-- COMMAND LINE -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="dfm_generate" xsi:type="object">Wyomind\DataFeedManager\Console\Command\Generate</item>
+                <item name="dfm_list" xsi:type="object">Wyomind\DataFeedManager\Console\Command\Listing</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    
 </config>

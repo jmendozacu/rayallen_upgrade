@@ -4,10 +4,11 @@
   See LICENSE.txt for license details.
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Wyomind_Core" setup_version="3.0.4">
+    <module name="Wyomind_Core" setup_version="3.5.2">
         <sequence>
-            <module name="Magento_Core"/>
-            <module name="Magento_Cms" />
+            <sequence>
+                <module name="Magento_AdminNotification"/>
+            </sequence>
         </sequence>
     </module>
-</config>
+</config> 

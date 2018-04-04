@@ -13,6 +13,7 @@ class Categories extends \Magento\Backend\Block\Widget\Form\Generic implements \
     protected $_directoryList = null;
     protected $_coreHelper = null;
     protected $_objectManager = null;
+    protected $_tree = null;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -21,18 +22,21 @@ class Categories extends \Magento\Backend\Block\Widget\Form\Generic implements \
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
         \Wyomind\Core\Helper\Data $coreHelper,
         \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Wyomind\DataFeedManager\Helper\CategoryTree $tree,
         array $data = []
     ) {
+    
         $this->_directoryList = $directoryList;
         $this->_coreHelper = $coreHelper;
         $this->_objectManager = $objectManager;
+        $this->_tree = $tree;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     public function getFeedTaxonomy()
     {
         $model = $this->_coreRegistry->registry('data_feed');
-        return $model->getFeedTaxonomy();
+        return $model->getTaxonomy();
     }
 
     public function getCategoryFilter()
@@ -79,48 +83,10 @@ class Categories extends \Magento\Backend\Block\Widget\Form\Generic implements \
         }
     }
 
-    /**
-     * @from block Magento\Catalog\Block\Adminhtml\Category\Tree
-     * @return type
-     */
-    public function getCategoriesJson()
+    public function getJsonTree()
     {
-        return json_decode($this->_objectManager->get("Magento\Catalog\Block\Adminhtml\Category\Tree")->getTreeJson(), true);
-    }
-    
-    public function categoriesLoop(
-        $categories,
-        $parentId = ""
-    ) {
-        $html = "";
-        if (count($categories) > 0) {
-            $html .= "<ul class='tv-mapping closed'>";
-            foreach ($categories as $category) {
-                $html .= "<li><div class='selector'>";
-                if (isset($category['children']) && count($category['children']) > 0) {
-                    $html .= "<span class='tv-switcher closed'></span>";
-                } else {
-                    $html .= "<span class='empty'></span>";
-                }
-                $html .= "<input type='checkbox' class='category' id='cat_id_" . $category['id'] . "' name='cat_id_" . $category['id'] . "' parent_id='" . $parentId . "'/>";
-                $html .= preg_replace("/ \([0-9]+\)/", "", $category['text']);
-                $html .= "<span class='small'>[ID:" . $category['id'] . "]</span>
-                            <span class='mapped'>
-                                <br/>
-                                <span>" . __('mapped as') . " :</span>
-                            </span>&nbsp;
-                            <label class='mage-suggest-search-label'>
-                            <input placeholder='" . __('your google product category') . "' title='Press `End.` on your keyboard in order to apply this value to all the sub-categories' type='text' class='mapping' id='category_mapping_" . $category['id'] . "' class='mapping' />
-                        </label>";
-                $html .= "</div>";
-                if (isset($category['children'])) {
-                    $html .= $this->categoriesLoop($category['children'], ($parentId != "") ? ($parentId . "/" . $category['id']) : $category['id']);
-                }
-                $html .= "</li>";
-            }
-            $html .= "</ul>";
-        }
-        return $html;
+        $treeCategories = $this->_tree->getTree();
+        return json_encode($treeCategories);
     }
 
     /**
@@ -130,7 +96,6 @@ class Categories extends \Magento\Backend\Block\Widget\Form\Generic implements \
      */
     protected function _prepareForm()
     {
-        
         $model = $this->_coreRegistry->registry('data_feed');
         $form = $this->_formFactory->create();
         $form->setHtmlIdPrefix('');

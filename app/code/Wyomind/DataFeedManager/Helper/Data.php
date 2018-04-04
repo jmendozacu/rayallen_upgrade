@@ -14,7 +14,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
 
     protected $_coreDate = null;
-    
     protected $_dateFormats = [
         '{f}',
         'Y-m-d-{f}',
@@ -33,13 +32,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $_fieldProtectors = [
         '"',
         "'",
-        ''=>'none'
+        '' => 'none'
     ];
     protected $_fieldEscapes = [
         '"',
         "\\"
     ];
-                
 
     /**
      * Helper contructor
@@ -53,19 +51,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_coreDate = $coreDate;
     }
 
-    public function getFinalFilename($format, $filename, $updatedAt)
-    {
+    public function getFinalFilename(
+        $format,
+        $filename,
+        $updatedAt
+    ) {
         return str_replace('{f}', $filename, date($format, strtotime($updatedAt)));
     }
-    
+
     /**
      *
      * @param type $fn
      * @param type $ext
      * @return type
      */
-    public function getDateFormats($fn, $ext)
-    {
+    public function getDateFormats(
+        $fn,
+        $ext
+    ) {
         $toReturn = [];
         foreach ($this->_dateFormats as $dateFormat) {
             $toReturn[] = [
@@ -170,7 +173,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $toReturn;
     }
-    
+
     public function getFieldProtectors()
     {
         $toReturn = [];
@@ -189,7 +192,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $toReturn;
     }
-        
+
     public function getFieldEscapes()
     {
         $toReturn = [];
@@ -207,5 +210,40 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
         return $toReturn;
+    }
+
+    public function stripTagsContent(
+        $text,
+        $tags = '',
+        $invert = false
+    ) {
+
+        preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
+        $tags = array_unique($tags[1]);
+
+        if (is_array($tags) and count($tags) > 0) {
+            if ($invert == false) {
+                return preg_replace('@<(?!(?:' . implode('|', $tags) . ')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
+            } else {
+                return preg_replace('@<(' . implode('|', $tags) . ')\b.*?>.*?</\1>@si', '', $text);
+            }
+        } elseif ($invert == false) {
+            return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
+        }
+        return strip_tags($text);
+    }
+    
+    
+    public function strReplaceFirst(
+        $search,
+        $replace,
+        $subject
+    ) {
+    
+        $pos = strpos($subject, $search);
+        if ($pos !== false) {
+            return substr_replace($subject, $replace, $pos, strlen($search));
+        }
+        return $subject;
     }
 }

@@ -21,6 +21,7 @@ class InstallData implements InstallDataInterface
         \Magento\Framework\Stdlib\DateTime\DateTime $coreDate,
         \Wyomind\DataFeedManager\Model\ResourceModel\Store\CollectionFactory $storeCollectionFactory
     ) {
+    
         $this->_coreDate = $coreDate;
         $this->_storeId = $storeCollectionFactory->create()->getFirstStoreId();
     }
@@ -34,9 +35,10 @@ class InstallData implements InstallDataInterface
         ModuleDataSetupInterface $setup,
         ModuleContextInterface $context
     ) {
+    
 
         unset($context);
-        
+
         $installer = $setup;
         $installer->startSetup();
 
@@ -54,19 +56,19 @@ class InstallData implements InstallDataInterface
 <g:id>{{product.sku}}</g:id>
 <title>{{product.name}}</title>
 <link>{{parent.url | product.url}}</link>
-<description>{{parent.description php=\"strip_tags(\$self)\"}}</description>
+<description>{{parent.description output=\"strip_tags(\$self)\" | product.description output=\"strip_tags(\$self)\"}}</description>
 <g:google_product_category>{{product.google_product_category | parent.google_product_category}}</g:google_product_category>
 
-<g:product_type>{{product.categories index=0 | parent.categories index=0 }}</g:product_type>
-<g:product_type>{{product.categories index=1 | parent.categories index=1 }}</g:product_type>
-<g:product_type>{{product.categories index=2 | parent.categories index=2 }}</g:product_type>
-<g:product_type>{{product.categories index=3 | parent.categories index=3 }}</g:product_type>
-<g:product_type>{{product.categories index=4 | parent.categories index=4 }}</g:product_type>
-<g:product_type>{{product.categories index=5 | parent.categories index=5 }}</g:product_type>
-<g:product_type>{{product.categories index=6 | parent.categories index=6 }}</g:product_type>
-<g:product_type>{{product.categories index=7 | parent.categories index=7 }}</g:product_type>
-<g:product_type>{{product.categories index=8 | parent.categories index=8 }}</g:product_type>
-<g:product_type>{{product.categories index=9 | parent.categories index=9 }}</g:product_type>
+<g:product_type>{{parent.categories nth=0 | product.categories nth=0 }}</g:product_type>
+<g:product_type>{{parent.categories nth=1 | product.categories nth=1 }}</g:product_type>
+<g:product_type>{{parent.categories nth=2 | product.categories nth=2 }}</g:product_type>
+<g:product_type>{{parent.categories nth=3 | product.categories nth=3 }}</g:product_type>
+<g:product_type>{{parent.categories nth=4 | product.categories nth=4 }}</g:product_type>
+<g:product_type>{{parent.categories nth=5 | product.categories nth=5 }}</g:product_type>
+<g:product_type>{{parent.categories nth=6 | product.categories nth=6 }}</g:product_type>
+<g:product_type>{{parent.categories nth=7 | product.categories nth=7 }}</g:product_type>
+<g:product_type>{{parent.categories nth=8 | product.categories nth=8 }}</g:product_type>
+<g:product_type>{{parent.categories nth=9 | product.categories nth=9 }}</g:product_type>
 
 <g:image_link>{{parent.image_link index=\"0\"| product.image_link index=\"0\"}}</g:image_link>
 <g:additional_image_link>{{parent.image_link index=\"1\" | product.image_link index=\"1\"}}</g:additional_image_link>
@@ -102,7 +104,7 @@ class InstallData implements InstallDataInterface
 <g:pattern>{{product.pattern}}</g:pattern>
 
 <!-- Shipping -->
-<g:shipping_weight>{{product.weight php =\"float(\$self,2)\" suffix=\"kg\"}}</g:shipping_weight>
+<g:shipping_weight>{{product.weight output=\"float(\$self,2)\" suffix=\"kg\"}}</g:shipping_weight>
 
 <!-- AdWords attributes -->
 <g:custom_label_0>{{product.custom_label_0}}</g:custom_label_0>
@@ -136,7 +138,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "LeGuide",
@@ -145,7 +147,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<product place="{{product.inc}}">
+            "product_pattern" => '<product place="{{product.inc}}">
    <categorie>{{product.categories}}</categorie> 
    <identifiant_unique>{{product.sku}}</identifiant_unique>
    <titre>{{product.meta_title}}</titre>
@@ -181,7 +183,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Twenga",
@@ -190,7 +192,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.price}}", "{{product.url}}", "{{product.meta_title}}", "{{product.categories}}", "{{parent.image_link index="0"}}", "{{product.short_description}}", "{{product.sku}}", "{{product.is_in_stock in_stock=Y out_of_stock=N pre_order=N}}", "{{product.qty}}", "1", "0"]}',
+            "product_pattern" => '{"product":["{{product.price}}", "{{product.url}}", "{{product.meta_title}}", "{{product.categories}}", "{{parent.image_link index=0}}", "{{product.short_description}}", "{{product.sku}}", "{{product.is_in_stock in_stock=Y out_of_stock=N pre_order=N}}", "{{product.qty}}", "1", "0"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable,bundle,grouped,virtual,downloadable",
@@ -212,7 +214,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Kelkoo",
@@ -221,10 +223,10 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<product>
+            "product_pattern" => '<product>
    <id>{{product.sku}}</id>
    <model>{{product.meta_title}}</model>
-   <description>{{product.short_description php="dfm_substr($self,180,\'\')"}</description>
+   <description>{{product.short_description output="dfm_substr($self,180,\'\')"}</description>
    <price>{{product.price}}</price>
    <url>{{product.url}}</url>
    <merchantcat>{{product.categories}}</merchantcat>
@@ -236,7 +238,7 @@ class InstallData implements InstallDataInterface
    <pricenorebate>{{product.normal_price}}</pricenorebate>
    <percentagepromo><?php 
    if ({{product.has_special_price}}) 
-    return round(100-("{{product.special_price}}"*100/{{product.normal_price}}) ); 
+    return round(100-({{product.special_price}}*100/{{product.normal_price}}) ); 
    else
     return 0; 
    ?></percentagepromo>
@@ -265,7 +267,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Shopping.com",
@@ -274,7 +276,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<Product>
+            "product_pattern" => '<Product>
     <Merchant_SKU>{{product.sku}}</Merchant_SKU>		
     <MPN></MPN>		
     <UPC></UPC>		
@@ -365,7 +367,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
 
         $data['templates'][] = [
             "id" => null,
@@ -375,7 +377,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.id}}","{{product.name}}","{{parent.url php=\\"dfm_substr($self,100,\'\')\\"}}","{{product.price}} USD","{{parent.description php=\\"html_entity_decode(strip_tags($self))\\"}} ","{{parent.image_link index="0"}}","{{product.manufacturer}}","{{product.sku}}","{{product.sku}}","in stock","{categories,[1]}","{{weight php=\\"float($self,2)\\"}} kilograms","new","{{product.category_mapping}}"]}',
+            "product_pattern" => '{"product":["{{product.id}}","{{product.name}}","{{parent.url output=\\"dfm_substr($self,100,\'\')\\"}}","{{product.price}} USD","{{parent.description output=\\"html_entity_decode(strip_tags($self))\\"}} ","{{parent.image_link index="0"}}","{{product.manufacturer}}","{{product.sku}}","{{product.sku}}","in stock","{{product.categories}}","{{weight output=\\"float($self,2)\\"}} kilograms","new","{{product.category_mapping}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable",
@@ -397,7 +399,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-            
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Shopzilla",
@@ -406,7 +408,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.category_mapping}}","{{product.manufacturer}}","{{product.name}}","{{description php=\\"html_entity_decode(strip_tags($self))\\"}}","{{product.url}}","{{parent.image_link}}","{{product.sku}}","{{product.is_in_stock}}","new","{{product.weight}}","0","","","{{product.ean}}","{{product.price}}"]}',
+            "product_pattern" => '{"product":["{{product.category_mapping}}","{{product.manufacturer}}","{{product.name}}","{{description output=\\"html_entity_decode(strip_tags($self))\\"}}","{{product.url}}","{{parent.image_link}}","{{product.sku}}","{{product.is_in_stock}}","new","{{product.weight}}","0","","","{{product.ean}}","{{product.price}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple",
@@ -428,7 +430,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "PriceGrabber",
@@ -437,7 +439,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.name}}", "{{product.mpn}}", "{{product.upc}}", "{{product.sku}}", "{{product.category_mapping}}", "{{product.name}}", "{{product.price}}", "{{product.is_in_stock in_stock=\\"Yes\\" out_of_stock=\\"No\\" pre_order=\\"No\\"}}", "{{product.url}}", "{{parent.image_link index="0"}}", "new", "0", "{{product.weight}}"]}',
+            "product_pattern" => '{"product":["{{product.name}}", "{{product.mpn}}", "{{product.upc}}", "{{product.sku}}", "{{product.category_mapping}}", "{{product.name}}", "{{product.price}}", "{{product.is_in_stock in_stock=\\"Yes\\" out_of_stock=\\"No\\" pre_order=\\"No\\"}}", "{{product.url}}", "{{parent.image_link index="0"}}", "new", "0", "{{product.weight}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple",
@@ -459,7 +461,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Nextag",
@@ -468,7 +470,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.name}}", "{{product.manufacturer}}", "{{product.mpn}}", "{{product.upc}}", "{{product.sku}}", "{{product.categories}}", "{{product.short_description}}", "{{product.price}}", "{{product.is_in_stock in_stock=\\"Yes\\" out_of_stock=\\"No\\" pre_order=\\"No\\"}}", "{{product.url}}", "{{parent.image_link index="0"}}", "new", "0.00", "{{product.weight}}"]}',
+            "product_pattern" => '{"product":["{{product.name}}", "{{product.manufacturer}}", "{{product.mpn}}", "{{product.upc}}", "{{product.sku}}", "{{product.categories}}", "{{product.short_description}}", "{{product.price}}", "{{product.is_in_stock in_stock=\\"Yes\\" out_of_stock=\\"No\\" pre_order=\\"No\\"}}", "{{product.url}}", "{{parent.image_link index="0"}}", "new", "0.00", "{{product.weight}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple",
@@ -490,7 +492,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "AmazonProducts",
@@ -499,7 +501,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<Message>
+            "product_pattern" => '<Message>
     <MessageID>{{product.inc}}</MessageID>
     <OperationType>Update</OperationType>
     <Product>
@@ -557,7 +559,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "AmazonPrice",
@@ -566,7 +568,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<Message>
+            "product_pattern" => '<Message>
     <MessageID>{{product.inc}}</MessageID>
     <Price>
         <SKU>{{product.sku}}</SKU>
@@ -609,7 +611,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<Message>
+            "product_pattern" => '<Message>
         <MessageID>{{product.inc}}</MessageID>
         <Inventory>
             <SKU>{{product.sku}}</SKU>
@@ -643,7 +645,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "AmazonImage",
@@ -652,7 +654,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<Message>
+            "product_pattern" => '<Message>
             <MessageID>{{product.inc}}</MessageID>
             <ProductImage>
                 <SKU>{{product.sku}}</SKU>
@@ -697,7 +699,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.category_mapping}}","{{product.name}}","{{parent.url}}","{{product.sku}}","{{product.price}}","{{product.brand}}","men, women","{{product.upc}}","{{parent.image_link index="0"}}","{{product.description php=\\"html_entity_decode(strip_tags(inline($self)))\\"}}","{{product.manufacturer}}","{{product.sku}}","","{{product.color}}","{{product.weight}}","{{product.size}}"]}',
+            "product_pattern" => '{"product":["{{product.category_mapping}}","{{product.name}}","{{parent.url}}","{{product.sku}}","{{product.price}}","{{product.brand}}","men, women","{{product.upc}}","{{parent.image_link index="0"}}","{{product.description output=\\"html_entity_decode(strip_tags(inline($self)))\\"}}","{{product.manufacturer}}","{{product.sku}}","","{{product.color}}","{{product.weight}}","{{product.size}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable",
@@ -728,7 +730,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["Add","103440","{{product.name}}","{{product.description php=\\"html_entity_decode(strip_tags(inline($self)))\\"}}","1000","{{parent.image_link index="0"}}","{{product.qty}}","FixedPrice","{{product.price}}","{{product.price}}","GTC","1","USA KOi, http://yourwebsite.com","None","1","contact@website.com","","","","","","","","","","","","","","5","","ReturnAccepted",""]}',
+            "product_pattern" => '{"product":["Add","103440","{{product.name}}","{{product.description output=\\"html_entity_decode(strip_tags(inline($self)))\\"}}","1000","{{parent.image_link index="0"}}","{{product.qty}}","FixedPrice","{{product.price}}","{{product.price}}","GTC","1","USA KOi, http://yourwebsite.com","None","1","contact@website.com","","","","","","","","","","","","","","5","","ReturnAccepted",""]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable",
@@ -750,7 +752,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Beslist",
@@ -759,7 +761,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'<item>
+            "product_pattern" => '<item>
     <titel>{{product.name}}</titel>
     <prijs>{{product.price}}</prijs>
     <url>{{product.url}}</url>
@@ -789,7 +791,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Idealo",
@@ -798,7 +800,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.sku}}","{{product.ean}}","{{product.mpn}}","{{product.manufacturer}}","{{product.name}}","{{product.description php=\\"html_entity_decode(strip_tags(inline(cleaner($self))))\\"}}","{{product.categories}}","{{product.price currency=\\"GBP\\" vat_rate=\\"GB\\"}}","Available Immediatly","{{parent.url}}","{{parent.image_link}}",""]}',
+            "product_pattern" => '{"product":["{{product.sku}}","{{product.ean}}","{{product.mpn}}","{{product.manufacturer}}","{{product.name}}","{{product.description output=\\"html_entity_decode(strip_tags(inline(cleaner($self))))\\"}}","{{product.categories}}","{{product.price currency=\\"GBP\\" vat_rate=\\"GB\\"}}","Available Immediatly","{{parent.url}}","{{parent.image_link}}",""]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable,bundle,virtual,downloadable",
@@ -820,7 +822,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Yahoo",
@@ -829,7 +831,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.categories nb_path=1 from_level=1 nb_cat_in_each_path=1}}", "{{product.url_key}}", "{{product.name}}", "{{product.sku}}", "{{product.price currency=USD vat_rate=0}}", "{{product.special_price currency=USD vat_rate=0}}", "{{product.short_description}}", "{{product.short_description}}", "{{product.description}}", "{{product.weight php=\\"float($self,2)\\"}}", "yes", "no", "", "{{product.is_in_stock}}", "{{product.name}}", "{{product.short_description}} {{product.description}}", "{{parent.url}}", "{{product.condition}}"]}',
+            "product_pattern" => '{"product":["{{product.categories nth=1 from=1 length=1}}", "{{product.url_key}}", "{{product.name}}", "{{product.sku}}", "{{product.price currency=USD vat_rate=0}}", "{{product.special_price currency=USD vat_rate=0}}", "{{product.short_description}}", "{{product.short_description}}", "{{product.description}}", "{{product.weight output=\\"float($self,2)\\"}}", "yes", "no", "", "{{product.is_in_stock}}", "{{product.name}}", "{{product.short_description}} {{product.description}}", "{{parent.url}}", "{{product.condition}}"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable,bundle,virtual,downloadable",
@@ -851,7 +853,7 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['templates'][] = [
             "id" => null,
             "name" => "Trovaprezzi",
@@ -860,7 +862,7 @@ class InstallData implements InstallDataInterface
             "status" => 1,
             "updated_at" => $this->_coreDate->date('Y-m-d H:i:s'),
             "store_id" => $this->_storeId,
-            "product_pattern" =>'{"product":["{{product.name}}","{{product.brand}}","{{product.description php=\\"inline($self)\\"}}","{{product.price currency=EUR vat_rate=IT}}","{{product.sku}}","{{parent.url}}","{{product.is_in_stock}}","{{product.categories index=longest}}","{{parent.image_link index="0"}}","","{{product.mpn}}","{{product.ean}}<endrecord>"]}',
+            "product_pattern" => '{"product":["{{product.name}}","{{product.brand}}","{{product.description output=\\"inline($self)\\"}}","{{product.price currency=EUR vat_rate=IT}}","{{product.sku}}","{{parent.url}}","{{product.is_in_stock}}","{{product.categories nth=-1}}","{{parent.image_link index="0"}}","","{{product.mpn}}","{{product.ean}}<endrecord>"]}',
             "category_filter" => 1,
             "categories" => "*",
             "type_ids" => "simple,configurable,bundle,virtual,downloadable",
@@ -882,59 +884,59 @@ class InstallData implements InstallDataInterface
             "use_sftp" => 0,
             "ftp_active" => 0
         ];
-        
+
         $data['functions'] = [
             [
-                "id" => '1',
+                "id" => null,
                 "script" => '<?php function float($self,$dec) { return number_format((float)$self,$dec,".",""); } ?>'
             ],
             [
-                "id" => '2',
+                "id" => null,
                 "script" => "<?php function cleaner(\$self) {\$value_cleaned = preg_replace('/' . '[\\x00-\\x1F\\x7F]' . '|[\\x00-\\x7F][\\x80-\\xBF]+' . '|([\\xC0\\xC1]|[\\xF0-\\xFF])[\\x80-\\xBF]*' . '|[\\xC2-\\xDF]((?![\\x80-\\xBF])|[\\x80-\\xBF]{2,})' . '|[\\xE0-\\xEF](([\\x80-\\xBF](?![\\x80-\\xBF]))|' . '(?![\\x80-\\xBF]{2})|[\\x80-\\xBF]{3,})' . '/S', ' ', \$self); \$value = str_replace('&#153;', '', \$value_cleaned); return \$value; } ?>"
             ],
             [
-                "id" => '3',
+                "id" => null,
                 "script" => "<?php function dfm_strtoupper(\$self) {\nreturn mb_strtoupper(\$self, \"UTF8\");\n}\n?>"
             ],
             [
-                "id" => '4',
+                "id" => null,
                 "script" => "<?php function dfm_strtolower(\$self) {\nreturn mb_strtolower(\$self, \"UTF8\");\n}\n?>"
             ],
             [
-                "id" => '5',
+                "id" => null,
                 "script" => "<?php function dfm_implode(\$sep,\$self) {\nreturn (is_array(\$self)) ? implode(\$sep, \$value) : \$self;\n}\n?>"
             ],
             [
-                "id" => '6',
+                "id" => null,
                 "script" => '<?php function dfm_html_entity_decode($self) { return html_entity_decode($self, ENT_QUOTES, "UTF-8"); } ?>'
             ],
             [
-                "id" => '7',
+                "id" => null,
                 "script" => "<?php function dfm_strip_tags(\$self) {\nreturn strip_tags(preg_replace(['!<br />!isU','!<br/>!isU','!<br>!isU'], [\" \",\" \",\" \"], \$self));\n} ?>"
             ],
             [
-                "id" => '8',
+                "id" => null,
                 "script" => "<?php function dfm_htmlentities(\$self) {\nreturn htmlspecialchars(\$self);\n}\n?>"
             ],
             [
-                "id" => '9',
+                "id" => null,
                 "script" => "<?php function dfm_substr(\$self,\$len,\$end) {\n\$value = substr(\$self, 0,\$len - 3);\n\$s = strrpos(\$value, \" \");\n\$value = substr(\$value, 0, \$s) . \$end;\nreturn \$value;\n} \n?>"
             ],
             [
-                "id" => '10',
+                "id" => null,
                 "script" => "<?php function inline(\$self) {\nreturn preg_replace('/(
 |\n|\r|
 |\t)/s', '', \n\$self);\n}\n?>"
             ]
         ];
-        
-        
-            $data['variables'] = [
+
+
+        $data['variables'] = [
             [
-                "id"=>1,
-                "name"=>"configurable_sizes",
-                "comment"=>"Get all sizes available for a configurable product",
-                "script"=>"<?php
+                "id" => null,
+                "name" => "configurable_sizes",
+                "comment" => "Get all sizes available for a configurable product",
+                "script" => "<?php
 if (\$product->getTypeId() == 'configurable') {
 	\$childProducts = \$product->getTypeInstance()->getUsedProducts(\$product);
 	\$sizes = [];
@@ -945,21 +947,24 @@ if (\$product->getTypeId() == 'configurable') {
 }
 ?>"
             ]
-            ];
-        
-        
-            foreach ($data['templates'] as $template) {
-                $installer->getConnection()->insert($installer->getTable("datafeedmanager_feeds"), $template);
-            }
+        ];
 
-            foreach ($data['functions'] as $function) {
-                $installer->getConnection()->insert($installer->getTable("datafeedmanager_functions"), $function);
-            }
-        
-            foreach ($data['variables'] as $variable) {
-                $installer->getConnection()->insert($installer->getTable("datafeedmanager_variables"), $variable);
-            }
 
-            $installer->endSetup();
+        $installer->getConnection()->truncateTable($installer->getTable("datafeedmanager_feeds"));
+        foreach ($data['templates'] as $template) {
+            $installer->getConnection()->insert($installer->getTable("datafeedmanager_feeds"), $template);
+        }
+
+        $installer->getConnection()->truncateTable($installer->getTable("datafeedmanager_functions"));
+        foreach ($data['functions'] as $function) {
+            $installer->getConnection()->insert($installer->getTable("datafeedmanager_functions"), $function);
+        }
+
+        $installer->getConnection()->truncateTable($installer->getTable("datafeedmanager_variables"));
+        foreach ($data['variables'] as $variable) {
+            $installer->getConnection()->insert($installer->getTable("datafeedmanager_variables"), $variable);
+        }
+
+        $installer->endSetup();
     }
 }

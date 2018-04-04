@@ -16,8 +16,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
     {
         
         // $context->getVersion() = version du module actuelle
-        // 10.0.0 = version en cours d'installation
-        if (version_compare($context->getVersion(), '10.0.0') < 0) {
+        // 9.0.0 = version en cours d'installation
+        if (version_compare($context->getVersion(), '9.0.0') < 0) {
             $installer = $setup;
             $installer->startSetup();
             // do what you have to do

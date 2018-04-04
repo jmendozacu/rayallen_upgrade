@@ -13,7 +13,9 @@ class Observer
     protected $_collectionFactory = null;
     protected $_coreDate = null;
     protected $_scopeConfig = null;
+    protected $_transportBuilder = null;
     protected $_logger = null;
+    protected $_coreHelper = null;
 
     /**
      *
@@ -26,12 +28,16 @@ class Observer
         \Wyomind\DataFeedManager\Model\ResourceModel\Feeds\CollectionFactory $collectionFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Stdlib\DateTime\DateTime $coreDate,
-        \Wyomind\DataFeedManager\Logger\LoggerCron $logger
+        \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
+        \Wyomind\DataFeedManager\Logger\LoggerCron $logger,
+        \Wyomind\Core\Helper\Data $coreHelper
     ) {
         $this->_collectionFactory = $collectionFactory;
         $this->_scopeConfig = $scopeConfig;
         $this->_coreDate = $coreDate;
         $this->_logger = $logger;
+        $this->_transportBuilder = $transportBuilder;
+        $this->_coreHelper = $coreHelper;
     }
 
     /**

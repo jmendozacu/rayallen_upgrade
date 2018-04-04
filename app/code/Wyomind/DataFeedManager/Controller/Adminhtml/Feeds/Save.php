@@ -28,7 +28,21 @@ class Save extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\AbstractF
                 $model->load($id);
             }
 
+            
+            $toSanitize = [
+                'name',
+                'path',
+                'ftp_host',
+                'ftp_port',
+                'ftp_login',
+                'ftp_password',
+                'ftp_dir'
+            ];
+            
             foreach ($data as $index => $value) {
+                if (in_array($index, $toSanitize)) {
+                    $value = $this->dfmHelper->stripTagsContent($value);
+                }
                 $model->setData($index, $value);
             }
 

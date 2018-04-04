@@ -10,7 +10,7 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesUrl extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesUrl extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
     
     public function host($model, $options, $product, $reference)
@@ -20,6 +20,36 @@ class AttributesUrl extends \Magento\Framework\App\Helper\AbstractHelper
         unset($reference);
         return $model->getStoreUrl();
     }
+    
+    
+    public function urlConfig(
+        $model,
+        $options,
+        $product,
+        $reference
+    ) {
+    
+        unset($reference);
+        $parent = $model->checkReference("configurable", $product);
+        if ($parent == null) {
+            return "";
+        }
+        $attributes = $parent->getTypeInstance(true)->getConfigurableAttributes($parent);
+
+        $url = $this->url($model, $options, $product, 'configurable') . "?ps="; // ps parameter is for Google Microdata
+        $atts = [];
+        foreach ($attributes as $attribute) {
+            $att = $attribute->getProductAttribute()->getData('attribute_code');
+            $id = $attribute->getProductAttribute()->getData('attribute_id');
+            if ($product->getData($att) == "") {
+                $product->load($product->getId());
+            }
+            $atts[] = $id . '=' . $product->getData($att);
+        }
+
+        return $url . base64_encode(implode('&', $atts)) . "#" . implode('&', $atts);
+    }
+    
     
     /**
      *
@@ -90,4 +120,14 @@ class AttributesUrl extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $value;
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }

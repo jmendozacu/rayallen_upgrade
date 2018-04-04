@@ -10,9 +10,9 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
-    
+
     /**
      * {g_google_product_category} attribute processing
      * @param \Wyomind\DataFeedManager\Model\Feeds $model
@@ -22,11 +22,12 @@ class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
      * @return string g:google_product_category xml tags
      */
     public function googleProductCategory(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -52,46 +53,41 @@ class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
         return $value;
     }
 
-    /**
-     * {categories} attribute processing
-     * @param \Wyomind\DataFeedManager\Model\Feeds $model
-     * @param array                                     $options
-     * @param \Magento\Catalog\Model\Product            $product
-     * @param string                                    $reference
-     * @return string formatted version of the product categories
-     */
-    public function categories($model, $options, $product, $reference)
+    public function categories($model,
+            $options,
+            $product,
+            $reference)
     {
 
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
         }
-        
+
+        $nth = 1;
+        $from = 1;
+        $length = null;
+        $separator = " > ";
+
         $return = !isset($options["url"]) ? 'name' : 'url';
 
-        $index = "";
-        $maxNumber = INF;
-        $fromLevel = 1;
-        $maxLength = INF;
-        if (isset($options["index"])) {
-            $index = $options["index"];
-            $maxNumber = 1;
-        } else {
-            $maxNumber = (!isset($options["nb_path"]) || !$options["nb_path"] || $options["nb_path"] == "INF") ? INF : $options["nb_path"];
-            $fromLevel = (!isset($options["from_level"])) ? 1 : $options["from_level"];
-            $maxLength = (!isset($options["nb_cat_in_each_path"]) || !$options["nb_cat_in_each_path"] || $options["nb_cat_in_each_path"] == "INF") ? INF : $options["nb_cat_in_each_path"];
+        $opts = ["nth", "from", "length", "spearator"];
+        foreach ($opts as $opt) {
+            if (isset($options[$opt])) {
+                $$opt = $options[$opt];
+            }
         }
-        $separator = (!isset($options["path_separator"])) ? ", " : $options["path_separator"];
-        $children = (!isset($options["cat_separator"])) ? " > " : $options["cat_separator"];
 
         $path = 0;
         $categorieList = [];
-
+        
         foreach ($item->getCategoryIds() as $key => $category) {
-            $isIncategoryFilter = $model->params["category_filter"] && isset($model->categories[$category]) && isset($model->categories[$category]["path"]);
 
-            if (isset($model->categories[$category]) && $model->categories[$category]["include_in_menu"] && ($isIncategoryFilter || $model->categoriesFilterList[0] == "*")) {
+
+            $isIncategoryFilter = $model->params["category_filter"] && isset($model->categories[$category]) && isset($model->categories[$category]["path"]);
+            $isOutcategoryFilter = !$model->params["category_filter"] && isset($model->categories[$category]) && isset($model->categories[$category]["path"]);
+
+            if (isset($model->categories[$category]) && $model->categories[$category]["include_in_menu"] && $model->categoriesFilterList[0] == "*") {
                 $path++;
                 $categorieList[$path] = [];
 
@@ -103,54 +99,67 @@ class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
                         }
                     }
                 }
-            }
-        }
-        $categoriesToArray = [];
-        usort($categorieList, ["\Wyomind\DataFeedManager\Helper\Attributes", "cmpArray"]);
-        if ($index == "longest") {
-            $categorieList = array_reverse($categorieList);
-        }
-        $item->setCategoriesArray($categorieList);
-        
-        
-        if (is_numeric($index)) {
-            if (isset($categorieList[$index])) {
-                $categorieList = [$categorieList[$index]];
-            } else {
-                return "";
-            }
-        }
-        
-        $mn = 0;
-        foreach ($categorieList as $key => $c) {
-            if ($mn < $maxNumber) {
-                if (!isset($categoriesToArray[$mn])) {
-                    $categoriesToArray[$mn] = [];
-                }
-                $increment = false;
-                foreach ($c as $skey => $sc) {
-                    if ($skey >= $fromLevel && $skey <= $maxLength) {
-                        $categoriesToArray[$mn][] .= $sc;
-                        $increment = true;
+            } elseif (isset($model->categories[$category]) && $model->categories[$category]["include_in_menu"]) {
+
+                $path++;
+                $categorieList[$path] = [];
+
+                $pathIds = explode("/", $model->categories[$category]["path"]);
+
+
+                if (in_array($model->rootCategory, $pathIds)) {
+                    foreach ($pathIds as $pathId) {
+                        if (($isIncategoryFilter && in_array($category, $model->categoriesFilterList)) || ($isOutcategoryFilter && !in_array($category, $model->categoriesFilterList))) {
+
+                            if (isset($model->categories[$pathId]) && $model->categories[$pathId][$return] != null) {
+                                $categorieList[$path][] = ($model->categories[$pathId][$return]);
+                            }
+                        }
                     }
                 }
-                if ($increment) {
-                    $mn++;
-                }
             }
         }
+        
 
-        $value = null;
-
-        foreach (array_values($categoriesToArray) as $key => $cat) {
-            if ($key > 0) {
-                $value.=$separator;
+        $categorieList = array_filter($categorieList);
+        usort($categorieList, ["\Wyomind\DataFeedManager\Helper\Attributes", "cmpArray"]);
+        $newCatList = [];
+        foreach ($categorieList as $path => $list) {
+            if (count($list) != 0) {
+                $newCatList[] = $list;
             }
-            $value.=implode($children, $cat);
         }
-        return $value;
+        
+        $categorieList = $newCatList;
+        $item->setCategoriesArray($categorieList);
+        
+        if ($nth < 0) {
+            $nth = count($categorieList) + $nth;
+        } else {
+            $nth--;
+        }
+        if (isset($categorieList[$nth])) {
+            $category = $categorieList[$nth];
+        } else {
+            $category = [];
+        }
+
+        if ($from > 0) {
+            $from--;
+        }
+
+        return implode($separator, array_slice($category, $from, $length));
     }
-    
+
+    public function categoriesUrl($model,
+            $options,
+            $product,
+            $reference)
+    {
+        $options['url'] = true;
+        return $this->categories($model, $options, $product, $reference);
+    }
+
     /**
      * {category_mapping} attribute processing
      * @param \Wyomind\DataFeedManager\Model\Feeds $model
@@ -159,7 +168,10 @@ class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string                                    $reference
      * @return string mapped category
      */
-    public function categoryMapping($model, $options, $product, $reference)
+    public function categoryMapping($model,
+            $options,
+            $product,
+            $reference)
     {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
@@ -179,4 +191,14 @@ class AttributesCategories extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $value;
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }

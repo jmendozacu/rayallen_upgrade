@@ -10,7 +10,7 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesStockInTheChannel extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesStockInTheChannel extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
 
     /**
@@ -208,4 +208,14 @@ class AttributesStockInTheChannel extends \Magento\Framework\App\Helper\Abstract
         $value = $condition;
         return $value;
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }

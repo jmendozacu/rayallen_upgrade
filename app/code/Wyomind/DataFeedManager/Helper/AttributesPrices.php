@@ -10,30 +10,66 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
 
     protected $_coreDate = null;
     protected $_localeDate = null;
     protected $_customerSession = null;
     protected $_ruleFactory = null;
+    protected $_coreHelper = null;
+    protected $_salesRuleCollectionFactory = null;
 
     /**
      * @param \Magento\Framework\App\Helper\Context       $context
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $coreDate
      */
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\Stdlib\DateTime\DateTime $coreDate,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\CatalogRule\Model\ResourceModel\RuleFactory $ruleFactory
-    ) {
+    \Magento\Framework\App\Helper\Context $context,
+            \Magento\Framework\Stdlib\DateTime\DateTime $coreDate,
+            \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+            \Magento\Customer\Model\Session $customerSession,
+            \Magento\CatalogRule\Model\ResourceModel\RuleFactory $ruleFactory,
+            \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory $salesRuleCollectionFactory,
+            \Wyomind\Core\Helper\data $coreHelper
+    )
+    {
         $this->_coreDate = $coreDate;
         $this->_localeDate = $localeDate;
         $this->_customerSession = $customerSession;
         $this->_ruleFactory = $ruleFactory;
+        $this->_coreHelper = $coreHelper;
+        $this->_salesRuleCollectionFactory = $salesRuleCollectionFactory;
         parent::__construct($context);
+    }
+
+    public function validateCond(
+    $conds,
+            $item
+    )
+    {
+
+        if ($item->getProductId() == "") {
+            $item->setProductId($item->getId());
+        }
+
+        $all = $conds->getAggregator() === 'all';
+        $true = (bool) $conds->getValue();
+        $found = $all;
+        foreach ($conds->getConditions() as $cond) {
+            $validated = $cond->validate($item);
+            if ($all && !$validated || !$all && $validated) {
+                $found = $validated;
+                break;
+            }
+        }
+
+        if ($found && $true) {
+            return true;
+        } elseif (!$found && !$true) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -45,11 +81,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return string g:sale_price + g:sale_price_effective_date xml tags
      */
     public function price(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -142,7 +179,6 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
         return $value;
     }
 
-    
     /**
      * {tier_price} attribute processing
      * @param \Wyomind\DataFeedManager\Model\Feeds $model
@@ -152,11 +188,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the tier price of the product
      */
     public function tierPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -186,16 +223,19 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
         $price = $tierPrices[$groupId][$index]['value'];
         if ($price > 0) {
             $value = $this->applyTaxThenCurrency($model, $item->getTaxClassId(), $price, $options, $reference);
+        } else {
+            $value = 0;
         }
         return $value;
     }
 
     public function tierPriceQty(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -228,11 +268,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function salePriceEffectiveDate(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         unset($options);
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
@@ -266,11 +307,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the min price for bundle / configurable products
      */
     public function minPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -289,11 +331,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the max price for bundle / configurable products
      */
     public function maxPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -312,11 +355,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the special of a product if it exists, the normal price else
      */
     public function specialPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -375,11 +419,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return the price defined by catalog price rules if existing, special price else, normal price else
      */
     public function priceRules(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -405,11 +450,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function hasSalePrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         return $this->salePrice($model, $options, $product, $reference) != "";
     }
 
@@ -422,11 +468,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return 0 if there is a special price, 0 else
      */
     public function hasSpecialPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -481,11 +528,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the price of the product
      */
     public function salePrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $priceRules = $this->priceRules($model, $options, $product, $reference);
         $specialPrice = $this->specialPrice($model, $options, $product, $reference);
         if ($priceRules != "" && $specialPrice != "") {
@@ -512,11 +560,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the normal price of the product
      */
     public function normalPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -535,11 +584,12 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return string formatted version of the final price
      */
     public function finalPrice(
-        $model,
-        $options,
-        $product,
-        $reference
-    ) {
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
         $item = $model->checkReference($reference, $product);
         if ($item == null) {
             return "";
@@ -558,12 +608,13 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float the final price
      */
     public function applyTaxThenCurrency(
-        $model,
-        $taxClassId,
-        $price,
-        $options,
-        $reference
-    ) {
+    $model,
+            $taxClassId,
+            $price,
+            $options,
+            $reference
+    )
+    {
         unset($reference);
         $vat = (!isset($options['vat_rate'])) ? false : $options['vat_rate'];
         $currency = (!isset($options['currency'])) ? $model->defaultCurrency : $options['currency'];
@@ -580,10 +631,11 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float
      */
     public function applyCurrencyRate(
-        $model,
-        $price,
-        $currency
-    ) {
+    $model,
+            $price,
+            $currency
+    )
+    {
         $currencies = $model->listOfCurrencies;
         if (isset($currencies[$currency])) {
             return $price * $currencies[$currency];
@@ -601,12 +653,13 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
      * @return float
      */
     public function applyTax(
-        $model,
-        $priceOrig,
-        $priceIncludeTax,
-        $taxClassId,
-        $vat = false
-    ) {
+    $model,
+            $priceOrig,
+            $priceIncludeTax,
+            $taxClassId,
+            $vat = false
+    )
+    {
         $rates = $model->taxRates;
         $price = number_format($priceOrig, 2, '.', '');
 
@@ -666,4 +719,102 @@ class AttributesPrices extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
     }
+
+    /**
+     *
+     * @param type $model
+     * @param type $options
+     * @param type $product
+     * @param type $reference
+     * @return string
+     */
+    public function promotionId(
+    $model,
+            $options,
+            $product,
+            $reference
+    )
+    {
+
+        if (!$this->_coreHelper->moduleIsEnabled("Wyomind_GoogleMerchantPromotions")) {
+            return "";
+        }
+
+        $item = $model->checkReference($reference, $product);
+        if ($item == null) {
+            return "";
+        }
+
+        $notProceeded = [
+            "Magento\SalesRule\Model\Rule\Condition\Product\Subselect",
+            "Magento\SalesRule\Model\Rule\Condition\Address"
+        ];
+
+        $rules = $this->_salesRuleCollectionFactory->create();
+        $rules->addFieldToFilter("transferable_to_google_merchant", 1);
+        foreach ($rules as $rule) {
+            if ($rule->getIsActive()) {
+                $conditions = $rule->getConditions();
+                $all = $conditions->getAggregator() === 'all';
+                $true = (bool) $conditions->getValue();
+                $rtnCond = ($all) ? true : false;
+                $rtnCond = (!count($conditions->getConditions())) ? true : $rtnCond;
+
+
+                foreach ($conditions->getConditions() as $cond) {
+                    if (!in_array($cond->getType(), $notProceeded)) {
+                        if ($cond->getType() == "Magento\SalesRule\Model\Rule\Condition\Product\Found") {
+                            $validated = $this->validateCond($cond, $item);
+                        } else {
+                            $validated = $cond->validate($item);
+                        }
+                        if ($all && $validated !== $true) {
+                            $rtnCond = false;
+                        } elseif (!$all && $validated === $true) {
+                            $rtnCond = true;
+                            break;
+                        }
+                    } else {
+                        $rtnCond = false;
+                    }
+                }
+
+                $actions = $rule->getActions();
+                $all = $actions->getAggregator() === 'all';
+                $true = (bool) $actions->getValue();
+                $rtnAct = ($all) ? true : false;
+                $rtnAct = (!count($actions->getConditions())) ? true : $rtnAct;
+
+                foreach ($actions->getConditions() as $act) {
+                    $validated = $act->validate($item);
+                    if ($all && $validated !== $true) {
+                        $rtnAct = false;
+                    } elseif (!$all && $validated === $true) {
+                        $rtnAct = true;
+                        break;
+                    }
+                }
+                if ($rtnAct && $rtnCond) {
+                    return $rule->getData('rule_id');
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        $item = $model->checkReference($reference, $product);
+        if ($item == null) {
+            return "";
+        }
+        $value = $this->applyTaxThenCurrency($model, $item->getTaxClassId(), number_format($item->getData($attributeCall['property']), 2, ".", ""), $options, $reference);
+        return $value;
+    }
+
 }

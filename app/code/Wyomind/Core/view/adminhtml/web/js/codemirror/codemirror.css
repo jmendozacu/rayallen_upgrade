@@ -1,5 +1,12 @@
 /* BASICS */
 
+.CodeMirror-fullscreen {
+  position: fixed !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  height: auto !important;
+  z-index: 999;
+}
+
 .CodeMirror {
     /* Set height, width, borders, and global font properties here */
     font-family: monospace;
@@ -204,7 +211,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
     border-width: 0;
     background: transparent;
     font-family: inherit;
-    font-size: inherit;
+    font-size: 14px;
     margin: 0;
     white-space: pre;
     word-wrap: normal;

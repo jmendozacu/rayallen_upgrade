@@ -37,7 +37,7 @@ class Save extends \Wyomind\DataFeedManager\Controller\Adminhtml\Variables\Abstr
             $displayErrors = ini_get('display_errors');
             ini_set('display_errors', 0);
             try {
-                if ($this->_attributesHelper->execPhp("?><?php function(){" . substr(trim($this->getRequest()->getParam('script')), 5, -2) . "} ?>") === false) {
+                if ($this->_attributesHelper->execPhp($this->getRequest()->getParam('script'),"?><?php function(){" . substr(trim($this->getRequest()->getParam('script')), 5, -2) . "} ?>") === false) {
                     $this->_coreRegistry->register('script', $data['script']);
                     $this->messageManager->addError(__("Invalid variable declaration") . "<br>" . error_get_last()["message"]);
                     $return = $this->resultForwardFactory->create()->forward("edit");

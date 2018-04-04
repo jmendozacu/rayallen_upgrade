@@ -1,18 +1,22 @@
 <?php
 
 /**
- * Copyright © 2016 Wyomind. All rights reserved.
+ * Copyright © 2017 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
  */
 
 namespace Wyomind\Core\Model\ResourceModel;
 
 /**
- *
+ * Get the last heart beat of the Magento main cron task
  */
 class Schedule extends \Magento\Cron\Model\ResourceModel\Schedule
 {
     
+    /**
+     * Get the last heart beat of the Magento main cron task
+     * @return string
+     */
     public function getLastHeartbeat()
     {
         $connection = $this->getConnection();

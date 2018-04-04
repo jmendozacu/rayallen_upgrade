@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright © 2015 Wyomind. All rights reserved.
+ * Copyright © 2018 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
  */
 namespace Wyomind\DataFeedManager\Controller\Adminhtml\Feeds;
@@ -11,7 +10,6 @@ namespace Wyomind\DataFeedManager\Controller\Adminhtml\Feeds;
  */
 class Library extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\AbstractFeeds
 {
-
     /**
      * Execute action
      */
@@ -20,8 +18,8 @@ class Library extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstra
         try {
             $tabOutput = '<div class="data-feed-library"><ul>';
             $tabOutput .=" <li>" . __("Online documentation : ") . "</li>";
-            $tabOutput .=" <li><a target='_blank' href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#Attribute%20specifications'>" . __("Attributes") . "</a></li>";
-            $tabOutput .=" <li><a target='_blank' href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#BASIC FUNCTIONS'>" . __("Functions") . "</a></li>";
+            $tabOutput .=" <li><a target='_blank' href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#attribute-specifications'>" . __("Attributes") . "</a></li>";
+            $tabOutput .=" <li><a target='_blank' href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#basic-functions'>" . __("Functions") . "</a></li>";
             $tabOutput .=" <li><a target='_blank' href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation'>" . __("More documentation") . "</a></li>";
             $tabOutput .= '</ul>';
             $tabOutput .= '<span class="separator"></span>';
@@ -38,46 +36,40 @@ class Library extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstra
             $contentOutput = "<div class='attr-list'><h3></h3>";
             $contentOutput .= "<table class='attr-list'>";
             $contentOutput .= "<thead><tr><th>" . __("Attribute label") . "</th><th>" . __("Attribute code") . "</th></tr></thead><tbody>";
-            $i = 0;
             $empties = [];
-            
-            
+
             $collection = $this->variablesCollectionFactory->create();
             foreach ($collection as $variable) {
-                $contentOutput .=  "<tr class='attribute-documentation_" . ($i % 2) . "'><td title='" . __("Load sample") . "' class='label' att_code='" . $variable->getName() . "'><span class='tv' style='display: inline-block;height: 18px;width: 18px;'></span>" . $variable->getName() . "</td><td class='pink'>{{product." . $variable->getName() . "}}";
-                $i++;
+                $contentOutput .= "<tr class='attribute-documentation'><td title='" . __("Load sample") . "' class='label' att_code='" . $variable->getName() . "'><span class='tv' style='display: inline-block;height: 18px;width: 18px;'></span>" . $variable->getName() . "</td><td class='pink'>{{product." . $variable->getName() . "}}";
             }
-            
-            
+
             foreach ($attributesList->getItems() as $attribute) {
                 if (empty($attribute->getDefaultFrontendLabel())) {
                     $empties[] = $attribute;
                     continue;
                 }
                 if (!empty($attribute->getAttributeCode())) {
-                    $contentOutput .= "<tr class='attribute-documentation_" . ($i % 2) . "'><td title='" . __("Load sample") . "' class='label load-attr-sample' att_code='" . $attribute->getAttributeCode() . "'><span class='tv closed' ></span>" . $attribute->getDefaultFrontendLabel() . "</td><td class='pink'>{{product." . $attribute->getAttributeCode() . "}}";
+                    $contentOutput .= "<tr class='attribute-documentation'><td title='" . __("Load sample") . "' class='label load-attr-sample' att_code='" . $attribute->getAttributeCode() . "'><span class='tv closed' ></span>" . $attribute->getDefaultFrontendLabel() . "</td><td class='pink'>{{product." . $attribute->getAttributeCode() . "}}";
                     if (array_key_exists($attribute->getAttributeCode(), $this->parserHelper->attributeOptions)) {
                         $contentOutput .= "&nbsp;&nbsp;<a href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#{{" . $attribute->getAttributeCode() . "}}' target='_blank'>" . __('More information') . "</a>";
                     }
                     $contentOutput .= "</td></tr><tr class='attribute-sample'><td colspan='2'></td></tr>";
-                    $i++;
                 }
             }
             foreach ($empties as $attribute) {
                 if (!empty($attribute->getAttributeCode())) {
-                    $contentOutput .= "<tr class='attribute-documentation_" . ($i % 2) . "'><td title='" . __("Load sample") . "' class='label load-attr-sample' att_code='" . $attribute->getAttributeCode() . "'><span class=' tv closed'></span><i>Empty label</i></td><td class='pink'>{{product." . $attribute->getAttributeCode() . "}}";
+                    $contentOutput .= "<tr class='attribute-documentation'><td title='" . __("Load sample") . "' class='label load-attr-sample' att_code='" . $attribute->getAttributeCode() . "'><span class=' tv closed'></span><i>Empty label</i></td><td class='pink'>{{product." . $attribute->getAttributeCode() . "}}";
                     if (array_key_exists($attribute->getAttributeCode(), $this->parserHelper->attributeOptions)) {
                         $contentOutput .= "&nbsp;&nbsp;<a href='https://www.wyomind.com/magento2/data-feed-manager-magento.html?section=documentation#{{" . $attribute->getAttributeCode() . "}}' target='_blank'>" . __('More information') . "</a>";
                     }
                     $contentOutput .= "</td></tr><tr class='attribute-sample'><td colspan='2'></td></tr>";
-                    $i++;
                 }
             }
             $contentOutput .="</tbody></table>";
             $contentOutput .="</div>";
-            $data = $tabOutput . $contentOutput;
+            $data = ['data' => $tabOutput . $contentOutput];
         } catch (\Exception $e) {
-            $data = $e->getMessage();
+            $data = ['data' => $e->getMessage()];
         }
         $this->getResponse()->representJson($this->_objectManager->create('Magento\Framework\Json\Helper\Data')->jsonEncode($data));
     }

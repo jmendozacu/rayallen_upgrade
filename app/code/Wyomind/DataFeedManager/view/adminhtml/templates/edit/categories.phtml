@@ -2,7 +2,7 @@
 /*
  * Copyright © 2015 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
-*/
+ */
 ?>
 <!--
   Categories tree view template
@@ -33,7 +33,7 @@
         <div id="taxonomy-box">
 
             <b><?php echo __("Google Taxonomy source : ") ?></b>  
-            <select id="feed_taxonomy" name='feed_taxonomy'>
+            <select id="taxonomy" name='taxonomy'>
                 <?php
                 $array = $block->getAvailableTaxonomies();
 
@@ -43,7 +43,7 @@
                     } else {
                         $selected = "";
                     }
-                    echo "<option value='".$file . "' $selected>" . basename(str_replace('.txt', null, $file)) . "</option>";
+                    echo "<option value='" . $file . "' $selected>" . basename(str_replace('.txt', null, $file)) . "</option>";
                 }
                 ?> 
 
@@ -53,17 +53,76 @@
 
         <br>
         <span id='note' style='margin-left:10px;'>
-        <?php echo __("* If you do not select any category, all products will be exported"); ?>
+            <?php echo __("* If you do not select any category, all products will be exported"); ?>
         </span>
-        <div class="category-selector">
-            <?php
-            echo $block->categoriesLoop($block->getCategoriesJson());
-            ?>
+        <div class="category-selector" id="category-selector">
+            <textarea style="display:none" id="cat-json-tree"><?php echo $block->getJsonTree(); ?></textarea>
             <div class="mapping-dropdown" id="mapping-dropdown"></div>
-        </div>
+        </div> 
 
     </fieldset>
 
 </div>
 
 
+<script>
+    require(["jquery", "dfm_categories"], function ($, categories) {
+        'use strict';
+
+        /* opening/closing treeview */
+        $(document).on("click", ".tv-switcher", function (evt) {
+            var elt = $(evt.target);
+            // click on treeview expand/collapse
+            if (elt.hasClass('closed')) {
+                elt.removeClass('closed');
+                elt.addClass('opened');
+                categories.displayChildren(categories.tree[elt.attr('id')], "#main-cat-" + elt.attr('id'));
+            } else if (elt.hasClass('opened')) {
+                elt.addClass('closed');
+                elt.removeClass('opened');
+                $("#main-cat-" + elt.attr('id')).parent().find("ul").remove();
+            }
+        });
+
+        // click on category select
+        $(document).on("click", ".category", function (evt) {
+            $(this).parent().toggleClass('selected');
+            categories.updateSelection();
+            categories.selectChildren($(this).attr("id").replace("cat_id_", ""));
+        });
+
+        // change categories filter value
+        $(document).on("click", ".category_filter", function (evt) {
+            $("#category_filter").val($(this).val());
+        });
+
+        // change categories type value
+        $(document).on("click", ".category_type", function (evt) {
+            $("#category_type").val($(this).val());
+        });
+
+        /* change mapping */
+        $(document).on("change", ".mapping", function () {
+            categories.updateSelection();
+        });
+
+
+        // change the taxonomy file 
+        $(document).on('change', '#taxonomy', function () {
+            categories.updateAutoComplete();
+        });
+
+        /* initialize end keyboard shortcut */
+        $(document).on("keyup", ".mapping", function (event) {
+            if (event.key === "End") {
+                categories.updateChildrenMapping($(this).val(), $(this).attr('id').replace('category_mapping_', ''));
+            }
+        });
+
+        // load selected categories
+        categories.init();
+        // load the categories filter
+        categories.loadCategoriesFilter();
+        ;
+    });
+</script>

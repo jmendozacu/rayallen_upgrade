@@ -1,23 +1,25 @@
 <?php
+
 /*
  * Copyright © 2015 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
  */
+
 namespace Wyomind\DataFeedManager\Block\Adminhtml\Feeds\Edit\Tab;
- 
+
 /**
  * Cms page edit form main tab
  */
 class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Magento\Backend\Block\Widget\Tab\TabInterface
 {
- 
+
     protected $_attributeFactory = null;
     protected $_attributeOption = null;
     protected $_coreHelper = null;
     protected $_attributeSetRepository = null;
     protected $_attributeRepository = null;
     protected $_objectManager = null;
-    
+
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -42,6 +44,7 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
         \Magento\Framework\ObjectManager\ObjectManager $objectManager,
         array $data = []
     ) {
+    
         parent::__construct($context, $registry, $formFactory, $data);
         $this->_attributeFactory = $attributeFactory;
         $this->_attributeOption = $attributeOption;
@@ -54,19 +57,19 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
     protected function _prepareForm()
     {
         $model = $this->_coreRegistry->registry('data_feed');
- 
+
         $form = $this->_formFactory->create();
- 
+
         $form->setHtmlIdPrefix('');
-        
+
         $form->setValues($model->getData());
         $this->setForm($form);
-        
+
         $this->setTemplate('edit/filters.phtml');
-         
+
         return parent::_prepareForm();
     }
-    
+
     /**
      * @return string
      */
@@ -103,7 +106,7 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
     {
         return ($a['frontend_label'] < $b['frontend_label']) ? -1 : 1;
     }
-    
+
     /**
      * @return string
      */
@@ -118,7 +121,7 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
         }
         return $selectOutput;
     }
-    
+
     public function getNbFilters()
     {
         return $this->_coreHelper->getStoreConfig("datafeedmanager/system/filters");
@@ -128,29 +131,31 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
     {
         return $this->_coreHelper->getStoreConfig("datafeedmanager/system/filters_sql");
     }
- 
+
     public function getDFMTypeIds()
     {
         $model = $this->_coreRegistry->registry('data_feed');
         return $model->getTypeIds();
     }
+
     public function getDFMAttributeSets()
     {
         $model = $this->_coreRegistry->registry('data_feed');
         return $model->getAttributeSets();
     }
+
     public function getDFMVisibilities()
     {
         $model = $this->_coreRegistry->registry('data_feed');
         return $model->getVisibilities();
     }
-    
+
     public function getDFMAttributes()
     {
         $model = $this->_coreRegistry->registry('data_feed');
         return $model->getAttributes();
     }
- 
+
     public function getAttributeSets()
     {
 
@@ -168,7 +173,7 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
 
         return $this->_attributeSetRepository->getList($searchCriteria)->getItems();
     }
- 
+
     public function getAttributeOptions($attId)
     {
         $att = $this->_attributeFactory->create()->load($attId);
@@ -202,27 +207,28 @@ class Filters extends \Magento\Backend\Block\Widget\Form\Generic implements \Mag
         $attributeList[] = ["attribute_code" => "entity_id", "frontend_label" => "Product Id"];
         $attributeList[] = ["attribute_code" => "qty", "frontend_label" => "Quantity"];
         $attributeList[] = ["attribute_code" => "is_in_stock", "frontend_label" => "Is in stock"];
+        $attributeList[] = ["attribute_code" => "status", "frontend_label" => "Status"];
 
         usort($attributeList, ['\Wyomind\DataFeedManager\Block\Adminhtml\Feeds\Edit\Tab\Filters', 'cmp']);
 
         return $attributeList;
     }
-    
+
     public function getTabLabel()
     {
         return __('Filters');
     }
- 
+
     public function getTabTitle()
     {
         return __('Filters');
     }
- 
+
     public function canShowTab()
     {
         return true;
     }
- 
+
     public function isHidden()
     {
         return false;

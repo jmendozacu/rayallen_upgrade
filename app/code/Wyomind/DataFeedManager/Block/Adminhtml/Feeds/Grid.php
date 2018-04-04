@@ -26,6 +26,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
         \Wyomind\Core\Helper\Data $coreHelper,
         array $data = []
     ) {
+    
         $this->_collectionFactory = $collectionFactory;
         $this->_coreHelper = $coreHelper;
         parent::__construct($context, $backendHelper, $data);
@@ -90,87 +91,43 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->addColumn(
             'status',
             [
-                'header' => __('Status'),
-                'index' => 'status',
-                'type' => 'options',
-                'options' => [
-                    1 => __('Enabled'),
-                    0 => __('Disabled'),
-                ],
-            ]
+            'header' => __('Status'),
+            'index' => 'status',
+            'type' => 'options',
+            'options' => [
+                1 => __('Enabled'),
+                0 => __('Disabled'),
+            ],
+                ]
         );
 
         $this->addColumn(
             'feed_status',
             [
-                'header' => __('Status'),
-                'align' => 'left',
-                'renderer' => 'Wyomind\DataFeedManager\Block\Adminhtml\Feeds\Renderer\Status',
-                "filter" => false,
-                "sortable" => false,
-            ]
+            'header' => __('Status'),
+            'align' => 'left',
+            'renderer' => 'Wyomind\DataFeedManager\Block\Adminhtml\Feeds\Renderer\Status',
+            "filter" => false,
+            "sortable" => false,
+                ]
         );
 
-        $actions = [
-            [// Edit
-                'caption' => __('Edit'),
-                'url' => [
-                    'base' => '*/*/edit'
-                ],
-                'field' => 'id'
-            ],
-            [// Generate
-                'caption' => __('Generate'),
-                'url' => [
-                    'base' => '*/*/generate'
-                ],
-                'field' => 'id',
-                'confirm' => __('Generate a data feed can take a while. Are you sure you want to generate it now ?'),
-            ],
-            [// Preview
-                'caption' => __('Preview (%1 items)', $this->_coreHelper->getDefaultConfig("datafeedmanager/system/preview")),
-                'url' => [
-                    'base' => '*/*/preview'
-                ],
-                'field' => 'id',
-                'popup' => true
-            ],
-            [// Delete
-                'caption' => __('Delete'),
-                'url' => [
-                    'base' => '*/*/delete'
-                ],
-                'field' => 'id',
-                'confirm' => __('Are you sure you want to delete this feed ?'),
-                ],
-            ];
+        $this->addColumn(
+            'action',
+            [
+            'header' => __('Action'),
+            'type' => 'action',
+            'getter' => 'getId',
+            'filter' => false,
+            'sortable' => false,
+            'index' => 'id',
+            'header_css_class' => 'col-action',
+            'column_css_class' => 'col-action',
+            'renderer' => 'Wyomind\DataFeedManager\Block\Adminhtml\Feeds\Renderer\Action',
+                ]
+        );
 
-        if ($this->getRequest()->getParam('debug')) {
-            $actions[] = [
-                'caption' => __('Debug'),
-                'url' => [
-                    'base' => '*/*/debug'
-                ],
-                'field' => 'id'
-            ];
-        }
-
-                $this->addColumn(
-                    'action',
-                    [
-                        'header' => __('Action'),
-                        'type' => 'action',
-                        'getter' => 'getId',
-                        'actions' => $actions,
-                        'filter' => false,
-                        'sortable' => false,
-                        'index' => 'id',
-                        'header_css_class' => 'col-action',
-                        'column_css_class' => 'col-action'
-                    ]
-                );
-
-                return parent::_prepareColumns();
+        return parent::_prepareColumns();
     }
 
     public function getRowUrl($row)

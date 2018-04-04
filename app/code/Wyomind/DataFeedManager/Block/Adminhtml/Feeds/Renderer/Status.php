@@ -130,7 +130,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Abstract
             $status = __(self::_PENDING);
         }
 
-        $script = "<script language='javascript' type='text/javascript'>var updater_url='" . $this->getUrl('datafeedmanager/feeds/updater') . "';</script>";
-        return $script . "<span class='grid-severity-$severity updater' cron='" . $row->getCronExpr() . "' id='feed_" . $row->getId() . "'><span>" . ($status) . "</span></span>";
+        
+        return "<span class='grid-severity-$severity updater' cron='" . $row->getCronExpr() . "' id='feed_" . $row->getId() . "'><span>" . ($status) . "</span></span>";
     }
 }

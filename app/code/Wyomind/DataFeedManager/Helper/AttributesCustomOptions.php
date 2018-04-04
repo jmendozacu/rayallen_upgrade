@@ -10,7 +10,7 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesCustomOptions extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesCustomOptions extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
 
     /**
@@ -118,4 +118,14 @@ class AttributesCustomOptions extends \Magento\Framework\App\Helper\AbstractHelp
         }
         return "";
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }
