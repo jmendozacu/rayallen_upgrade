@@ -50,6 +50,7 @@ define([
             wrapper.element.find(wrapper.options.editSelector).off().on('click', function() {
                 spinner.show();
                 wrapper.element.parent().load(this.href, function () {
+                    wrapper._create();
                     spinner.hide();
                 });
 
@@ -60,14 +61,14 @@ define([
             wrapper.element.find(wrapper.options.editSelectorInd).off().on('click', function(e) {
                 e.preventDefault();
 
-                $(this).find(wrapper.options.editSelectorIndTarget).trigger('click');
+                wrapper.element.find(wrapper.options.editSelectorIndTarget).trigger('click');
             });
 
             // Catch saves
             wrapper.element.find(wrapper.options.formSelector).off().on('submit', function(e) {
                 e.preventDefault();
 
-                $(this).find(wrapper.options.saveSelector).prop('disabled', true);
+                $(wrapper.element).find(wrapper.options.saveSelector).prop('disabled', true);
 
                 spinner.show();
                 $.post(this.action, $(this).serialize(), function(data) {
@@ -77,13 +78,41 @@ define([
                         if(typeof data.message != 'undefined') {
                             alert(data.message);
 
-                            $(this).find(wrapper.options.saveSelector).prop('disabled', false);
+                            wrapper.element.find(wrapper.options.saveSelector).removeProp('disabled');
                         }
                     }
                     else {
                         wrapper.element.parent().html(data);
+                        wrapper._create();
                     }
                 });
+
+                return false;
+            });
+
+            wrapper.element.find(wrapper.options.saveSelector).off().on('click', function(e) {
+                e.preventDefault();
+
+                $(this).prop('disabled', true);
+
+                spinner.show();
+                $.post(this.form.action, $(this.form).serialize(), function(data) {
+                    spinner.hide();
+
+                    if(typeof data === 'object') {
+                        if(typeof data.message != 'undefined') {
+                            alert(data.message);
+
+                            $(wrapper.element).find(wrapper.options.saveSelector).prop('disabled', false);
+                        }
+                    }
+                    else {
+                        wrapper.element.parent().html(data);
+                        wrapper._create();
+                    }
+                });
+
+                return false;
             });
         }
     });

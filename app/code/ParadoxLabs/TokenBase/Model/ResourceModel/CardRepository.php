@@ -97,7 +97,7 @@ class CardRepository implements CardRepositoryInterface
      * @return \ParadoxLabs\TokenBase\Api\Data\CardInterface
      * @throws CouldNotSaveException
      */
-    public function save(Data\CardInterface $card)
+    public function save(\ParadoxLabs\TokenBase\Api\Data\CardInterface $card)
     {
         try {
             $this->resource->save($card);
@@ -106,6 +106,25 @@ class CardRepository implements CardRepositoryInterface
         }
 
         return $card;
+    }
+
+    /**
+     * Save card with extended objects.
+     *
+     * @param \ParadoxLabs\TokenBase\Api\Data\CardInterface $card
+     * @param \Magento\Customer\Api\Data\AddressInterface $address
+     * @param \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface $additional
+     * @return \ParadoxLabs\TokenBase\Api\Data\CardInterface
+     */
+    public function saveExtended(
+        \ParadoxLabs\TokenBase\Api\Data\CardInterface $card,
+        \Magento\Customer\Api\Data\AddressInterface $address,
+        \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface $additional
+    ) {
+        $card->setAddress($address);
+        $card->setAdditional($additional);
+
+        return $this->save($card);
     }
 
     /**
@@ -120,13 +139,33 @@ class CardRepository implements CardRepositoryInterface
         $card = $this->cardFactory->create();
 
         if (!is_numeric($cardId)) {
-            $card->loadByHash($cardId);
+            $this->resource->load($card, $cardId, 'hash');
         } else {
             $this->resource->load($card, $cardId);
         }
 
         if (!$card->getId()) {
             throw new NoSuchEntityException(__('Card with id "%1" does not exist.', $cardId));
+        }
+
+        return $card;
+    }
+
+    /**
+     * Retrieve card. Will accept hash only.
+     *
+     * @param string $cardHash
+     * @return \ParadoxLabs\TokenBase\Api\Data\CardInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getByHash($cardHash)
+    {
+        $card = $this->cardFactory->create();
+
+        $this->resource->load($card, $cardHash, 'hash');
+
+        if (!$card->getId()) {
+            throw new NoSuchEntityException(__('Card with id "%1" does not exist.', $cardHash));
         }
 
         return $card;
@@ -150,7 +189,7 @@ class CardRepository implements CardRepositoryInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @param SearchCriteriaInterface $criteria
-     * @return \ParadoxLabs\TokenBase\Model\ResourceModel\Card\Collection
+     * @return \ParadoxLabs\TokenBase\Api\Data\CardSearchResultsInterface
      */
     public function getList(SearchCriteriaInterface $criteria)
     {
@@ -233,7 +272,7 @@ class CardRepository implements CardRepositoryInterface
         $conds  = [];
 
         foreach ($filterGroup->getFilters() as $filter) {
-            $condition = $filter->getConditionType() ? $filter->getConditionType() : 'eq';
+            $condition = $filter->getConditionType() ?: 'eq';
             $fields[]  = $filter->getField();
             $conds[]   = [$condition => $filter->getValue()];
         }

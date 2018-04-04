@@ -19,26 +19,37 @@ namespace ParadoxLabs\Authnetcim\Model;
 class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
 {
     /**
-     * @var string
-     */
-    protected $_code = 'authnetcim';
-
-    /**
-     * @var string
-     */
-    protected $_formBlockType = 'ParadoxLabs\Authnetcim\Block\Form\Cc';
-
-    /**
-     * @var string
-     */
-    protected $_infoBlockType = 'ParadoxLabs\Authnetcim\Block\Info\Cc';
-
-    /**
-     * Payment Method feature
+     * Determine whether Accept.js is configured and enabled.
      *
-     * @var bool
+     * @return bool
      */
-    protected $_canFetchTransactionInfo = true;
+    public function isAcceptJsEnabled()
+    {
+        $clientKey = $this->getConfigData('client_key');
+
+        if ($this->getConfigData('acceptjs') == 1 && !empty($clientKey)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return boolean whether given payment object includes new card info.
+     *
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @return bool
+     */
+    protected function paymentContainsCard(\Magento\Payment\Model\InfoInterface $payment)
+    {
+        $acceptJsValue = $this->getInfoInstance()->getAdditionalInformation('acceptjs_value');
+
+        if (!empty($acceptJsValue)) {
+            return true;
+        }
+
+        return parent::paymentContainsCard($payment);
+    }
 
     /**
      * Try to convert legacy data inline.
@@ -50,7 +61,18 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
     {
         /** @var \Magento\Sales\Model\Order\Payment $payment */
 
-        if (!is_null($this->card)) {
+        // Check for stale Accept.js token
+        $acceptJsValue = $this->getInfoInstance()->getAdditionalInformation('acceptjs_value');
+        $acceptCardId  = $this->registry->registry('authnetcim-acceptjs-' . $acceptJsValue);
+        if (!empty($acceptJsValue) && $acceptCardId !== null) {
+            // If we already stored the current token as a card and recorded it as such (via arbitrary registry key),
+            // we can't reuse it -- swap the card ID in and use that instead.
+            $payment->setData('tokenbase_id', $acceptCardId);
+            $payment->unsAdditionalInformation('acceptjs_key');
+            $payment->unsAdditionalInformation('acceptjs_value');
+        }
+
+        if ($this->card !== null) {
             $this->log(sprintf('loadOrCreateCard(%s %s)', get_class($payment), $payment->getId()));
 
             $this->setCard($this->getCard());
@@ -63,12 +85,13 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
 
             /** @var \ParadoxLabs\Authnetcim\Model\Card $card */
             $card = $this->cardFactory->create();
-            $card->setMethod($this->_code)
+            $card->setMethod($this->methodCode)
                  ->setMethodInstance($this)
                  ->setCustomer($this->getCustomer(), $payment)
                  ->setAddress($payment->getOrder()->getBillingAddress())
-                 ->importLegacyData($payment)
-                 ->save();
+                 ->importLegacyData($payment);
+
+            $card = $this->cardRepository->save($card);
 
             $this->setCard($card);
 
@@ -92,12 +115,14 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
             /** @var \Magento\Sales\Model\Order\Address $address */
             $address = $payment->getOrder()->getShippingAddress();
 
+            $region  = $address->getRegionCode() ?: $address->getRegion();
+
             $this->gateway()->setParameter('shipToFirstName', $address->getFirstname());
             $this->gateway()->setParameter('shipToLastName', $address->getLastname());
             $this->gateway()->setParameter('shipToCompany', $address->getCompany());
             $this->gateway()->setParameter('shipToAddress', implode(' ', $address->getStreet()));
             $this->gateway()->setParameter('shipToCity', $address->getCity());
-            $this->gateway()->setParameter('shipToState', $address->getRegion());
+            $this->gateway()->setParameter('shipToState', $region);
             $this->gateway()->setParameter('shipToZip', $address->getPostcode());
             $this->gateway()->setParameter('shipToCountry', $address->getCountryId());
             $this->gateway()->setParameter('shipToPhoneNumber', $address->getTelephone());
@@ -187,24 +212,20 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
 
                     $this->gateway()->clearParameters();
                     $this->gateway()->setCard($this->gateway()->getCard());
+                    $this->handleShippingAddress($payment);
                     $this->gateway()->setHaveAuthorized(true);
 
                     $authResponse    = $this->gateway()->authorize($payment, $outstanding);
-
-                    $payment->getOrder()->setExtOrderId(
-                        sprintf('%s:%s', $authResponse->getTransactionId(), $authResponse->getAuthCode())
-                    );
                 } catch (\Exception $e) {
-                    $payment->getOrder()->setExtOrderId(
-                        sprintf('%s:', $response->getTransactionId())
-                    );
+                    // Reauth failed: Take no action
+                    $this->log('afterCapture(): Reauthorization not successful. Continuing with original transaction.');
                 }
 
                 /**
                  * Even if the auth didn't go through, we need to create a new 'transaction'
                  * so we can still do an online capture for the remainder.
                  */
-                if (!is_null($authResponse)) {
+                if ($authResponse !== null) {
                     $payment->setTransactionId(
                         $this->getValidTransactionId($payment, $authResponse->getTransactionId())
                     );
@@ -215,7 +236,7 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
                     );
 
                     $message = __(
-                        'Reauthorized outstanding amount of %s.',
+                        'Reauthorized outstanding amount of %1.',
                         $payment->formatPrice($outstanding)
                     );
                 } else {
@@ -233,15 +254,13 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
                     false
                 );
 
-                if (!is_null($message)) {
+                if ($message !== null) {
                     $payment->addTransactionCommentsToOrder($transaction, $message);
                 }
 
                 $payment->setTransactionId($wasTransId);
                 $payment->setData('parent_transaction_id', $wasParentId);
             }
-        } else {
-            $payment->getOrder()->setExtOrderId(sprintf('%s:', $response->getTransactionId()));
         }
 
         $payment = $this->fixLegacyCcType($payment, $response);
@@ -261,14 +280,17 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
         \Magento\Payment\Model\InfoInterface $payment,
         \ParadoxLabs\TokenBase\Model\Gateway\Response $response
     ) {
-        /** @var \Magento\Sales\Model\Order\Payment $payment */
-        if ($this->getCard()->getAdditional('cc_type') == null && $response->getCardType() != '') {
-            $ccType = $this->helper->mapCcTypeToMagento($response->getCardType());
+        $card = $this->getCard();
 
-            if (!is_null($ccType)) {
-                $this->getCard()->setAdditional('cc_type', $ccType)
-                                ->setData('no_sync', true)
-                                ->save();
+        /** @var \Magento\Sales\Model\Order\Payment $payment */
+        if ($card->getAdditional('cc_type') == null && $response->getData('card_type') != '') {
+            $ccType = $this->helper->mapCcTypeToMagento($response->getData('card_type'));
+
+            if ($ccType !== null) {
+                $card->setAdditional('cc_type', $ccType)
+                                ->setData('no_sync', true);
+
+                $this->card = $this->cardRepository->save($card);
 
                 $payment->getOrder()->getPayment()->setCcType($ccType);
             }
@@ -299,6 +321,10 @@ class Method extends \ParadoxLabs\TokenBase\Model\AbstractMethod
 
         if ($payment->getData('cc_status') == '' && $response->getData('cavv_response_code') != '') {
             $payment->setData('cc_status', $response->getData('cavv_response_code'));
+        }
+
+        if ($response->getData('auth_code') != '') {
+            $payment->setData('cc_approval', $response->getData('auth_code'));
         }
 
         return $payment;

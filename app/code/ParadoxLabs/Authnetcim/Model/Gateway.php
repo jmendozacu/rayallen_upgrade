@@ -56,7 +56,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
      * @var array
      */
     protected $fields = [
-        'accountNumber'             => ['maxLength' => 17, 'charMask' => '\d'],
+        'accountNumber'             => ['maxLength' => 17, 'charMask' => 'X\d'],
         'accountType'               => ['enum' => ['checking', 'savings', 'businessChecking']],
         'allowPartialAuth'          => ['enum' => ['true', 'false']],
         'amount'                    => [],
@@ -74,11 +74,15 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         'billToZip'                 => ['maxLength' => 20, 'noSymbols' => true],
         'cardCode'                  => ['maxLength' => 4, 'charMask' => '\d'],
         'cardNumber'                => ['maxLength' => 16, 'charMask' => 'X\d'],
+        'centinelAuthIndicator'     => ['maxLength' => 2, 'charMask' => '\d'],
+        'centinelAuthValue'         => [],
         'customerIp'                => [],
         'customerPaymentProfileId'  => [],
         'customerProfileId'         => [],
         'customerShippingAddressId' => [],
         'customerType'              => ['enum' => ['individual', 'business']],
+        'dataDescriptor'            => ['noSymbols' => true],
+        'dataValue'                 => ['charMask' => 'a-zA-Z0-9+\/\\='],
         'description'               => ['maxLength' => 255],
         'duplicateWindow'           => ['charMask' => '\d'],
         'dutyAmount'                => [],
@@ -88,6 +92,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         'email'                     => ['maxLength' => 255],
         'emailCustomer'             => ['enum' => ['true', 'false']],
         'expirationDate'            => ['maxLength' => 7],
+        'includeIssuerInfo'         => ['enum' => ['true', 'false']],
         'invoiceNumber'             => ['maxLength' => 20, 'noSymbols' => true],
         'itemName'                  => ['maxLength' => 31, 'noSymbols' => true],
         'loginId'                   => ['maxLength' => 20],
@@ -96,7 +101,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         'purchaseOrderNumber'       => ['maxLength' => 25, 'noSymbols' => true],
         'recurringBilling'          => ['enum' => ['true', 'false']],
         'refId'                     => ['maxLength' => 20],
-        'routingNumber'             => ['maxLength' => 9, 'charMask' => '\d'],
+        'routingNumber'             => ['maxLength' => 9, 'charMask' => 'X\d'],
         'shipAmount'                => [],
         'shipDescription'           => ['maxLength' => 255],
         'shipName'                  => ['maxLength' => 31],
@@ -135,6 +140,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             ],
         ],
         'transId'                   => ['charMask' => '\d'],
+        'unmaskExpirationDate'      => ['enum' => ['true', 'false']],
         'validationMode'            => ['enum' => ['liveMode', 'testMode', 'none']],
     ];
 
@@ -149,6 +155,48 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         'refundTransaction'           => 'credit',
         'voidTransaction'             => 'void',
     ];
+
+    /**
+     * @var \Magento\Framework\Module\Dir
+     */
+    protected $moduleDir;
+
+    /**
+     * @var \Magento\Framework\Registry
+     */
+    protected $registry;
+
+    /**
+     * Gateway constructor.
+     *
+     * @param \ParadoxLabs\TokenBase\Helper\Data $helper
+     * @param \ParadoxLabs\TokenBase\Model\Gateway\Xml $xml
+     * @param \ParadoxLabs\TokenBase\Model\Gateway\ResponseFactory $responseFactory
+     * @param \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
+     * @param \Magento\Framework\Module\Dir $moduleDir
+     * @param \Magento\Framework\Registry $registry
+     * @param array $data
+     */
+    public function __construct(
+        \ParadoxLabs\TokenBase\Helper\Data $helper,
+        \ParadoxLabs\TokenBase\Model\Gateway\Xml $xml,
+        \ParadoxLabs\TokenBase\Model\Gateway\ResponseFactory $responseFactory,
+        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
+        \Magento\Framework\Module\Dir $moduleDir,
+        \Magento\Framework\Registry $registry,
+        array $data = []
+    ) {
+        $this->moduleDir = $moduleDir;
+        $this->registry = $registry;
+
+        parent::__construct(
+            $helper,
+            $xml,
+            $responseFactory,
+            $httpClientFactory,
+            $data
+        );
+    }
 
     /**
      * Set the API credentials so they go through validation.
@@ -172,7 +220,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
      *
      * @param string $request
      * @param array $params
-     * @return string
+     * @return array|string
      * @throws LocalizedException
      * @throws PaymentException
      */
@@ -192,96 +240,93 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
 
         $this->lastRequest = $xml;
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->endpoint);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ["Content-Type: text/xml"]);
-        curl_setopt($curl, CURLOPT_HEADER, 0);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $xml);
+        /** @var \Magento\Framework\HTTP\ZendClient $httpClient */
+        $httpClient = $this->httpClientFactory->create();
 
+        $clientConfig = [
+            'adapter'     => '\Zend_Http_Client_Adapter_Curl',
+            'timeout'     => 900,
+            'curloptions' => [
+                CURLOPT_CAINFO         => $this->moduleDir->getDir('ParadoxLabs_Authnetcim') . '/authorizenet-cert.pem',
+                CURLOPT_SSL_VERIFYPEER => false,
+            ],
+            'verifypeer' => false,
+            'verifyhost' => 0,
+        ];
+
+        // If we are running a money transaction, we don't want to cut it off even if it takes too long.
+        // Override that 900 second timeout only if this is a non-critical transaction.
         if (!in_array($request, ['createTransactionRequest', 'createCustomerProfileTransactionRequest'])) {
-            curl_setopt($curl, CURLOPT_TIMEOUT, 15);
+            $clientConfig['timeout'] = 15;
         }
-
-        curl_setopt($curl, CURLOPT_CAINFO, dirname(dirname(__FILE__)) . '/authorizenet-cert.pem');
 
         if ($this->verifySsl === true) {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-        } else {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            $clientConfig['curloptions'][CURLOPT_SSL_VERIFYPEER] = true;
+            $clientConfig['curloptions'][CURLOPT_SSL_VERIFYHOST] = 2;
+            $clientConfig['verifypeer'] = true;
+            $clientConfig['verifyhost'] = 2;
         }
 
-        $this->lastResponse = curl_exec($curl);
+        $httpClient->setUri($this->endpoint);
+        $httpClient->setConfig($clientConfig);
+        $httpClient->setRawData($xml, 'text/xml');
 
-        if ($this->lastResponse && !curl_errno($curl)) {
-            $this->log .= 'REQUEST: ' . $this->sanitizeLog($xml) . "\n";
-            $this->log .= 'RESPONSE: ' . $this->sanitizeLog($this->lastResponse) . "\n";
+        try {
+            $response = $httpClient->request(\Zend_Http_Client::POST);
 
-            $this->lastResponse = $this->xmlToArray($this->lastResponse);
+            $this->lastResponse = $response->getBody();
 
-            if ($this->testMode === true) {
-                $this->helper->log($this->code, $this->log, true);
-            }
+            if ($response->isSuccessful() && !empty($this->lastResponse)) {
+                $this->log .= 'REQUEST: ' . $this->sanitizeLog($xml) . "\n";
+                $this->log .= 'RESPONSE: ' . $this->sanitizeLog($this->lastResponse) . "\n";
 
-            /**
-             * Check for basic errors.
-             */
-            if ($this->lastResponse['messages']['resultCode'] != 'Ok') {
-                $errorCode  = $this->helper->getArrayValue($this->lastResponse, 'messages/message/code');
-                $errorText  = $this->helper->getArrayValue($this->lastResponse, 'messages/message/text');
-                $errorText2 = $this->helper->getArrayValue(
-                    $this->lastResponse,
-                    'transactionResponse/errors/error/errorText'
-                );
+                $this->lastResponse = $this->xmlToArray($this->lastResponse);
 
-                if ($errorText2 != '') {
-                    $errorText .= ' ' . $errorText2;
+                if ($this->testMode === true) {
+                    $this->helper->log($this->code, $this->log, true);
                 }
 
                 /**
-                 * Log and spit out generic error. Skip certain warnings we can handle.
+                 * Check for basic errors.
                  */
-                $okayErrorCodes = ['E00039', 'E00040'];
-                $okayErrorTexts = [
-                    'The referenced transaction does not meet the criteria for issuing a credit.',
-                    'The transaction cannot be found.',
-                ];
+                $this->handleTransactionError();
+            } else {
+                $this->helper->log(
+                    $this->code,
+                    sprintf(
+                        "CURL Connection error: %s (%s)\nREQUEST: %s",
+                        $httpClient->getAdapter()->getError(),
+                        $httpClient->getAdapter()->getErrno(),
+                        $this->sanitizeLog($xml)
+                    )
+                );
 
-                if (!empty($errorCode)
-                    && !in_array($errorCode, $okayErrorCodes)
-                    && !in_array($errorText, $okayErrorTexts)
-                    && !in_array($errorText2, $okayErrorTexts)
-                ) {
-                    $this->helper->log(
-                        $this->code,
-                        sprintf("API error: %s: %s\n%s", $errorCode, $errorText, $this->log)
-                    );
-	/* Code For Checking Proccess Time */
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/order_process.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info('Payment Respone '.$errorText.' Session ID '.$_SESSION['default']['visitor_data']['session_id']. " Timestamp ". date('Y-m-d H:i:s'));
-        /* <!---Code For Checking Proccess Time---> */
-                    throw new PaymentException(
-                        __(sprintf('Authorize.Net CIM Gateway: %s (%s)', $errorText, $errorCode))
-                    );
-                }
+                throw new LocalizedException(
+                    __(sprintf(
+                        'Authorize.Net CIM Gateway Connection error: %s (%s)',
+                        $httpClient->getAdapter()->getError(),
+                        $httpClient->getAdapter()->getErrno()
+                    ))
+                );
             }
-
-            curl_close($curl);
-        } else {
+        } catch (\Zend_Http_Exception $e) {
             $this->helper->log(
                 $this->code,
-                sprintf('CURL Connection error: ' . curl_error($curl) . ' (' . curl_errno($curl) . ')' . "\n"
-                    . 'REQUEST: ' . $this->sanitizeLog($xml))
+                sprintf(
+                    "CURL Connection error: %s. %s (%s)\nREQUEST: %s",
+                    $e->getMessage(),
+                    $httpClient->getAdapter()->getError(),
+                    $httpClient->getAdapter()->getErrno(),
+                    $this->sanitizeLog($xml)
+                )
             );
 
             throw new LocalizedException(
                 __(sprintf(
-                    'Authorize.Net CIM Gateway Connection error: %s (%s)',
-                    curl_error($curl),
-                    curl_errno($curl)
+                    'Authorize.Net CIM Gateway Connection error: %s. %s (%s)',
+                    $e->getMessage(),
+                    $httpClient->getAdapter()->getError(),
+                    $httpClient->getAdapter()->getErrno()
                 ))
             );
         }
@@ -356,10 +401,10 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
                     /**
                      * We know the card is not valid, so hide and get rid of it. Except we're in the middle
                      * of a transaction... so any change will just be rolled back. Save it for a little later.
-                     * @see \ParadoxLabs\TokenBase\Model\Observer\CardLoad::checkQueuedForDeletion()
+                     * @see \ParadoxLabs\TokenBase\Observer\CardLoadProcessDeleteQueueObserver::execute()
                      */
-                    $this->_registry->unregister('queue_card_deletion');
-                    $this->_registry->register('queue_card_deletion', $this->getData('card'));
+                    $this->registry->unregister('queue_card_deletion');
+                    $this->registry->register('queue_card_deletion', $this->getData('card'));
                 }
 
                 $this->helper->log(
@@ -455,10 +500,10 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
     /**
      * These should be implemented by the child gateway.
      *
-     * @param \ParadoxLabs\Tokenbase\Api\Data\CardInterface $card
+     * @param \ParadoxLabs\TokenBase\Api\Data\CardInterface $card
      * @return $this
      */
-    public function setCard(\ParadoxLabs\Tokenbase\Api\Data\CardInterface $card)
+    public function setCard(\ParadoxLabs\TokenBase\Api\Data\CardInterface $card)
     {
         $this->setParameter('email', $card->getCustomerEmail());
         $this->setParameter('merchantCustomerId', $card->getCustomerId());
@@ -466,7 +511,9 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         $this->setParameter('customerPaymentProfileId', $card->getPaymentId());
         $this->setParameter('customerIp', $card->getCustomerIp());
 
-        return parent::setCard($card);
+        parent::setCard($card);
+
+        return $this;
     }
 
     /**
@@ -519,38 +566,21 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         if ($this->getHaveAuthorized()) {
             $this->setParameter('transactionType', 'priorAuthCaptureTransaction');
 
-            if (!is_null($transactionId)) {
+            if ($transactionId !== null) {
                 $this->setParameter('transId', $transactionId);
-            } elseif ($payment->getData('transaction_id') != '') {
+            } else {
                 $this->setParameter('transId', $payment->getData('transaction_id'));
             }
-        } else {
+        }
+
+        if ($this->getHaveAuthorized() === false || empty($this->getTransactionId())) {
             $this->setParameter('transactionType', 'authCaptureTransaction');
         }
 
         $this->setParameter('amount', $amount);
         $this->setParameter('invoiceNumber', $payment->getOrder()->getIncrementId());
 
-        // Grab shipping and tax info from the invoice if possible. Should always be true.
-        if ($payment->hasData('invoice')
-            && $payment->getData('invoice') instanceof \Magento\Sales\Model\Order\Invoice
-        ) {
-            if ($payment->getData('invoice')->getBaseTaxAmount()) {
-                $this->setParameter('taxAmount', $payment->getData('invoice')->getBaseTaxAmount());
-            }
-
-            if ($payment->getData('invoice')->getBaseShippingAmount()) {
-                $this->setParameter('shipAmount', $payment->getData('invoice')->getBaseShippingAmount());
-            }
-        } elseif ($payment->getOrder()->getBaseTotalPaid() <= 0) {
-            if ($payment->getOrder()->getBaseTaxAmount()) {
-                $this->setParameter('taxAmount', $payment->getOrder()->getBaseTaxAmount());
-            }
-
-            if ($payment->getBaseShippingAmount()) {
-                $this->setParameter('shipAmount', $payment->getBaseShippingAmount());
-            }
-        }
+        $this->captureGetAmountInfo($payment);
 
         if ($payment->hasData('cc_cid') && $payment->getData('cc_cid') != '') {
             $this->setParameter('cardCode', $payment->getData('cc_cid'));
@@ -569,6 +599,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             );
 
             $this->clearParameters()
+                 ->setHaveAuthorized(false)
                  ->setCard($this->getData('card'));
 
             $response = $this->capture($payment, $amount, '');
@@ -594,15 +625,17 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         $this->setParameter('amount', $amount);
         $this->setParameter('invoiceNumber', $payment->getOrder()->getIncrementId());
 
-        if ($payment->getCreditmemo()->getBaseTaxAmount()) {
-            $this->setParameter('taxAmount', $payment->getCreditmemo()->getBaseTaxAmount());
+        if ($payment->getCreditmemo() instanceof \Magento\Sales\Api\Data\CreditmemoInterface) {
+            if ($payment->getCreditmemo()->getBaseTaxAmount()) {
+                $this->setParameter('taxAmount', $payment->getCreditmemo()->getBaseTaxAmount());
+            }
+
+            if ($payment->getCreditmemo()->getBaseShippingAmount()) {
+                $this->setParameter('shipAmount', $payment->getCreditmemo()->getBaseShippingAmount());
+            }
         }
 
-        if ($payment->getCreditmemo()->getBaseShippingAmount()) {
-            $this->setParameter('shipAmount', $payment->getCreditmemo()->getBaseShippingAmount());
-        }
-
-        if (!is_null($transactionId)) {
+        if ($transactionId !== null) {
             $this->setParameter('transId', $transactionId);
         } elseif ($payment->getTransactionId() != '') {
             $this->setParameter('transId', $payment->getTransactionId());
@@ -618,7 +651,8 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             /**
              * Is this a full refund? If so, just void it. Nobody will see the difference.
              */
-            if ($amount == $payment->getCreditmemo()->getInvoice()->getBaseGrandTotal()) {
+            if ($payment->getCreditmemo() instanceof \Magento\Sales\Api\Data\CreditmemoInterface
+                && $amount == $payment->getCreditmemo()->getInvoice()->getBaseGrandTotal()) {
                 $transactionId = $this->getParameter('transId');
 
                 return $this->clearParameters()
@@ -659,7 +693,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
 
         $this->setParameter('transactionType', 'voidTransaction');
 
-        if (!is_null($transactionId)) {
+        if ($transactionId !== null) {
             $this->setParameter('transId', $transactionId);
         } elseif ($payment->getTransactionId() != '') {
             $this->setParameter('transId', $payment->getTransactionId());
@@ -770,7 +804,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
     {
         $params = [
             'profile' => [
-                'merchantCustomerId' => intval($this->getParameter('merchantCustomerId')),
+                'merchantCustomerId' => (int)$this->getParameter('merchantCustomerId'),
                 'description'        => $this->getParameter('description'),
                 'email'              => $this->getParameter('email'),
             ],
@@ -831,29 +865,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
                 ] + $params['paymentProfile'];
         }
 
-        if ($this->hasParameter('cardNumber')) {
-            $params['paymentProfile']['payment'] = [
-                'creditCard' => [
-                    'cardNumber'     => $this->getParameter('cardNumber'),
-                    'expirationDate' => $this->getParameter('expirationDate'),
-                ],
-            ];
-
-            if ($this->hasParameter('cardCode')) {
-                $params['paymentProfile']['payment']['creditCard']['cardCode'] = $this->getParameter('cardCode');
-            }
-        } elseif ($this->hasParameter('accountNumber')) {
-            $params['paymentProfile']['payment'] = [
-                'bankAccount' => [
-                    'accountType'   => $this->getParameter('accountType'),
-                    'routingNumber' => $this->getParameter('routingNumber'),
-                    'accountNumber' => $this->getParameter('accountNumber'),
-                    'nameOnAccount' => $this->getParameter('nameOnAccount'),
-                    'echeckType'    => $this->getParameter('echeckType'),
-                    'bankName'      => $this->getParameter('bankName'),
-                ],
-            ];
-        }
+        $params = $this->createCustomerPaymentProfileAddPaymentInfo($params);
 
         $result = $this->runTransaction('createCustomerPaymentProfileRequest', $params);
         $paymentId = null;
@@ -881,9 +893,19 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             }
 
             if (!empty($paymentId)) {
-                // Update the card record to ensure CCV and expiry are up to date.
+                // Update the card record to ensure expiry is up to date.
                 $this->setParameter('customerPaymentProfileId', $paymentId);
-                $this->updateCustomerPaymentProfile();
+
+                // Handle Accept.js nonce (which would now be expired). Card number won't have changed, but exp might.
+                if ($this->hasParameter('dataValue')) {
+                    $this->setParameter('cardNumber', 'XXXX' . $this->getCard()->getAdditional('cc_last4'));
+                    $this->setParameter('expirationDate', date('Y-m', strtotime($this->getCard()->getExpires())));
+                }
+
+                if ($this->getParameter('cardNumber') !== 'XXXX'
+                    && $this->getParameter('expirationDate') !== '1970-01') {
+                    $this->updateCustomerPaymentProfile();
+                }
             }
         }
 
@@ -926,22 +948,12 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
              */
             $profile = $this->getCustomerProfile();
 
-            if (isset($profile['profile']['shipToList']) && count($profile['profile']['shipToList']) > 0) {
+            if (isset($profile['profile']['shipToList']) && !empty($profile['profile']['shipToList'])) {
                 if (isset($profile['profile']['shipToList']['customerAddressId'])) {
                     return $profile['profile']['shipToList']['customerAddressId'];
                 } else {
                     foreach ($profile['profile']['shipToList'] as $address) {
-                        $isDuplicate = true;
-                        $fields = ['firstName', 'lastName', 'address', 'zip', 'phoneNumber'];
-
-                        foreach ($fields as $field) {
-                            if ($address[$field] != $params['address'][$field]) {
-                                $isDuplicate = false;
-                                break;
-                            }
-                        }
-
-                        if ($isDuplicate === true) {
+                        if ($this->isAddressDuplicate($address, $params['address']) === true) {
                             return $address['customerAddressId'];
                         }
                     }
@@ -967,7 +979,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         $profile = $this->getCustomerProfile();
         $lastFour = substr($this->getParameter('cardNumber'), -4);
 
-        if (isset($profile['profile']['paymentProfiles']) && count($profile['profile']['paymentProfiles']) > 0) {
+        if (isset($profile['profile']['paymentProfiles']) && !empty($profile['profile']['paymentProfiles'])) {
             // If there's only one, just stop. It has to be the match.
             if (isset($profile['profile']['paymentProfiles']['billTo'])) {
                 $card = $profile['profile']['paymentProfiles'];
@@ -1006,7 +1018,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         ];
 
         if ($this->hasParameter('amount')) {
-            $params['transaction'][$type]['amount'] = $this->formatAmount($this->getParameter('amount'));
+            $params['transaction'][$type]['amount'] = static::formatAmount($this->getParameter('amount'));
         }
 
         // Add customer IP?
@@ -1017,7 +1029,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         // Add tax amount?
         if ($this->hasParameter('taxAmount')) {
             $params['transaction'][$type]['tax'] = [
-                'amount'      => $this->formatAmount($this->getParameter('taxAmount')),
+                'amount'      => static::formatAmount($this->getParameter('taxAmount')),
                 'name'        => $this->getParameter('taxName'),
                 'description' => $this->getParameter('taxDescription'),
             ];
@@ -1026,7 +1038,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         // Add shipping amount?
         if ($this->hasParameter('shipAmount')) {
             $params['transaction'][$type]['shipping'] = [
-                'amount'      => $this->formatAmount($this->getParameter('shipAmount')),
+                'amount'      => static::formatAmount($this->getParameter('shipAmount')),
                 'name'        => $this->getParameter('shipName'),
                 'description' => $this->getParameter('shipDescription'),
             ];
@@ -1035,88 +1047,20 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         // Add duty amount?
         if ($this->hasParameter('dutyAmount')) {
             $params['transaction'][$type]['duty'] = [
-                'amount'      => $this->formatAmount($this->getParameter('dutyAmount')),
+                'amount'      => static::formatAmount($this->getParameter('dutyAmount')),
                 'name'        => $this->getParameter('dutyName'),
                 'description' => $this->getParameter('dutyDescription'),
             ];
         }
 
         // Add line items?
-        if (!is_null($this->lineItems) && count($this->lineItems) > 0) {
-            $params['transaction'][$type]['lineItems'] = [];
-
-            $count = 0;
-            /** @var \Magento\Sales\Model\Order\Item $item */
-            foreach ($this->lineItems as $item) {
-                if (($item instanceof \Magento\Framework\DataObject) == false) {
-                    continue;
-                }
-
-                if ($item->getQty() > 0) {
-                    $qty = $item->getQty();
-                } else {
-                    $qty = $item->getQtyOrdered();
-                }
-
-                if ($qty <= 0 || $item->getPrice() <= 0) {
-                    continue;
-                }
-
-                if (++$count > 30) {
-                    break;
-                }
-
-                // Discount amount is per-line, not per-unit (???). Math it out.
-                $unitPrice = max(0, $item->getPrice() - ($item->getDiscountAmount() / $qty));
-
-                $params['transaction'][$type]['lineItems'][] = [
-                    'itemId'    => $this->setParameter('itemName', $item->getSku())->getParameter('itemName'),
-                    'name'      => $this->setParameter('itemName', $item->getName())->getParameter('itemName'),
-                    'quantity'  => $this->formatAmount($qty),
-                    'unitPrice' => $this->formatAmount($unitPrice),
-                ];
-            }
-
-            if (count($params['transaction'][$type]['lineItems']) < 1) {
-                unset($params['transaction'][$type]['lineItems']);
-            }
-        }
+        $params = $this->createCustomerProfileTransactionAddItemInfo($params, $type);
 
         $params['transaction'][$type]['customerProfileId'] = $this->getParameter('customerProfileId');
         $params['transaction'][$type]['customerPaymentProfileId'] = $this->getParameter('customerPaymentProfileId');
 
         // Various other optional or conditional fields
-        if ($this->hasParameter('customerShippingAddressId')) {
-            $params['transaction'][$type]['customerShippingAddressId']
-                = $this->getParameter('customerShippingAddressId');
-        }
-
-        if ($this->hasParameter('invoiceNumber') && $type != 'profileTransPriorAuthCapture') {
-            $params['transaction'][$type]['order'] = [
-                'invoiceNumber'       => $this->getParameter('invoiceNumber'),
-                'description'         => $this->getParameter('description'),
-                'purchaseOrderNumber' => $this->getParameter('purchaseOrderNumber'),
-            ];
-        }
-
-        if ($this->hasParameter('cardCode') && $type != 'profileTransPriorAuthCapture') {
-            $params['transaction'][$type]['cardCode'] = $this->getParameter('cardCode');
-        }
-
-        if ($this->hasParameter('transId') && $type != 'profileTransAuthOnly') {
-            $params['transaction'][$type]['transId'] = $this->getParameter('transId');
-        }
-
-        if ($this->hasParameter('splitTenderId')) {
-            $params['transaction'][$type]['splitTenderId'] = $this->getParameter('splitTenderId');
-        }
-
-        if ($this->hasParameter('approvalCode')
-            && strlen($this->getParameter('approvalCode')) == 6
-            && !in_array($type, ['profileTransRefund', 'profileTransPriorAuthCapture', 'profileTransAuthOnly'])
-        ) {
-            $params['transaction'][$type]['approvalCode'] = $this->getParameter('approvalCode');
-        }
+        $params = $this->createCustomerProfileTransactionAddConditionalInfo($params, $type);
 
         return $this->runTransaction('createCustomerProfileTransactionRequest', $params);
     }
@@ -1133,237 +1077,60 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
     {
         $type = $this->getParameter('transactionType');
 
-        if (in_array(
-            $type,
-            ['authOnlyTransaction', 'authCaptureTransaction', 'captureOnlyTransaction', 'refundTransaction']
-        )) {
-            $isNewTxn = true;
-        } else {
-            $isNewTxn = false;
-        }
+        $isNewTxn  = $this->getIsNewTransaction($type);
+        $isNewCard = $this->getIsNewCard();
+        $isRefund  = $this->getIsRefundTransaction($type);
 
-        if ($this->hasParameter('customerProfileId') && $this->hasParameter('customerPaymentProfileId')) {
-            $isNewCard = false;
-        } else {
-            $isNewCard = true;
-        }
+        /**
+         * Initialize our params array.
+         *
+         * NOTE: All elements in the XML array are order-sensitive!
+         */
+        $params = [];
 
         /**
          * Define the transaction and basics: Amount, txn ID, auth code
          */
-        $params = [];
-        $params['transactionType'] = $type;
-
-        if ($this->hasParameter('amount')) {
-            $params['amount'] = $this->formatAmount($this->getParameter('amount'));
-        }
-
-        // profile must be above refTransId. Placeholder to enforce that.
-        $params['profile'] = [];
-
-        if ($isNewTxn === false) {
-            if ($this->hasParameter('transId')) {
-                $params['refTransId'] = $this->getParameter('transId');
-            }
-
-            if ($this->hasParameter('splitTenderId')) {
-                $params['splitTenderId'] = $this->getParameter('splitTenderId');
-            }
-        }
-
-        if ($type == 'captureOnlyTransaction'
-            && $this->hasParameter('approvalCode')
-            && strlen($this->getParameter('approvalCode')) == 6) {
-            $params['authCode'] = $this->getParameter('approvalCode');
-        }
+        $params = $this->createTransactionAddTransactionInfo($params, $type, $isNewTxn);
 
         // Most of the data does not matter for follow-ups (capture, void, refund).
-        if ($isNewTxn === true) {
+        if ($isNewTxn === true || $isRefund === true) {
             /**
              * Add payment info.
              */
-            if ($isNewCard === true) {
-                /**
-                 * If we're storing a new card, send the payment data along and request a profile.
-                 */
-                if ($this->hasParameter('cardNumber')) {
-                    $params['payment'] = [
-                        'creditCard' => [
-                            'cardNumber'     => $this->getParameter('cardNumber'),
-                            'expirationDate' => $this->getParameter('expirationDate'),
-                        ],
-                    ];
+            $params = $this->createTransactionAddPaymentInfo($params, $type, $isNewCard);
 
-                    if ($this->hasParameter('cardCode')) {
-                        $params['payment']['creditCard']['cardCode'] = $this->getParameter('cardCode');
-                    }
-                } elseif ($this->hasParameter('accountNumber')) {
-                    $params['payment'] = [
-                        'bankAccount' => [
-                            'accountType'   => $this->getParameter('accountType'),
-                            'routingNumber' => $this->getParameter('routingNumber'),
-                            'accountNumber' => $this->getParameter('accountNumber'),
-                            'nameOnAccount' => $this->getParameter('nameOnAccount'),
-                            'echeckType'    => $this->getParameter('echeckType'),
-                            'bankName'      => $this->getParameter('bankName'),
-                        ],
-                    ];
-                }
+            /**
+             * Add order info.
+             */
+            $params = $this->createTransactionAddOrderInfo($params, $type, $isRefund);
 
-                $params['profile']['createProfile'] = 'true';
-            } elseif ($type != 'captureOnlyTransaction') {
-                /**
-                 * Otherwise, send the tokens we already have.
-                 */
-                $params['profile']['customerProfileId'] = $this->getParameter('customerProfileId');
-                $params['profile']['paymentProfile']    = [
-                    'paymentProfileId' => $this->getParameter('customerPaymentProfileId'),
-                ];
+            /**
+             * Add line items.
+             */
+            $params = $this->createTransactionAddItemInfo($params);
 
-                // Include CCV if available.
-                if ($this->hasParameter('cardCode') && $type != 'priorAuthCaptureTransaction') {
-                    $params['profile']['paymentProfile']['cardCode'] = $this->getParameter('cardCode');
-                }
-
-                // Include shipping profile if available.
-                if ($this->hasParameter('customerShippingAddressId')) {
-                    $params['profile']['shippingProfileId'] = $this->hasParameter('customerShippingAddressId');
-                }
-            }
-
-            // Set order identifiers!
-            $params['solution'] = [
-                'id' => static::SOLUTION_ID,
-            ];
-
-            if ($this->hasParameter('invoiceNumber') && $type != 'priorAuthCaptureTransaction') {
-                $params['order'] = [
-                    'invoiceNumber' => $this->getParameter('invoiceNumber'),
-                    'description'   => $this->getParameter('description'),
-                ];
-            }
-
-            // Add line items?
-            if (!is_null($this->lineItems) && count($this->lineItems) > 0) {
-                $params['lineItems'] = [
-                    'lineItem'  => [],
-                ];
-
-                $count = 0;
-                /** @var \Magento\Sales\Model\Order\Item $item */
-                foreach ($this->lineItems as $item) {
-                    if (($item instanceof \Magento\Framework\DataObject) == false) {
-                        continue;
-                    }
-
-                    if ($item->getQty() > 0) {
-                        $qty = $item->getQty();
-                    } else {
-                        $qty = $item->getQtyOrdered();
-                    }
-
-                    if ($qty <= 0 || $item->getPrice() <= 0) {
-                        continue;
-                    }
-
-                    if (++$count > 30) {
-                        break;
-                    }
-
-                    // Discount amount is per-line, not per-unit (???). Math it out.
-                    $unitPrice = max(0, $item->getPrice() - ($item->getDiscountAmount() / $qty));
-
-                    $params['lineItems']['lineItem'][] = [
-                        // We're sending SKU and name through parameters to filter characters and length.
-                        'itemId'    => $this->setParameter('itemName', $item->getSku())->getParameter('itemName'),
-                        'name'      => $this->setParameter('itemName', $item->getName())->getParameter('itemName'),
-                        'quantity'  => $this->formatAmount($qty),
-                        'unitPrice' => $this->formatAmount($unitPrice),
-                    ];
-                }
-
-                if (count($params['lineItems']['lineItem']) < 1) {
-                    unset($params['lineItems']);
-                }
-            }
-
-            // Add tax amount?
-            if ($this->hasParameter('taxAmount')) {
-                $params['tax'] = [
-                    'amount'      => $this->formatAmount($this->getParameter('taxAmount')),
-                    'name'        => $this->getParameter('taxName'),
-                    'description' => $this->getParameter('taxDescription'),
-                ];
-            }
-
-            // Add duty amount?
-            if ($this->hasParameter('dutyAmount')) {
-                $params['duty'] = [
-                    'amount'      => $this->formatAmount($this->getParameter('dutyAmount')),
-                    'name'        => $this->getParameter('dutyName'),
-                    'description' => $this->getParameter('dutyDescription'),
-                ];
-            }
-
-            // Add shipping amount?
-            if ($this->hasParameter('shipAmount')) {
-                $params['shipping'] = [
-                    'amount'      => $this->formatAmount($this->getParameter('shipAmount')),
-                    'name'        => $this->getParameter('shipName'),
-                    'description' => $this->getParameter('shipDescription'),
-                ];
-            }
+            /**
+             * Add amount info.
+             */
+            $params = $this->createTransactionAddAmounts($params);
 
             // Add PO number?
             if ($this->hasParameter('purchaseOrderNumber')) {
                 $params['poNumber'] = $this->getParameter('purchaseOrderNumber');
             }
 
-            // Add customer info!
-            $params['customer'] = [
-                'id'    => $this->getParameter('merchantCustomerId'),
-                'email' => $this->getParameter('email'),
-            ];
+            /**
+             * Add customer info.
+             */
+            $params = $this->createTransactionAddCustomerInfo($params, $isNewCard);
 
-            if ($this->hasParameter('customerType')) {
-                $params['customer'] = [
-                        'type' => $this->getParameter('customerType'),
-                    ] + $params['customer'];
-            }
-
-            // Add billing address?
-            if ($isNewCard === true) {
-                $params['billTo'] = [
-                    'firstName'   => $this->getParameter('billToFirstName'),
-                    'lastName'    => $this->getParameter('billToLastName'),
-                    'company'     => $this->getParameter('billToCompany'),
-                    'address'     => $this->getParameter('billToAddress'),
-                    'city'        => $this->getParameter('billToCity'),
-                    'state'       => $this->getParameter('billToState'),
-                    'zip'         => $this->getParameter('billToZip'),
-                    'country'     => $this->getParameter('billToCountry'),
-                    'phoneNumber' => $this->getParameter('billToPhoneNumber'),
-                    'faxNumber'   => $this->getParameter('billToFaxNumber'),
+            // Add 3D Secure token?
+            if ($this->hasParameter('centinelAuthIndicator') && $this->hasParameter('centinelAuthValue')) {
+                $params['cardholderAuthentication'] = [
+                    'authenticationIndicator'       => $this->getParameter('centinelAuthIndicator'),
+                    'cardholderAuthenticationValue' => urlencode($this->getParameter('centinelAuthValue')),
                 ];
-            }
-
-            // Add shipping address?
-            if (!$this->hasParameter('customerShippingAddressId') && $this->hasParameter('shipToAddress')) {
-                $params['shipTo'] = [
-                    'firstName' => $this->getParameter('shipToFirstName'),
-                    'lastName'  => $this->getParameter('shipToLastName'),
-                    'company'   => $this->getParameter('shipToCompany'),
-                    'address'   => $this->getParameter('shipToAddress'),
-                    'city'      => $this->getParameter('shipToCity'),
-                    'state'     => $this->getParameter('shipToState'),
-                    'zip'       => $this->getParameter('shipToZip'),
-                    'country'   => $this->getParameter('shipToCountry'),
-                ];
-            }
-
-            // Add customer IP?
-            if ($this->hasParameter('customerIp')) {
-                $params['customerIP'] = $this->getParameter('customerIp');
             }
 
             // Add misc settings.
@@ -1385,6 +1152,10 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
                 'settingName'  => 'emailCustomer',
                 'settingValue' => $this->getParameter('emailCustomer', 'false'),
             ];
+        }
+
+        if (empty($params['payment'])) {
+            unset($params['payment']);
         }
 
         if (empty($params['profile'])) {
@@ -1456,7 +1227,9 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
     public function getCustomerProfile()
     {
         $params = [
-            'customerProfileId' => $this->getParameter('customerProfileId'),
+            'customerProfileId'    => $this->getParameter('customerProfileId'),
+            'unmaskExpirationDate' => $this->getParameter('unmaskExpirationDate', 'false'),
+            'includeIssuerInfo'    => $this->getParameter('includeIssuerInfo', 'false'),
         ];
 
         return $this->runTransaction('getCustomerProfileRequest', $params);
@@ -1472,6 +1245,8 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         $params = [
             'customerProfileId'        => $this->getParameter('customerProfileId'),
             'customerPaymentProfileId' => $this->getParameter('customerPaymentProfileId'),
+            'unmaskExpirationDate'     => $this->getParameter('unmaskExpirationDate', 'false'),
+            'includeIssuerInfo'        => $this->getParameter('includeIssuerInfo', 'false'),
         ];
 
         return $this->runTransaction('getCustomerPaymentProfileRequest', $params);
@@ -1554,28 +1329,10 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             ],
         ];
 
-        if ($this->hasParameter('cardNumber')) {
-            $params['paymentProfile']['payment'] = [
-                'creditCard' => [
-                    'cardNumber'     => $this->getParameter('cardNumber'),
-                    'expirationDate' => $this->getParameter('expirationDate'),
-                ],
-            ];
+        $params = $this->createCustomerPaymentProfileAddPaymentInfo($params);
 
-            if ($this->hasParameter('cardCode')) {
-                $params['paymentProfile']['payment']['creditCard']['cardCode'] = $this->getParameter('cardCode');
-            }
-        } elseif ($this->hasParameter('accountNumber')) {
-            $params['paymentProfile']['payment'] = [
-                'bankAccount' => [
-                    'accountType'   => $this->getParameter('accountType'),
-                    'routingNumber' => $this->getParameter('routingNumber'),
-                    'accountNumber' => $this->getParameter('accountNumber'),
-                    'nameOnAccount' => $this->getParameter('nameOnAccount'),
-                    'echeckType'    => $this->getParameter('echeckType'),
-                    'bankName'      => $this->getParameter('bankName'),
-                ],
-            ];
+        if (empty($params['paymentProfile']['payment'])) {
+            unset($params['paymentProfile']['payment']);
         }
 
         return $this->runTransaction('updateCustomerPaymentProfileRequest', $params);
@@ -1618,9 +1375,13 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         $params = [
             'customerProfileId'         => $this->getParameter('customerProfileId'),
             'customerPaymentProfileId'  => $this->getParameter('customerPaymentProfileId'),
-            'customerShippingAddressId' => $this->getParameter('customerShippingAddressId'),
-            'validationMode'            => $this->getParameter('validationMode'),
         ];
+
+        if ($this->hasParameter('customerShippingAddressId')) {
+            $params['customerShippingAddressId'] = $this->getParameter('customerShippingAddressId');
+        }
+
+        $params['validationMode'] = $this->getParameter('validationMode');
 
         return $this->runTransaction('validateCustomerPaymentProfileRequest', $params);
     }
@@ -1642,7 +1403,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
             $directResponse = explode(substr($directResponse, 1, 1), $directResponse);
         }
 
-        if (empty($directResponse) || count($directResponse) == 0) {
+        if (empty($directResponse)) {
             $this->helper->log(
                 $this->code,
                 sprintf("Authorize.Net CIM Gateway: Transaction failed; no direct response.\n%s", $this->log)
@@ -1817,7 +1578,7 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         }
 
         $txn     = $response['transaction'];
-        $eCheck  = $this->helper->getArrayValue($txn, 'payment/bankAccount', false) !== false ? true : false;
+        $eCheck  = $this->helper->getArrayValue($txn, 'payment/bankAccount', false) !== false;
 
         // Map data.
         $data    = [
@@ -1880,5 +1641,615 @@ class Gateway extends \ParadoxLabs\TokenBase\Model\AbstractGateway
         }
 
         return $data;
+    }
+
+    /**
+     * Return whether the given transaction type constitutes a 'new' transaction.
+     *
+     * @param string $type
+     * @return bool
+     */
+    protected function getIsNewTransaction($type)
+    {
+        if (in_array(
+            $type,
+            ['authOnlyTransaction', 'authCaptureTransaction', 'captureOnlyTransaction']
+        )) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determine whether the current parameters are for a new or stored card.
+     *
+     * @return bool
+     */
+    protected function getIsNewCard()
+    {
+        if ($this->hasParameter('customerProfileId') && $this->hasParameter('customerPaymentProfileId')) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Return whether the given transaction type is a refund.
+     *
+     * @param string $type
+     * @return bool
+     */
+    protected function getIsRefundTransaction($type)
+    {
+        if ($type == 'refundTransaction') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Add payment info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @param string $type
+     * @param bool $isNewTxn
+     * @return array
+     */
+    protected function createTransactionAddTransactionInfo($params, $type, $isNewTxn)
+    {
+        $params['transactionType'] = $type;
+
+        if ($this->hasParameter('amount')) {
+            $params['amount'] = static::formatAmount($this->getParameter('amount'));
+        }
+
+        // payment must be above profile. Placeholder to enforce that.
+        $params['payment'] = [];
+
+        // profile must be above refTransId. Placeholder to enforce that.
+        $params['profile'] = [];
+
+        if ($isNewTxn === false && $this->hasParameter('transId')) {
+            $params['refTransId'] = $this->getParameter('transId');
+        }
+
+        if ($isNewTxn === false && $this->hasParameter('splitTenderId')) {
+            $params['splitTenderId'] = $this->getParameter('splitTenderId');
+        }
+
+        if ($type == 'captureOnlyTransaction'
+            && $this->hasParameter('approvalCode')
+            && strlen($this->getParameter('approvalCode')) == 6
+        ) {
+            $params['authCode'] = $this->getParameter('approvalCode');
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add payment info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @param string $type
+     * @param bool $isNewCard
+     * @return array
+     */
+    protected function createTransactionAddPaymentInfo($params, $type, $isNewCard)
+    {
+        if ($isNewCard === true) {
+            /**
+             * If we're storing a new card, send the payment data along and request a profile.
+             */
+            if ($this->hasParameter('cardNumber')) {
+                $params['payment'] = [
+                    'creditCard' => [
+                        'cardNumber'     => $this->getParameter('cardNumber'),
+                        'expirationDate' => $this->getParameter('expirationDate'),
+                    ],
+                ];
+
+                if ($this->hasParameter('cardCode')) {
+                    $params['payment']['creditCard']['cardCode'] = $this->getParameter('cardCode');
+                }
+            } elseif ($this->hasParameter('dataValue')) {
+                $params['paymentProfile']['payment'] = [
+                    'opaqueData' => [
+                        'dataDescriptor' => $this->getParameter('dataDescriptor'),
+                        'dataValue'      => $this->getParameter('dataValue'),
+                    ],
+                ];
+            } elseif ($this->hasParameter('accountNumber')) {
+                $params['payment'] = [
+                    'bankAccount' => [
+                        'accountType'   => $this->getParameter('accountType'),
+                        'routingNumber' => $this->getParameter('routingNumber'),
+                        'accountNumber' => $this->getParameter('accountNumber'),
+                        'nameOnAccount' => $this->getParameter('nameOnAccount'),
+                        'echeckType'    => $this->getParameter('echeckType'),
+                        'bankName'      => $this->getParameter('bankName'),
+                    ],
+                ];
+            }
+
+            $params['profile']['createProfile'] = 'true';
+        } elseif ($type != 'captureOnlyTransaction') {
+            /**
+             * Otherwise, send the tokens we already have.
+             */
+            $params['profile']['customerProfileId'] = $this->getParameter('customerProfileId');
+            $params['profile']['paymentProfile'] = [
+                'paymentProfileId' => $this->getParameter('customerPaymentProfileId'),
+            ];
+
+            // Include CCV if available.
+            if ($this->hasParameter('cardCode') && $type != 'priorAuthCaptureTransaction') {
+                $params['profile']['paymentProfile']['cardCode'] = $this->getParameter('cardCode');
+            }
+
+            // Include shipping profile if available.
+            if ($this->hasParameter('customerShippingAddressId')) {
+                $params['profile']['shippingProfileId'] = $this->hasParameter('customerShippingAddressId');
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add order info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param $params
+     * @param $type
+     * @param $isRefund
+     * @return mixed
+     */
+    protected function createTransactionAddOrderInfo($params, $type, $isRefund)
+    {
+        if ($isRefund !== true) {
+            $params['solution'] = [
+                'id' => static::SOLUTION_ID,
+            ];
+        }
+
+        if ($this->hasParameter('invoiceNumber') && $type != 'priorAuthCaptureTransaction') {
+            $params['order'] = [
+                'invoiceNumber' => $this->getParameter('invoiceNumber'),
+                'description'   => $this->getParameter('description'),
+            ];
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add item info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function createTransactionAddItemInfo($params)
+    {
+        if ($this->lineItems !== null && !empty($this->lineItems)) {
+            $params['lineItems'] = [
+                'lineItem' => [],
+            ];
+
+            $count = 0;
+            /** @var \Magento\Sales\Model\Order\Item $item */
+            foreach ($this->lineItems as $item) {
+                if (($item instanceof \Magento\Framework\DataObject) == false) {
+                    continue;
+                }
+
+                $itemArray = $this->createTransactionAddItemInfoBuildItem($item);
+
+                if ($itemArray !== false) {
+                    $params['lineItems']['lineItem'][] = $itemArray;
+
+                    if (++$count >= 30) {
+                        break;
+                    }
+                }
+            }
+
+            if (empty($params['lineItems']['lineItem'])) {
+                unset($params['lineItems']);
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * Build param array for a single order/invoice/refund item.
+     *
+     * @param \Magento\Framework\DataObject $item
+     * @return array|false
+     */
+    protected function createTransactionAddItemInfoBuildItem(\Magento\Framework\DataObject $item)
+    {
+        /** @var \Magento\Sales\Model\Order\Item $item */
+        if ($item->getData('qty') > 0) {
+            $qty = $item->getData('qty');
+        } else {
+            $qty = $item->getData('qty_ordered');
+        }
+
+        $sku = $this->setParameter('itemName', $item->getSku())->getParameter('itemName');
+
+        if ($qty < 1 || $item->getPrice() <= 0 || empty($sku)) {
+            return false;
+        }
+
+        // Discount amount is per-line, not per-unit (???). Math it out.
+        $unitPrice = max(0, $item->getPrice() - ($item->getDiscountAmount() / $qty));
+
+        return [
+            // We're sending SKU and name through parameters to filter characters and length.
+            'itemId'    => $sku,
+            'name'      => $this->setParameter('itemName', $item->getName())->getParameter('itemName'),
+            'quantity'  => static::formatAmount($qty),
+            'unitPrice' => static::formatAmount($unitPrice),
+        ];
+    }
+
+    /**
+     * Add amount info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function createTransactionAddAmounts($params)
+    {
+        // Add tax amount?
+        if ($this->hasParameter('taxAmount')) {
+            $params['tax'] = [
+                'amount'      => static::formatAmount($this->getParameter('taxAmount')),
+                'name'        => $this->getParameter('taxName'),
+                'description' => $this->getParameter('taxDescription'),
+            ];
+        }
+
+        // Add duty amount?
+        if ($this->hasParameter('dutyAmount')) {
+            $params['duty'] = [
+                'amount'      => static::formatAmount($this->getParameter('dutyAmount')),
+                'name'        => $this->getParameter('dutyName'),
+                'description' => $this->getParameter('dutyDescription'),
+            ];
+        }
+
+        // Add shipping amount?
+        if ($this->hasParameter('shipAmount')) {
+            $params['shipping'] = [
+                'amount'      => static::formatAmount($this->getParameter('shipAmount')),
+                'name'        => $this->getParameter('shipName'),
+                'description' => $this->getParameter('shipDescription'),
+            ];
+        }
+
+        // Add tax exempt?
+        if ($this->hasParameter('taxExempt')) {
+            $params['taxExempt'] = $this->getParameter('taxExempt');
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add item info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @param bool $isNewCard
+     * @return array
+     */
+    protected function createTransactionAddCustomerInfo($params, $isNewCard)
+    {
+        $params['customer'] = [
+            'id'    => $this->getParameter('merchantCustomerId'),
+            'email' => $this->getParameter('email'),
+        ];
+
+        if ($this->hasParameter('customerType')) {
+            $params['customer'] = [
+                    'type' => $this->getParameter('customerType'),
+                ] + $params['customer'];
+        }
+
+        // Add billing address?
+        if ($isNewCard === true) {
+            $params['billTo'] = [
+                'firstName'   => $this->getParameter('billToFirstName'),
+                'lastName'    => $this->getParameter('billToLastName'),
+                'company'     => $this->getParameter('billToCompany'),
+                'address'     => $this->getParameter('billToAddress'),
+                'city'        => $this->getParameter('billToCity'),
+                'state'       => $this->getParameter('billToState'),
+                'zip'         => $this->getParameter('billToZip'),
+                'country'     => $this->getParameter('billToCountry'),
+                'phoneNumber' => $this->getParameter('billToPhoneNumber'),
+                'faxNumber'   => $this->getParameter('billToFaxNumber'),
+            ];
+        }
+
+        // Add shipping address?
+        if (!$this->hasParameter('customerShippingAddressId') && $this->hasParameter('shipToAddress')) {
+            $params['shipTo'] = [
+                'firstName' => $this->getParameter('shipToFirstName'),
+                'lastName'  => $this->getParameter('shipToLastName'),
+                'company'   => $this->getParameter('shipToCompany'),
+                'address'   => $this->getParameter('shipToAddress'),
+                'city'      => $this->getParameter('shipToCity'),
+                'state'     => $this->getParameter('shipToState'),
+                'zip'       => $this->getParameter('shipToZip'),
+                'country'   => $this->getParameter('shipToCountry'),
+            ];
+        }
+
+        // Add customer IP?
+        if ($this->hasParameter('customerIp')) {
+            $params['customerIP'] = $this->getParameter('customerIp');
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add various conditional fields to a createCustomerProfileTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    protected function createCustomerProfileTransactionAddConditionalInfo($params, $type)
+    {
+        if ($this->hasParameter('customerShippingAddressId')) {
+            $params['transaction'][$type]['customerShippingAddressId']
+                = $this->getParameter('customerShippingAddressId');
+        }
+
+        if ($this->hasParameter('invoiceNumber') && $type != 'profileTransPriorAuthCapture') {
+            $params['transaction'][$type]['order'] = [
+                'invoiceNumber'       => $this->getParameter('invoiceNumber'),
+                'description'         => $this->getParameter('description'),
+                'purchaseOrderNumber' => $this->getParameter('purchaseOrderNumber'),
+            ];
+        }
+
+        if ($this->hasParameter('taxExempt') && $type != 'profileTransPriorAuthCapture') {
+            $params['transaction'][$type]['taxExempt'] = $this->getParameter('taxExempt');
+        }
+
+        if ($this->hasParameter('cardCode') && $type != 'profileTransPriorAuthCapture') {
+            $params['transaction'][$type]['cardCode'] = $this->getParameter('cardCode');
+        }
+
+        if ($this->hasParameter('transId') && $type != 'profileTransAuthOnly') {
+            $params['transaction'][$type]['transId'] = $this->getParameter('transId');
+        }
+
+        if ($this->hasParameter('splitTenderId')) {
+            $params['transaction'][$type]['splitTenderId'] = $this->getParameter('splitTenderId');
+        }
+
+        if ($this->hasParameter('approvalCode')
+            && strlen($this->getParameter('approvalCode')) == 6
+            && !in_array($type, ['profileTransRefund', 'profileTransPriorAuthCapture', 'profileTransAuthOnly'])
+        ) {
+            $params['transaction'][$type]['approvalCode'] = $this->getParameter('approvalCode');
+        }
+
+        return $params;
+    }
+
+    /**
+     * Add item info to a createTransaction API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    protected function createCustomerProfileTransactionAddItemInfo($params, $type)
+    {
+        if ($this->lineItems !== null && !empty($this->lineItems)) {
+            $params['transaction'][$type]['lineItems'] = [];
+
+            $count = 0;
+            /** @var \Magento\Sales\Model\Order\Item $item */
+            foreach ($this->lineItems as $item) {
+                if (($item instanceof \Magento\Framework\DataObject) == false) {
+                    continue;
+                }
+
+                $itemArray = $this->createTransactionAddItemInfoBuildItem($item);
+
+                if ($itemArray !== false) {
+                    $params['lineItems']['lineItem'][] = $itemArray;
+
+                    if (++$count >= 30) {
+                        break;
+                    }
+                }
+            }
+
+            if (empty($params['transaction'][$type]['lineItems'])) {
+                unset($params['transaction'][$type]['lineItems']);
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * On capture, get amount info from the order or invoice if possible.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @return $this
+     */
+    protected function captureGetAmountInfo(\Magento\Payment\Model\InfoInterface $payment)
+    {
+        /** @var \Magento\Sales\Model\Order\Payment $payment */
+
+        // Grab shipping and tax info from the invoice if possible. Should always be true.
+        if ($payment->hasData('invoice')
+            && $payment->getData('invoice') instanceof \Magento\Sales\Model\Order\Invoice
+        ) {
+            if ($payment->getData('invoice')->getBaseTaxAmount()) {
+                $this->setParameter('taxAmount', $payment->getData('invoice')->getBaseTaxAmount());
+            }
+
+            if ($payment->getData('invoice')->getBaseShippingAmount()) {
+                $this->setParameter('shipAmount', $payment->getData('invoice')->getBaseShippingAmount());
+            }
+        } elseif ($payment->getOrder()->getBaseTotalPaid() <= 0) {
+            if ($payment->getOrder()->getBaseTaxAmount()) {
+                $this->setParameter('taxAmount', $payment->getOrder()->getBaseTaxAmount());
+            }
+
+            if ($payment->getBaseShippingAmount()) {
+                $this->setParameter('shipAmount', $payment->getBaseShippingAmount());
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether the given address in $address2 is a duplicate of $address1, based on several fields.
+     *
+     * @param array $address1
+     * @param array $address2
+     * @return bool
+     */
+    protected function isAddressDuplicate($address1, $address2)
+    {
+        $isDuplicate = true;
+        $fields = ['firstName', 'lastName', 'address', 'zip', 'phoneNumber'];
+
+        foreach ($fields as $field) {
+            if ($address1[$field] != $address2[$field]) {
+                $isDuplicate = false;
+                break;
+            }
+        }
+        return $isDuplicate;
+    }
+
+    /**
+     * After running a transaction, handle any generic errors in the response.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @return void
+     * @throws PaymentException
+     */
+    protected function handleTransactionError()
+    {
+        if ($this->lastResponse['messages']['resultCode'] != 'Ok') {
+            $errorCode = $this->helper->getArrayValue($this->lastResponse, 'messages/message/code');
+            $errorText = $this->helper->getArrayValue($this->lastResponse, 'messages/message/text');
+            $errorText2 = $this->helper->getArrayValue(
+                $this->lastResponse,
+                'transactionResponse/errors/error/errorText'
+            );
+
+            if ($errorText2 != '') {
+                $errorText .= ' ' . $errorText2;
+            }
+
+            /**
+             * Log and spit out generic error. Skip certain warnings we can handle.
+             */
+            $okayErrorCodes = ['E00039', 'E00040'];
+            $okayErrorTexts = [
+                'The referenced transaction does not meet the criteria for issuing a credit.',
+                'The transaction cannot be found.',
+            ];
+
+            if (!empty($errorCode)
+                && !in_array($errorCode, $okayErrorCodes)
+                && !in_array($errorText, $okayErrorTexts)
+                && !in_array($errorText2, $okayErrorTexts)
+            ) {
+                $this->helper->log(
+                    $this->code,
+                    sprintf("API error: %s: %s\n%s", $errorCode, $errorText, $this->log)
+                );
+
+                if ($errorText == 'Invalid OTS Token.') {
+                    $errorText = 'Invalid token. Please re-enter your payment info.';
+                }
+
+                throw new PaymentException(
+                    __(sprintf('Authorize.Net CIM Gateway: %s (%s)', $errorText, $errorCode))
+                );
+            }
+        }
+    }
+
+    /**
+     * Add payment fields to a createCustomerPaymentProfile API request's parameters.
+     *
+     * Split out to reduce that method's cyclomatic complexity.
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function createCustomerPaymentProfileAddPaymentInfo($params)
+    {
+        if ($this->hasParameter('cardNumber')) {
+            $params['paymentProfile']['payment'] = [
+                'creditCard' => [
+                    'cardNumber'     => $this->getParameter('cardNumber'),
+                    'expirationDate' => $this->getParameter('expirationDate'),
+                ],
+            ];
+
+            if ($this->hasParameter('cardCode')) {
+                $params['paymentProfile']['payment']['creditCard']['cardCode'] = $this->getParameter('cardCode');
+            }
+        } elseif ($this->hasParameter('dataValue')) {
+            $params['paymentProfile']['payment'] = [
+                'opaqueData' => [
+                    'dataDescriptor' => $this->getParameter('dataDescriptor'),
+                    'dataValue'      => $this->getParameter('dataValue'),
+                ],
+            ];
+        } elseif ($this->hasParameter('accountNumber')) {
+            $params['paymentProfile']['payment'] = [
+                'bankAccount' => [
+                    'accountType'   => $this->getParameter('accountType'),
+                    'routingNumber' => $this->getParameter('routingNumber'),
+                    'accountNumber' => $this->getParameter('accountNumber'),
+                    'nameOnAccount' => $this->getParameter('nameOnAccount'),
+                    'echeckType'    => $this->getParameter('echeckType'),
+                    'bankName'      => $this->getParameter('bankName'),
+                ],
+            ];
+        }
+
+        return $params;
     }
 }

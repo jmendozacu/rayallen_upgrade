@@ -1,9 +1,14 @@
 define(
     [
         'ko',
-        'Magento_Payment/js/view/payment/cc-form'
+        'jquery',
+        'Magento_Payment/js/view/payment/cc-form',
+        'Magento_Checkout/js/action/place-order',
+        'Magento_Payment/js/model/credit-card-validation/credit-card-number-validator',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Magento_Ui/js/modal/alert'
     ],
-    function (ko, Component) {
+    function (ko, $, Component, placeOrderAction, cardNumberValidator, additionalValidators, alert) {
         'use strict';
         var config=null;
         return Component.extend({
@@ -16,6 +21,7 @@ define(
             defaults: {
                 template: 'ParadoxLabs_TokenBase/payment/cc',
                 isCcFormShown: true,
+                isCcvShown: true,
                 save: config ? config.canSaveCard && config.defaultSaveCard : false,
                 selectedCard: config ? config.selectedCard : '',
                 storedCards: config ? config.storedCards : {},
@@ -92,6 +98,76 @@ define(
             },
             getLogoImage: function() {
                 return this.logoImage;
+            },
+            /**
+             * @override
+             */
+            placeOrder: function (data, event) {
+                var self = this;
+
+                if (event) {
+                    event.preventDefault();
+                }
+
+                if (this.validate() && additionalValidators.validate()) {
+                    this.isPlaceOrderActionAllowed(false);
+
+                    // This mess for CE 2.0 compatibility, following CE 2.1 interface change. If 2.1+...
+                    if( typeof this.getPlaceOrderDeferredObject === 'function' ) {
+                        this.getPlaceOrderDeferredObject()
+                            .fail(
+                                function (response) {
+                                    self.isPlaceOrderActionAllowed(true);
+
+                                    var error = JSON.parse(response.responseText);
+                                    if (error && typeof error.message != 'undefined') {
+                                        alert({
+                                            content: error.message
+                                        });
+                                    }
+                                }
+                            ).done(
+                                function () {
+                                    self.afterPlaceOrder();
+
+                                    if (self.redirectAfterPlaceOrder) {
+                                        // This dependency doesn't exist prior to 2.1. Can't require it up-front.
+                                        require(['Magento_Checkout/js/action/redirect-on-success'],
+                                            function(redirectOnSuccessAction) {
+                                                redirectOnSuccessAction.execute();
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                    }
+                    else {
+                        // If 2.0...
+                        $.when(
+                            placeOrderAction(this.getData(), this.redirectAfterPlaceOrder, this.messageContainer)
+                        ).fail(function (response) {
+                            self.isPlaceOrderActionAllowed(true);
+
+                            var error = JSON.parse(response.responseText);
+                            if (error && typeof error.message != 'undefined') {
+                                alert({
+                                    content: error.message
+                                });
+                            }
+                        })
+                        .done(this.afterPlaceOrder.bind(this));
+                    }
+
+                    return true;
+                }
+
+                return false;
+            },
+            /**
+             * @override
+             */
+            validate: function () {
+                return true;
             }
         });
     }

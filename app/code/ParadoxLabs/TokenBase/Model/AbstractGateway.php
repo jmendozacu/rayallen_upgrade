@@ -18,7 +18,7 @@ use ParadoxLabs\TokenBase\Api\GatewayInterface;
 /**
  * Common API gateway methods, logging, exceptions, etc.
  */
-abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel implements GatewayInterface
+abstract class AbstractGateway extends \Magento\Framework\DataObject implements GatewayInterface
 {
     /**
      * @var string
@@ -84,7 +84,7 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
     /**
      * @var array|null
      */
-    protected $lineItems        = null;
+    protected $lineItems;
 
     /**
      * @var string
@@ -127,34 +127,33 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
     protected $helper;
 
     /**
+     * @var
+     */
+    protected $httpClientFactory;
+
+    /**
      * Constructor, yeah!
      *
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
      * @param \ParadoxLabs\TokenBase\Model\Gateway\Xml $xml
      * @param \ParadoxLabs\TokenBase\Model\Gateway\ResponseFactory $responseFactory
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
         \ParadoxLabs\TokenBase\Helper\Data $helper,
         \ParadoxLabs\TokenBase\Model\Gateway\Xml $xml,
         \ParadoxLabs\TokenBase\Model\Gateway\ResponseFactory $responseFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
         array $data = []
     ) {
         $this->helper           = $helper;
         $this->responseFactory  = $responseFactory;
         $this->xml              = $xml;
+        $this->httpClientFactory = $httpClientFactory;
 
-        return parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        parent::__construct($data);
     }
-
 
     /**
      * Initialize the gateway. Input is taken as an array for greater flexibility.
@@ -244,7 +243,7 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
             /**
              * Make sure we know this parameter
              */
-            if (in_array($key, array_keys($this->fields))) {
+            if (array_key_exists($key, $this->fields)) {
                 /**
                  * Run validations
                  */
@@ -259,7 +258,7 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
                         '$1',
                         $val
                     );
-                    $val = preg_replace(['/[^0-9a-z \.]/i', '/-+/'], ' ', $val);
+                    $val = preg_replace(['/[^0-9a-z \.\-]/i', '/\s{2,}/'], ' ', $val);
                     $val = trim($val);
                 }
 
@@ -294,6 +293,8 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
                     __(sprintf("Payment Gateway: Unknown parameter '%s'", $key))
                 );
             }
+        } elseif ($val === null) {
+            unset($this->params[$key]);
         }
 
         return $this;
@@ -332,7 +333,7 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
      */
     public function hasParameter($key)
     {
-        return (isset($this->params[ $key ]) && !empty($this->params[ $key ]) ? true : false);
+        return (isset($this->params[ $key ]) && !empty($this->params[ $key ]));
     }
 
     /**
@@ -379,7 +380,18 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
      */
     public static function formatAmount($amount)
     {
-        return sprintf("%01.2f", (float) $amount);
+        return sprintf('%01.2f', (float) $amount);
+    }
+
+    /**
+     * Mask certain values in the XML for secure logging purposes.
+     *
+     * @param $string
+     * @return mixed
+     */
+    protected function sanitizeLog($string)
+    {
+        return $string;
     }
 
     /**
@@ -401,10 +413,17 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
      *
      * @param string $xml
      * @return array
+     * @throws \Exception
      */
     protected function xmlToArray($xml)
     {
-        return $this->xml->createArray($xml);
+        try {
+            return $this->xml->createArray($xml);
+        } catch (\Exception $e) {
+            $this->helper->log($this->code, $e->getMessage() . "\n" . $this->sanitizeLog($xml));
+
+            throw $e;
+        }
     }
 
     /**
@@ -415,7 +434,9 @@ abstract class AbstractGateway extends \Magento\Framework\Model\AbstractModel im
      */
     public function setCard(\ParadoxLabs\TokenBase\Api\Data\CardInterface $card)
     {
-        return parent::setData('card', $card);
+        parent::setData('card', $card);
+
+        return $this;
     }
 
     /**

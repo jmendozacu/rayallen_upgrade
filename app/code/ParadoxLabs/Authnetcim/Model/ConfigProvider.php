@@ -21,10 +21,7 @@ use Magento\Payment\Model\CcConfig;
  */
 class ConfigProvider extends CcGenericConfigProvider
 {
-    /**
-     * @var string
-     */
-    protected $code = 'authnetcim';
+    const CODE = 'authnetcim';
 
     /**
      * @var \Magento\Checkout\Model\Session
@@ -54,8 +51,8 @@ class ConfigProvider extends CcGenericConfigProvider
     /**
      * @param CcConfig $ccConfig
      * @param \Magento\Payment\Helper\Data $paymentHelper
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Checkout\Model\Session $checkoutSession *Proxy
+     * @param \Magento\Customer\Model\Session $customerSession *Proxy
      * @param \Magento\Payment\Model\Config $paymentConfig
      * @param \ParadoxLabs\Authnetcim\Helper\Data $dataHelper
      * @param array $methodCodes
@@ -75,7 +72,7 @@ class ConfigProvider extends CcGenericConfigProvider
         $this->dataHelper       = $dataHelper;
         $this->paymentConfig    = $paymentConfig;
 
-        parent::__construct($ccConfig, $paymentHelper, [$this->code]);
+        parent::__construct($ccConfig, $paymentHelper, [static::CODE]);
     }
 
     /**
@@ -85,7 +82,7 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     public function getStoredCards()
     {
-        return $this->dataHelper->getActiveCustomerCardsByMethod($this->code);
+        return $this->dataHelper->getActiveCustomerCardsByMethod(static::CODE);
     }
 
     /**
@@ -98,38 +95,44 @@ class ConfigProvider extends CcGenericConfigProvider
         if ($this->customerSession->isLoggedIn()) {
             return true;
         }
+
         return false;
     }
 
     /**
-     * @return array|void
+     * Get checkout config.
+     *
+     * @return array
      */
     public function getConfig()
     {
-        if (!$this->methods[$this->code]->isAvailable()) {
+        if (!$this->methods[static::CODE]->isAvailable()) {
             return [];
         }
 
         $config             = parent::getConfig();
         $selected           = null;
         $storedCardOptions  = [];
-        $cards              = $this->getStoredCards();
+        
+        if ($this->canSaveCard()) {
+            $cards              = $this->getStoredCards();
 
-        /** @var \ParadoxLabs\TokenBase\Model\Card $card */
-        foreach ($cards as $card) {
-            $storedCardOptions[]    = [
-                'id'       => $card->getHash(),
-                'label'    => $card->getLabel(),
-                'selected' => false,
-                'type'     => $card->getAdditional('cc_type'),
-            ];
+            /** @var \ParadoxLabs\TokenBase\Model\Card $card */
+            foreach ($cards as $card) {
+                $storedCardOptions[]    = [
+                    'id'       => $card->getHash(),
+                    'label'    => $card->getLabel(),
+                    'selected' => false,
+                    'type'     => $card->getAdditional('cc_type'),
+                ];
 
-            $selected               = $card->getHash();
+                $selected               = $card->getHash();
+            }
         }
 
         $config = array_merge_recursive($config, [
             'payment' => [
-                $this->code => [
+                static::CODE => [
                     'useVault'                => true,
                     'canSaveCard'             => $this->canSaveCard(),
                     'forceSaveCard'           => $this->forceSaveCard(),
@@ -137,9 +140,13 @@ class ConfigProvider extends CcGenericConfigProvider
                     'storedCards'             => $storedCardOptions,
                     'selectedCard'            => $selected,
                     'isCcDetectionEnabled'    => true,
-                    'availableCardTypes'      => $this->getCcAvailableTypes($this->code),
+                    'availableCardTypes'      => $this->getCcAvailableTypes(static::CODE),
                     'logoImage'               => $this->getLogoImage(),
                     'requireCcv'              => $this->requireCcv(),
+                    'apiLoginId'              => $this->getApiLoginId(),
+                    'clientKey'               => $this->getClientKey(),
+                    'sandbox'                 => $this->getSandbox(),
+                    'canStoreBin'             => $this->getCanStoreBin(),
                 ],
             ],
         ]);
@@ -154,7 +161,7 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     public function forceSaveCard()
     {
-        return $this->methods[$this->code]->getConfigData('allow_unsaved') ? false : true;
+        return $this->methods[static::CODE]->getConfigData('allow_unsaved') ? false : true;
     }
 
     /**
@@ -164,7 +171,7 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     public function requireCcv()
     {
-        return $this->methods[$this->code]->getConfigData('require_ccv') ? true : false;
+        return $this->methods[static::CODE]->getConfigData('require_ccv') ? true : false;
     }
 
     /**
@@ -174,7 +181,7 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     public function defaultSaveCard()
     {
-        return $this->methods[$this->code]->getConfigData('savecard_opt_out') ? true : false;
+        return $this->methods[static::CODE]->getConfigData('savecard_opt_out') ? true : false;
     }
 
     /**
@@ -184,10 +191,58 @@ class ConfigProvider extends CcGenericConfigProvider
      */
     public function getLogoImage()
     {
-        if ($this->methods[$this->code]->getConfigData('show_branding')) {
+        if ($this->methods[static::CODE]->getConfigData('show_branding')) {
             return $this->ccConfig->getViewFileUrl('ParadoxLabs_Authnetcim::images/logo.png');
         }
 
         return false;
+    }
+
+    /**
+     * Get API Login ID - ONLY if Accept.js is enabled
+     *
+     * @return string
+     */
+    public function getApiLoginId()
+    {
+        if ($this->methods[static::CODE]->getConfigData('acceptjs')) {
+            return $this->methods[static::CODE]->getConfigData('login');
+        }
+
+        return '';
+    }
+
+    /**
+     * Get Client Key - ONLY if Accept.js is enabled
+     *
+     * @return string
+     */
+    public function getClientKey()
+    {
+        if ($this->methods[static::CODE]->getConfigData('acceptjs')) {
+            return $this->methods[static::CODE]->getConfigData('client_key');
+        }
+
+        return '';
+    }
+
+    /**
+     * Get sandbox mode enabled flag
+     *
+     * @return bool
+     */
+    public function getSandbox()
+    {
+        return (bool)$this->methods[static::CODE]->getConfigData('test');
+    }
+
+    /**
+     * Get 'can store BIN' flag
+     *
+     * @return bool
+     */
+    public function getCanStoreBin()
+    {
+        return (bool)$this->methods[static::CODE]->getConfigData('can_store_bin');
     }
 }

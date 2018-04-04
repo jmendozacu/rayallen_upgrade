@@ -13,6 +13,7 @@
 
 namespace ParadoxLabs\Authnetcim\Setup;
 
+use Magento\Customer\Model\Customer;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
@@ -24,16 +25,33 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
     /**
      * @var \Magento\Customer\Setup\CustomerSetupFactory
      */
-    private $customerSetupFactory;
+    protected $customerSetupFactory;
+
+    /**
+     * @var \Magento\Eav\Api\AttributeRepositoryInterface
+     */
+    protected $attributeRepository;
+
+    /**
+     * @var UpgradeData
+     */
+    protected $dataUpgrade;
 
     /**
      * Init
      *
      * @param \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory
+     * @param \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository
+     * @param UpgradeData $dataUpgrade
      */
-    public function __construct(\Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory)
-    {
+    public function __construct(
+        \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory,
+        \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
+        \ParadoxLabs\Authnetcim\Setup\UpgradeData $dataUpgrade
+    ) {
         $this->customerSetupFactory = $customerSetupFactory;
+        $this->attributeRepository = $attributeRepository;
+        $this->dataUpgrade = $dataUpgrade;
     }
 
     /**
@@ -48,13 +66,21 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
         /** @var \Magento\Customer\Setup\CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
 
-        $setup->startSetup();
+        $this->addCustomerProfileIdAttr($customerSetup);
+        $this->addCustomerProfileVersionAttr($customerSetup);
+        $this->dataUpgrade->addConfigMinifyExcludeAcceptjs($setup, $context);
+    }
 
-        /**
-         * authnetcim_profile_id customer attribute: Stores CIM profile ID for each customer.
-         */
+    /**
+     * authnetcim_profile_id customer attribute: Stores CIM profile ID for each customer.
+     *
+     * @param \Magento\Customer\Setup\CustomerSetup $customerSetup
+     * @return void
+     */
+    public function addCustomerProfileIdAttr(\Magento\Customer\Setup\CustomerSetup $customerSetup)
+    {
         $customerSetup->addAttribute(
-            'customer',
+            Customer::ENTITY,
             'authnetcim_profile_id',
             [
                 'label'            => 'Authorize.Net CIM: Profile ID',
@@ -62,19 +88,39 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
                 'input'            => 'text',
                 'default'          => '',
                 'position'         => 70,
-                'visible'          => true,
+                'visible'          => false,
                 'required'         => false,
+                'system'           => false,
                 'user_defined'     => true,
                 'visible_on_front' => false,
             ]
         );
 
-        /**
-         * authnetcim_profile_version customer attribute: Indicates whether each customer needs
-         * the card upgrade process run, to migrate data from CIM 1.x to CIM 2+.
-         */
+        $profileIdAttr = $customerSetup->getEavConfig()->getAttribute(
+            Customer::ENTITY,
+            'authnetcim_profile_id'
+        );
+
+        $profileIdAttr->addData([
+            'attribute_set_id' => $customerSetup->getDefaultAttributeSetId(Customer::ENTITY),
+            'attribute_group_id' => $customerSetup->getDefaultAttributeGroupId(Customer::ENTITY),
+            'used_in_forms' => [],
+        ]);
+
+        $this->attributeRepository->save($profileIdAttr);
+    }
+
+    /**
+     * authnetcim_profile_version customer attribute: Indicates whether each customer needs
+     * the card upgrade process run, to migrate data from CIM 1.x to CIM 2+.
+     *
+     * @param \Magento\Customer\Setup\CustomerSetup $customerSetup
+     * @return void
+     */
+    public function addCustomerProfileVersionAttr(\Magento\Customer\Setup\CustomerSetup $customerSetup)
+    {
         $customerSetup->addAttribute(
-            'customer',
+            Customer::ENTITY,
             'authnetcim_profile_version',
             [
                 'label'            => 'Authorize.Net CIM: Profile version (for updating legacy data)',
@@ -82,13 +128,25 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
                 'input'            => 'text',
                 'default'          => '100',
                 'position'         => 71,
-                'visible'          => true,
+                'visible'          => false,
                 'required'         => false,
+                'system'           => false,
                 'user_defined'     => true,
                 'visible_on_front' => false,
             ]
         );
 
-        $setup->endSetup();
+        $profileVersionAttr = $customerSetup->getEavConfig()->getAttribute(
+            Customer::ENTITY,
+            'authnetcim_profile_version'
+        );
+
+        $profileVersionAttr->addData([
+            'attribute_set_id' => $customerSetup->getDefaultAttributeSetId(Customer::ENTITY),
+            'attribute_group_id' => $customerSetup->getDefaultAttributeGroupId(Customer::ENTITY),
+            'used_in_forms' => [],
+        ]);
+
+        $this->attributeRepository->save($profileVersionAttr);
     }
 }

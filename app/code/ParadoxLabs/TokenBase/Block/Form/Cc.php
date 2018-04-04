@@ -15,6 +15,8 @@ namespace ParadoxLabs\TokenBase\Block\Form;
 
 /**
  * Credit card input form on checkout for TokenBase methods.
+ *
+ * TODO: admin form is not selecting a card by default
  */
 class Cc extends \Magento\Payment\Block\Form\Cc
 {
@@ -49,11 +51,22 @@ class Cc extends \Magento\Payment\Block\Form\Cc
     protected $helper;
 
     /**
+     * @var \ParadoxLabs\TokenBase\Model\Method\Factory
+     */
+    protected $tokenbaseMethodFactory;
+
+    /**
+     * @var \ParadoxLabs\TokenBase\Api\MethodInterface
+     */
+    protected $tokenbaseMethod;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Payment\Model\Config $paymentConfig
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Customer\Model\Session $customerSession *Proxy
+     * @param \Magento\Checkout\Model\Session $checkoutSession *Proxy
+     * @param \ParadoxLabs\TokenBase\Model\Method\Factory $tokenbaseMethodFactory
      * @param array $data
      */
     public function __construct(
@@ -62,11 +75,13 @@ class Cc extends \Magento\Payment\Block\Form\Cc
         \ParadoxLabs\TokenBase\Helper\Data $helper,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Session $checkoutSession,
+        \ParadoxLabs\TokenBase\Model\Method\Factory $tokenbaseMethodFactory,
         array $data = []
     ) {
         $this->helper = $helper;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
+        $this->tokenbaseMethodFactory = $tokenbaseMethodFactory;
 
         parent::__construct($context, $paymentConfig, $data);
     }
@@ -78,17 +93,17 @@ class Cc extends \Magento\Payment\Block\Form\Cc
      */
     public function getStoredCards()
     {
-        if (is_null($this->cards)) {
+        if ($this->cards === null) {
             /**
              * If logged in, fetch the method cards for the current customer.
              * If not, short circuit / return empty array.
              */
             $customer = $this->helper->getCurrentCustomer();
 
+            $this->cards = [];
+
             if ($this->helper->getIsFrontend() !== true || ($customer && $customer->getId() > 0)) {
                 $this->cards = $this->helper->getActiveCustomerCardsByMethod($this->getMethodCode());
-            } else {
-                $this->cards = array();
             }
         }
 
@@ -104,7 +119,7 @@ class Cc extends \Magento\Payment\Block\Form\Cc
     {
         $cards = $this->getStoredCards();
 
-        return (count($cards) > 0 ? true : false);
+        return (!empty($cards) ? true : false);
     }
 
     /**
@@ -146,5 +161,21 @@ class Cc extends \Magento\Payment\Block\Form\Cc
     public function getHelper()
     {
         return $this->helper;
+    }
+
+    /**
+     * Get Tokenbase payment method instance.
+     *
+     * @return \ParadoxLabs\TokenBase\Api\MethodInterface
+     */
+    public function getTokenbaseMethod()
+    {
+        if ($this->tokenbaseMethod === null) {
+            $this->tokenbaseMethod = $this->tokenbaseMethodFactory->getMethodInstance(
+                $this->getMethodCode()
+            );
+        }
+
+        return $this->tokenbaseMethod;
     }
 }

@@ -34,19 +34,19 @@ class PaymentinfoSave extends Paymentinfo
     protected $skipCardLoad = true;
 
     /**
-     * @var \ParadoxLabs\TokenBase\Api\Data\CardInterfaceFactory
-     */
-    protected $cardFactory;
-
-    /**
      * @var \Magento\Quote\Model\Quote\PaymentFactory
      */
     protected $paymentFactory;
 
     /**
-     * @var \Magento\Quote\Api\CartRepositoryInterface
+     * @var \Magento\Quote\Api\Data\CartInterfaceFactory
      */
-    protected $quoteRepository;
+    protected $quoteFactory;
+
+    /**
+     * @var \ParadoxLabs\TokenBase\Api\Data\CardInterfaceFactory
+     */
+    protected $cardFactory;
 
     /**
      * PaymentinfoDelete constructor.
@@ -75,12 +75,12 @@ class PaymentinfoSave extends Paymentinfo
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory
+     * @param \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
      * @param \ParadoxLabs\TokenBase\Helper\Address $addressHelper
-     * @param \Magento\Backend\Model\Session $session
      * @param \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory
-     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+     * @param \Magento\Quote\Api\Data\CartInterfaceFactory $quoteFactory
+     * @param \ParadoxLabs\TokenBase\Api\Data\CardInterfaceFactory $cardFactory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -108,15 +108,16 @@ class PaymentinfoSave extends Paymentinfo
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory,
+        \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository,
         \ParadoxLabs\TokenBase\Helper\Data $helper,
         \ParadoxLabs\TokenBase\Helper\Address $addressHelper,
-        \Magento\Backend\Model\Session $session,
         \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        \Magento\Quote\Api\Data\CartInterfaceFactory $quoteFactory,
+        \ParadoxLabs\TokenBase\Api\Data\CardInterfaceFactory $cardFactory
     ) {
         $this->paymentFactory = $paymentFactory;
-        $this->quoteRepository = $quoteRepository;
+        $this->quoteFactory = $quoteFactory;
+        $this->cardFactory = $cardFactory;
 
         parent::__construct(
             $context,
@@ -144,17 +145,16 @@ class PaymentinfoSave extends Paymentinfo
             $resultPageFactory,
             $resultForwardFactory,
             $resultJsonFactory,
-            $cardFactory,
+            $cardRepository,
             $helper,
-            $addressHelper,
-            $session
+            $addressHelper
         );
     }
 
     /**
      * View customer's stored cards list (active view)
      *
-     * @return \Magento\Framework\View\Result\Layout
+     * @return \Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
@@ -178,16 +178,20 @@ class PaymentinfoSave extends Paymentinfo
                  */
 
                 /** @var \ParadoxLabs\TokenBase\Model\Card $card */
-                $card       = $this->cardFactory->create();
-                $card->loadByHash($id);
-                $card->setMethod($card->getMethod() ?: $method);
+                if (!empty($id)) {
+                    $card = $this->cardRepository->getByHash($id);
+                } else {
+                    $card = $this->cardFactory->create();
+                    $card->setMethod($card->getMethod() ?: $method);
+                }
+
                 $card       = $card->getTypeInstance();
 
                 if ($card && (empty($id) || $card->getHash() == $id)) {
                     /**
                      * Process address data
                      */
-                    $newAddrId    = intval($this->getRequest()->getParam('billing_address_id'));
+                    $newAddrId    = (int)$this->getRequest()->getParam('billing_address_id');
 
                     if ($newAddrId > 0) {
                         // Existing address
@@ -214,10 +218,12 @@ class PaymentinfoSave extends Paymentinfo
 
                     if (isset($cardData['cc_number'])) {
                         $cardData['cc_last4'] = substr($cardData['cc_number'], -4);
+                        $cardData['cc_bin']   = substr($cardData['cc_number'], 0, 6);
                     }
 
                     /** @var \Magento\Quote\Model\Quote $quote */
-                    $quote = $this->quoteRepository->getActiveForCustomer($customer->getId());
+                    $quote = $this->quoteFactory->create();
+                    $quote->setCustomer($customer);
 
                     /** @var \Magento\Quote\Model\Quote\Payment $newPayment */
                     $newPayment = $this->paymentFactory->create();
@@ -233,16 +239,17 @@ class PaymentinfoSave extends Paymentinfo
                     $card->setCustomer($customer);
                     $card->setAddress($newAddr);
                     $card->importPaymentInfo($newPayment);
-                    $card->save();
 
-                    $this->session->unsData('tokenbase_form_data');
+                    $card = $this->cardRepository->save($card);
+
+                    $this->_session->setData('tokenbase_form_data', null);
 
                     $response['success'] = true;
                 } else {
                     $response['message'] = __('Invalid card reference.');
                 }
             } catch (\Exception $e) {
-                $this->session->setData('tokenbase_form_data', $this->getRequest()->getParams());
+                $this->_session->setData('tokenbase_form_data', $this->getRequest()->getParams());
 
                 $this->helper->log($method, (string)$e);
                 $response['message'] = __($e->getMessage());

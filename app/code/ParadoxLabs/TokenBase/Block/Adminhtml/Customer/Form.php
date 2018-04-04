@@ -15,7 +15,6 @@ namespace ParadoxLabs\TokenBase\Block\Adminhtml\Customer;
 
 /**
  * Form Class
- * TODO: Might have problems from extended class scope
  */
 class Form extends \Magento\Customer\Block\Address\Edit
 {
@@ -40,7 +39,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
     protected $registry;
 
     /**
-     * @var \Magento\Payment\Model\MethodInterface
+     * @var \ParadoxLabs\TokenBase\Api\MethodInterface
      */
     protected $method;
 
@@ -55,6 +54,11 @@ class Form extends \Magento\Customer\Block\Address\Edit
     protected $formKey;
 
     /**
+     * @var \ParadoxLabs\TokenBase\Model\Method\Factory
+     */
+    protected $tokenbaseMethodFactory;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -63,7 +67,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
      * @param \Magento\Framework\App\Cache\Type\Config $configCacheType
      * @param \Magento\Directory\Model\ResourceModel\Region\CollectionFactory $regionCollectionFactory
      * @param \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollectionFactory
-     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Customer\Model\Session $customerSession *Proxy
      * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
      * @param \Magento\Customer\Api\Data\AddressInterfaceFactory $addressDataFactory
      * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer
@@ -72,6 +76,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
      * @param \Magento\Framework\Data\Form\FormKey $formKey
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
      * @param \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory
+     * @param \ParadoxLabs\TokenBase\Model\Method\Factory $tokenbaseMethodFactory
      * @param array $data
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -92,14 +97,16 @@ class Form extends \Magento\Customer\Block\Address\Edit
         \Magento\Framework\Data\Form\FormKey $formKey,
         \ParadoxLabs\TokenBase\Helper\Data $helper,
         \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory,
+        \ParadoxLabs\TokenBase\Model\Method\Factory $tokenbaseMethodFactory,
         array $data = []
     ) {
         $this->helper = $helper;
         $this->cardFactory = $cardFactory;
         $this->registry = $registry;
         $this->formKey = $formKey;
+        $this->tokenbaseMethodFactory = $tokenbaseMethodFactory;
 
-        $this->method = $this->helper->getMethodInstance($this->getCode());
+        $this->method = $this->tokenbaseMethodFactory->getMethodInstance($this->getCode());
 
         parent::__construct(
             $context,
@@ -130,7 +137,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
     /**
      * Get the active payment method.
      *
-     * @return \Magento\Payment\Model\MethodInterface
+     * @return \ParadoxLabs\TokenBase\Api\MethodInterface
      */
     public function getMethod()
     {
@@ -154,7 +161,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
      */
     public function getCard()
     {
-        if (is_null($this->card)) {
+        if ($this->card === null) {
             try {
                 $this->card = $this->helper->getActiveCard($this->getCode());
             } catch (\Exception $e) {
@@ -228,7 +235,7 @@ class Form extends \Magento\Customer\Block\Address\Edit
      */
     public function isEdit()
     {
-        return ($this->getCard()->getId() > 0) ? true : false;
+        return $this->getCard()->getId() > 0;
     }
 
     /**
@@ -236,9 +243,9 @@ class Form extends \Magento\Customer\Block\Address\Edit
      */
     public function getCcBlock()
     {
-        if (is_null($this->ccBlock)) {
+        if ($this->ccBlock === null) {
             $this->ccBlock = $this->getLayout()->createBlock('Magento\Payment\Block\Form\Cc');
-            $this->ccBlock->setMethod($this->getMethod());
+            $this->ccBlock->setMethod($this->helper->getMethodInstance($this->getCode()));
         }
 
         return $this->ccBlock;
@@ -266,8 +273,9 @@ class Form extends \Magento\Customer\Block\Address\Edit
             [
                 '_secure' => true,
                 'id' => $this->getRequest()->getParam('id'),
-                'method' => $this->getMethod(),
+                'method' => $this->getCard()->getMethod(),
                 'form_key' => $this->formKey->getFormKey(),
+                'cancel' => 1,
             ]
         );
     }

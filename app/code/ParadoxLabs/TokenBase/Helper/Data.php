@@ -44,17 +44,12 @@ class Data extends \Magento\Payment\Helper\Data
     protected $registry;
 
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * @var \Magento\Store\Model\WebsiteFactory
      */
     protected $websiteFactory;
 
     /**
-     * @var \Magento\Customer\Model\CustomerFactory
+     * @var \Magento\Customer\Api\Data\CustomerInterfaceFactory
      */
     protected $customerFactory;
 
@@ -64,19 +59,24 @@ class Data extends \Magento\Payment\Helper\Data
     protected $cardFactory;
 
     /**
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     */
+    protected $customerRepository;
+
+    /**
      * @var \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory
      */
     protected $cardCollectionFactory;
 
     /**
-     * @var \Magento\Customer\Model\Customer
+     * @var \Magento\Customer\Api\Data\CustomerInterface
      */
     protected $currentCustomer;
 
     /**
-     * @var AddressFactory
+     * @var Address
      */
-    protected $addressHelperFactory;
+    protected $addressHelper;
 
     /**
      * @var \Magento\Quote\Model\Quote\PaymentFactory
@@ -110,6 +110,26 @@ class Data extends \Magento\Payment\Helper\Data
     ];
 
     /**
+     * @var \Magento\Backend\Model\Session\Quote
+     */
+    protected $backendSession;
+
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $customerSession;
+
+    /**
+     * @var \Magento\Customer\Helper\Session\CurrentCustomer
+     */
+    protected $currentCustomerSession;
+
+    /**
      * Construct
      *
      * @param \Magento\Framework\App\Helper\Context $context
@@ -121,13 +141,17 @@ class Data extends \Magento\Payment\Helper\Data
      * @param \Magento\Framework\App\State $appState
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Store\Model\WebsiteFactory $websiteFactory
-     * @param \Magento\Customer\Model\CustomerFactory $customerFactory
+     * @param \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory
+     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      * @param \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory
+     * @param \Magento\Backend\Model\Session\Quote $backendSession *Proxy
+     * @param \Magento\Checkout\Model\Session $checkoutSession *Proxy
+     * @param \Magento\Customer\Model\Session $customerSession *Proxy
+     * @param \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomerSession *Proxy
      * @param \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory
      * @param \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory
-     * @param \ParadoxLabs\TokenBase\Helper\AddressFactory $addressHelperFactory
+     * @param \ParadoxLabs\TokenBase\Helper\Address $addressHelper *Proxy
      * @param \ParadoxLabs\TokenBase\Helper\Operation $operationHelper
      */
     public function __construct(
@@ -140,26 +164,34 @@ class Data extends \Magento\Payment\Helper\Data
         \Magento\Framework\App\State $appState,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
-        \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Customer\Api\Data\CustomerInterfaceFactory $customerFactory,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory,
+        \Magento\Backend\Model\Session\Quote $backendSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomerSession,
         \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory,
         \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory,
-        \ParadoxLabs\TokenBase\Helper\AddressFactory $addressHelperFactory,
+        \ParadoxLabs\TokenBase\Helper\Address $addressHelper,
         \ParadoxLabs\TokenBase\Helper\Operation $operationHelper
     ) {
         $this->appState = $appState;
         $this->storeManager = $storeManager;
         $this->registry = $registry;
-        $this->objectManager = $objectManager;
         $this->websiteFactory = $websiteFactory;
         $this->customerFactory = $customerFactory;
+        $this->customerRepository = $customerRepository;
         $this->cardFactory = $cardFactory;
         $this->cardCollectionFactory = $cardCollectionFactory;
-        $this->addressHelperFactory = $addressHelperFactory;
+        $this->addressHelper = $addressHelper;
         $this->paymentFactory = $paymentFactory;
         $this->operationHelper = $operationHelper;
+        $this->backendSession = $backendSession;
+        $this->checkoutSession = $checkoutSession;
+        $this->customerSession = $customerSession;
+        $this->currentCustomerSession = $currentCustomerSession;
 
         parent::__construct(
             $context,
@@ -181,12 +213,13 @@ class Data extends \Magento\Payment\Helper\Data
     public function getActiveMethods()
     {
         $methods = [];
+        $storeId = $this->getCurrentStoreId();
 
         foreach ($this->getPaymentMethods() as $code => $data) {
             if (isset($data['group']) && $data['group'] == 'tokenbase') {
                 $method = $this->getMethodInstance($code);
 
-                if ($method->getConfigData('active') == 1) {
+                if ($method->getConfigData('active', $storeId) == 1) {
                     $methods[] = $code;
                 }
             }
@@ -247,14 +280,8 @@ class Data extends \Magento\Payment\Helper\Data
             } elseif ($this->registry->registry('current_creditmemo') != null) {
                 return $this->registry->registry('current_creditmemo')->getStoreId();
             } else {
-                // Don't like to use the object manager directly but this is how the core does it.
-                // @see \Magento\Sales\Controller\Adminhtml\Order\Create::_getSession()
-
-                /** @var \Magento\Backend\Model\Session\Quote $backendSession */
-                $backendSession = $this->objectManager->get('Magento\Backend\Model\Session\Quote');
-
-                if ($backendSession->getStoreId() > 0) {
-                    return $backendSession->getStoreId();
+                if ($this->backendSession->getStoreId() > 0) {
+                    return $this->backendSession->getStoreId();
                 } else {
                     return 0;
                 }
@@ -265,57 +292,72 @@ class Data extends \Magento\Payment\Helper\Data
     }
 
     /**
-     * Return current customer based on the available info.
+     * Return current customer based on the available info. Caches value per-request.
      *
-     * @return \Magento\Customer\Model\Customer
+     * @return \Magento\Customer\Api\Data\CustomerInterface
      */
     public function getCurrentCustomer()
     {
-        if (!is_null($this->currentCustomer)) {
+        if ($this->currentCustomer !== null) {
             return $this->currentCustomer;
         }
 
+        $registryCustomer = $this->registry->registry('current_customer');
+
+        if ($registryCustomer instanceof \Magento\Customer\Model\Customer) {
+            $this->currentCustomer = $registryCustomer->getDataModel();
+        } elseif ($registryCustomer instanceof \Magento\Customer\Api\Data\CustomerInterface) {
+            $this->currentCustomer = $registryCustomer;
+        } elseif (!$this->getIsFrontend()) {
+            $this->currentCustomer = $this->getCurrentBackendCustomer();
+        } elseif ($this->currentCustomerSession->getCustomerId() > 0) {
+            $this->currentCustomer = $this->customerRepository->getById(
+                $this->currentCustomerSession->getCustomerId()
+            );
+        }
+
+        if (($this->currentCustomer instanceof \Magento\Customer\Api\Data\CustomerInterface) === false) {
+            $this->currentCustomer = $this->customerFactory->create();
+        }
+
+        return $this->currentCustomer;
+    }
+
+    /**
+     * Get current customer in the adminhtml scope. Looks at order, quote, invoice, credit memo.
+     *
+     * @return \Magento\Customer\Api\Data\CustomerInterface
+     */
+    protected function getCurrentBackendCustomer()
+    {
         $customer = $this->customerFactory->create();
 
-        if (!$this->getIsFrontend()) {
-            if ($this->registry->registry('current_order') != null) {
-                $customer->load($this->registry->registry('current_order')->getCustomerId());
-            } elseif ($this->registry->registry('current_customer') != null) {
-                $customer = $this->registry->registry('current_customer');
-            } elseif ($this->registry->registry('current_invoice') != null) {
-                $customer->load($this->registry->registry('current_invoice')->getCustomerId());
-            } elseif ($this->registry->registry('current_creditmemo') != null) {
-                $customer->load($this->registry->registry('current_creditmemo')->getCustomerId());
-            } else {
-                // Don't like to use the object manager directly but this is how the core does it.
-                // We don't necessarily want to inject it since that would initialize the session every time.
-                // @see \Magento\Sales\Controller\Adminhtml\Order\Create::_getSession()
-
-                /** @var \Magento\Backend\Model\Session\Quote $backendSession */
-                $backendSession = $this->objectManager->get('Magento\Backend\Model\Session\Quote');
-
-                if ($backendSession->hasQuoteId()) {
-                    if ($backendSession->getQuote()->getCustomerId() > 0) {
-                        $customer->load($backendSession->getQuote()->getCustomerId());
-                    } elseif ($backendSession->getQuote()->getCustomerEmail() != '') {
-                        $customer->setData('email', $backendSession->getQuote()->getCustomerEmail());
-                    }
-                }
-            }
-        } elseif ($this->registry->registry('current_customer') != null) {
-            $customer = $this->registry->registry('current_customer');
-        } else {
-            // We don't necessarily want to inject this since that would initialize the session every time.
-            /** @var \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer */
-            $currentCustomer = $this->objectManager->get('Magento\Customer\Helper\Session\CurrentCustomer');
-            if ($currentCustomer->getCustomerId() > 0) {
-                $customer->load($currentCustomer->getCustomerId());
+        if ($this->registry->registry('current_order') != null
+            && $this->registry->registry('current_order')->getCustomerId() > 0) {
+            $customer = $this->customerRepository->getById(
+                $this->registry->registry('current_order')->getCustomerId()
+            );
+        } elseif ($this->registry->registry('current_invoice') != null
+            && $this->registry->registry('current_invoice')->getOrder()->getCustomerId() > 0) {
+            $customer = $this->customerRepository->getById(
+                $this->registry->registry('current_invoice')->getOrder()->getCustomerId()
+            );
+        } elseif ($this->registry->registry('current_creditmemo') != null
+            && $this->registry->registry('current_creditmemo')->getOrder()->getCustomerId() > 0) {
+            $customer = $this->customerRepository->getById(
+                $this->registry->registry('current_creditmemo')->getOrder()->getCustomerId()
+            );
+        } elseif ($this->backendSession->hasQuoteId()) {
+            if ($this->backendSession->getQuote()->getCustomerId() > 0) {
+                $customer = $this->customerRepository->getById(
+                    $this->backendSession->getQuote()->getCustomerId()
+                );
+            } elseif ($this->backendSession->getQuote()->getCustomerEmail() != '') {
+                $customer->setEmail($this->backendSession->getQuote()->getCustomerEmail());
             }
         }
 
-        $this->currentCustomer = $customer;
-
-        return $this->currentCustomer;
+        return $customer;
     }
 
     /**
@@ -326,9 +368,9 @@ class Data extends \Magento\Payment\Helper\Data
      */
     public function getActiveCard($method = null)
     {
-        $method = is_null($method) ? $this->registry->registry('tokenbase_method') : $method;
+        $method = ($method === null) ? $this->registry->registry('tokenbase_method') : $method;
 
-        if (is_null($this->card)) {
+        if ($this->card === null) {
             if ($this->registry->registry('active_card')) {
                 $this->card = $this->registry->registry('active_card');
             } else {
@@ -344,52 +386,42 @@ class Data extends \Magento\Payment\Helper\Data
             /**
              * Import prior form data from the session, if possible.
              */
-            if ($this->getIsFrontend()) {
-                $session = $this->objectManager->get('Magento\Customer\Model\Session');
-                if ($session->hasTokenbaseFormData()) {
-                    $data = $session->getTokenbaseFormData(true);
+            if ($this->getIsFrontend() && $this->customerSession->hasTokenbaseFormData()) {
+                $data = $this->customerSession->getTokenbaseFormData(true);
 
-                    if (isset($data['billing']) && count($data['billing']) > 0) {
-                        /** @var \ParadoxLabs\TokenBase\Helper\Address $addressHelper */
-                        $addressHelper  = $this->addressHelperFactory->create();
+                if (isset($data['billing']) && !empty($data['billing'])) {
+                    $address        = $this->addressHelper->buildAddressFromInput(
+                        $data['billing'],
+                        $this->card->getAddress()
+                    );
 
-                        $address        = $addressHelper->buildAddressFromInput(
-                            $data['billing'],
-                            $this->card->getAddress()
-                        );
+                    $this->card->setAddress($address);
+                }
 
-                        $this->card->setAddress($address);
+                if (isset($data['payment']) && !empty($data['payment'])) {
+                    $cardData = $data['payment'];
+                    $cardData['method']     = $method;
+                    $cardData['card_id']    = $data['id'];
+                    // This bypasses the validation check in importData below. Does not matter otherwise.
+                    $cardData['cc_cid']     = '000';
+
+                    unset($cardData['cc_number'], $cardData['echeck_account_no'], $cardData['echeck_routing_no']);
+
+                    /** @var \Magento\Quote\Model\Quote\Payment $newPayment */
+                    $newPayment = $this->paymentFactory->create();
+                    $newPayment->setQuote($this->checkoutSession->getQuote());
+                    $newPayment->getQuote()->getBillingAddress()->setCountryId(
+                        $this->card->getAddress('country_id')
+                    );
+
+                    try {
+                        $newPayment->importData($cardData);
+                    } catch (\Exception $e) {
+                        // We're only trying to load prior-entered data for the form. Ignore validation errors.
+                        $this->card->getId();
                     }
 
-                    if (isset($data['payment']) && count($data['payment']) > 0) {
-                        $cardData = $data['payment'];
-                        $cardData['method']     = $method;
-                        $cardData['card_id']    = $data['id'];
-                        // This bypasses the validation check in importData below. Does not matter otherwise.
-                        $cardData['cc_cid']     = '000';
-
-                        unset($cardData['cc_number']);
-                        unset($cardData['echeck_account_no']);
-                        unset($cardData['echeck_routing_no']);
-
-                        /** @var \Magento\Checkout\Model\Session $checkoutSession */
-                        $checkoutSession = $this->objectManager->get('Magento\Checkout\Model\Session');
-
-                        /** @var \Magento\Quote\Model\Quote\Payment $newPayment */
-                        $newPayment = $this->paymentFactory->create();
-                        $newPayment->setQuote($checkoutSession->getQuote());
-                        $newPayment->getQuote()->getBillingAddress()->setCountryId(
-                            $this->card->getAddress('country_id')
-                        );
-
-                        try {
-                            $newPayment->importData($cardData);
-                        } catch (\Exception $e) {
-                            // We're only trying to load prior-entered data for the form. Ignore validation errors.
-                        }
-
-                        $this->card->importPaymentInfo($newPayment);
-                    }
+                    $this->card->importPaymentInfo($newPayment);
                 }
             }
         }
@@ -405,7 +437,7 @@ class Data extends \Magento\Payment\Helper\Data
      */
     public function getActiveCustomerCardsByMethod($method = null)
     {
-        $method = is_null($method) ? $this->registry->registry('tokenbase_method') : $method;
+        $method = ($method === null) ? $this->registry->registry('tokenbase_method') : $method;
 
         if (!isset($this->cards[ $method ])) {
             $this->_eventManager->dispatch(
@@ -419,27 +451,26 @@ class Data extends \Magento\Payment\Helper\Data
             $this->cards[ $method ] = $this->cardCollectionFactory->create();
 
             if (!$this->getIsFrontend()) {
-                /** @var \Magento\Backend\Model\Session\Quote $backendSession */
-                $backendSession = $this->objectManager->get('Magento\Backend\Model\Session\Quote');
-
-                if ($backendSession->hasQuoteId()
-                    && $backendSession->getQuote()->getPayment()->getData('tokenbase_id') > 0
+                if ($this->backendSession->getData('quote_id')
+                    && $this->backendSession->getQuote()->getPayment()->getData('tokenbase_id') > 0
                     && !($this->registry->registry('current_customer') instanceof \Magento\Customer\Model\Customer)) {
                     // Case where we want to show a card that may not otherwise be (edit or reorder)
-                    $tokenbaseId = $backendSession->getQuote()->getPayment()->getData('tokenbase_id');
+                    $tokenbaseId = $this->backendSession->getQuote()->getPayment()->getData('tokenbase_id');
 
                     if ($this->getCurrentCustomer()->getId() > 0) {
-                        // Manual select -- only because collections don't let us do the complex condition. (soz.)
-                        $this->cards[$method]->getSelect()->where(
-                            sprintf(
-                                "(id='%s' and customer_id='%s') or (active=1 and customer_id='%s')",
-                                $tokenbaseId,
-                                $this->getCurrentCustomer()->getId(),
-                                $this->getCurrentCustomer()->getId()
-                            )
+                        $this->cards[ $method ]->addFieldToFilter('customer_id', $this->getCurrentCustomer()->getId());
+                        $this->cards[ $method ]->addFieldToFilter(
+                            [
+                                'id',
+                                'active',
+                            ],
+                            [
+                                ['eq' => $tokenbaseId],
+                                ['eq' => 1],
+                            ]
                         );
                     } else {
-                        $this->cards[$method]->addFieldToFilter('id', $tokenbaseId);
+                        $this->cards[ $method ]->addFieldToFilter('id', $tokenbaseId);
                     }
                 } elseif ($this->getCurrentCustomer()->getId() > 0) {
                     // Case where we want to show a customer's stored cards (if any)
@@ -456,7 +487,7 @@ class Data extends \Magento\Payment\Helper\Data
                 return [];
             }
 
-            if (!is_null($method)) {
+            if ($method !== null) {
                 $this->cards[ $method ]->addFieldToFilter('method', $method);
                 $this->cards[ $method ]->addFieldToFilter('payment_id', ['notnull' => true]);
                 $this->cards[ $method ]->addFieldToFilter('payment_id', ['neq' => '']);
@@ -532,7 +563,7 @@ class Data extends \Magento\Payment\Helper\Data
      */
     public function getAchAccountTypes($code = null)
     {
-        if (!is_null($code)) {
+        if ($code !== null) {
             if (isset($this->achAccountTypes[$code])) {
                 return $this->achAccountTypes[$code];
             }
@@ -590,6 +621,8 @@ class Data extends \Magento\Payment\Helper\Data
      */
     public function log($code, $message, $debug = false)
     {
-        return $this->operationHelper->log($code, $message, $debug);
+        $this->operationHelper->log($code, $message, $debug);
+
+        return $this;
     }
 }

@@ -8,17 +8,35 @@
  *  http://support.paradoxlabs.com
  *
  * @author        Ryan Hoerr <support@paradoxlabs.com>
- * @license        http://store.paradoxlabs.com/license.html
+ * @license       http://store.paradoxlabs.com/license.html
  */
 
 namespace ParadoxLabs\TokenBase\Model;
 
 /**
+ * Soft dependency: Supporting 2.1 Vault without breaking 2.0 compatibility.
+ * The 2.1+ version implements \Magento\Vault; 2.0 does not.
+ *
+ * If PaymentTokenInterface exists, we want to implement it. If not, skip.
+ */
+if (interface_exists('\Magento\Vault\Api\Data\PaymentTokenInterface')) {
+    class_alias(
+        '\Magento\Vault\Api\Data\PaymentTokenInterface',
+        '\ParadoxLabs\TokenBase\Api\Data\TokenInterface'
+    );
+} else {
+    class_alias(
+        '\ParadoxLabs\TokenBase\Api\Data\FauxTokenInterface',
+        '\ParadoxLabs\TokenBase\Api\Data\TokenInterface'
+    );
+}
+
+/**
  * Payment record storage
  */
-class Card
-    extends \Magento\Framework\Model\AbstractExtensibleModel
-    implements \ParadoxLabs\TokenBase\Api\Data\CardInterface
+class Card extends \Magento\Framework\Model\AbstractExtensibleModel implements
+    \ParadoxLabs\TokenBase\Api\Data\CardInterface,
+    \ParadoxLabs\TokenBase\Api\Data\TokenInterface
 {
     /**
      * Prefix of model events names
@@ -30,12 +48,12 @@ class Card
     /**
      * @var null|array
      */
-    protected $address      = null;
+    protected $address;
 
     /**
      * @var null|array
      */
-    protected $additional   = null;
+    protected $additional;
 
     /**
      * @var \ParadoxLabs\TokenBase\Helper\Data
@@ -43,9 +61,9 @@ class Card
     protected $helper;
 
     /**
-     * @var \Magento\Payment\Helper\Data
+     * @var \ParadoxLabs\TokenBase\Model\Method\Factory
      */
-    protected $paymentHelper;
+    protected $methodFactory;
 
     /**
      * @var \ParadoxLabs\TokenBase\Model\AbstractMethod
@@ -53,14 +71,19 @@ class Card
     protected $method;
 
     /**
-     * @var \ParadoxLabs\Tokenbase\Model\ResourceModel\Card\CollectionFactory
+     * @var \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory
      */
     protected $cardCollectionFactory;
 
     /**
-     * @var \Magento\Customer\Model\CustomerFactory
+     * @var \Magento\Customer\Api\Data\CustomerInterfaceFactory
      */
     protected $customerFactory;
+
+    /**
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface
+     */
+    protected $customerRepository;
 
     /**
      * @var \Magento\Sales\Model\ResourceModel\Order\CollectionFactory
@@ -83,19 +106,14 @@ class Card
     protected $remoteAddress;
 
     /**
-     * @var \ParadoxLabs\Tokenbase\Model\Card
+     * @var \ParadoxLabs\TokenBase\Model\Card
      */
     protected $instance;
 
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
+     * @var Card\Factory
      */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
+    protected $cardFactory;
 
     /**
      * @var \Magento\Customer\Api\Data\AddressInterfaceFactory
@@ -113,22 +131,26 @@ class Card
     protected $dataProcessor;
 
     /**
+     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
+     */
+    protected $dateProcessor;
+
+    /**
+     * @var \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterfaceFactory
+     */
+    protected $cardAdditionalFactory;
+
+    /**
+     * @var \Magento\Framework\Api\DataObjectHelper
+     */
+    protected $dataObjectHelper;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
      * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
-     * @param \ParadoxLabs\TokenBase\Helper\Data $helper
-     * @param \Magento\Payment\Helper\Data $paymentHelper
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \ParadoxLabs\Tokenbase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory
-     * @param \Magento\Customer\Model\CustomerFactory $customerFactory
-     * @param \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory
-     * @param \Magento\Customer\Api\Data\RegionInterfaceFactory $addressRegionFactory
-     * @param \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress
-     * @param \Magento\Framework\Reflection\DataObjectProcessor $dataObjectProcessor
+     * @param Card\Context $cardContext
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
@@ -138,18 +160,7 @@ class Card
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
         \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
-        \ParadoxLabs\TokenBase\Helper\Data $helper,
-        \Magento\Payment\Helper\Data $paymentHelper,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \ParadoxLabs\Tokenbase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory,
-        \Magento\Customer\Model\CustomerFactory $customerFactory,
-        \Magento\Customer\Api\Data\AddressInterfaceFactory $addressFactory,
-        \Magento\Customer\Api\Data\RegionInterfaceFactory $addressRegionFactory,
-        \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
-        \Magento\Framework\Reflection\DataObjectProcessor $dataObjectProcessor,
+        \ParadoxLabs\TokenBase\Model\Card\Context $cardContext,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -163,19 +174,22 @@ class Card
             $resourceCollection,
             $data
         );
-        
-        $this->helper                   = $helper;
-        $this->paymentHelper            = $paymentHelper;
-        $this->objectManager            = $objectManager;
-        $this->scopeConfig              = $scopeConfig;
-        $this->customerFactory          = $customerFactory;
-        $this->addressFactory           = $addressFactory;
-        $this->addressRegionFactory     = $addressRegionFactory;
-        $this->cardCollectionFactory    = $cardCollectionFactory;
-        $this->orderCollectionFactory   = $orderCollectionFactory;
-        $this->checkoutSession          = $checkoutSession;
-        $this->remoteAddress            = $remoteAddress;
-        $this->dataProcessor            = $dataObjectProcessor;
+
+        $this->helper                   = $cardContext->getHelper();
+        $this->methodFactory            = $cardContext->getMethodFactory();
+        $this->cardFactory              = $cardContext->getCardFactory();
+        $this->cardAdditionalFactory    = $cardContext->getCardAdditionalFactory();
+        $this->customerFactory          = $cardContext->getCustomerFactory();
+        $this->customerRepository       = $cardContext->getCustomerRepository();
+        $this->addressFactory           = $cardContext->getAddressFactory();
+        $this->addressRegionFactory     = $cardContext->getAddressRegionFactory();
+        $this->cardCollectionFactory    = $cardContext->getCardCollectionFactory();
+        $this->orderCollectionFactory   = $cardContext->getOrderCollectionFactory();
+        $this->checkoutSession          = $cardContext->getCheckoutSession();
+        $this->remoteAddress            = $cardContext->getRemoteAddress();
+        $this->dataProcessor            = $cardContext->getDataObjectProcessor();
+        $this->dateProcessor            = $cardContext->getDateProcessor();
+        $this->dataObjectHelper         = $cardContext->getDataObjectHelper();
     }
 
     /**
@@ -191,10 +205,10 @@ class Card
     /**
      * Set the method instance for this card. This is often necessary to route card data properly.
      *
-     * @param \ParadoxLabs\TokenBase\Api\MethodInterface $method
+     * @param \ParadoxLabs\TokenBase\Api\MethodInterface|\Magento\Payment\Model\MethodInterface $method
      * @return $this
      */
-    public function setMethodInstance(\ParadoxLabs\TokenBase\Api\MethodInterface $method)
+    public function setMethodInstance($method)
     {
         $this->method = $method;
 
@@ -204,14 +218,15 @@ class Card
     /**
      * Get the arbitrary method instance.
      *
-     * @return \ParadoxLabs\TokenBase\Api\MethodInterface Gateway-specific payment method
+     * @return \ParadoxLabs\TokenBase\Api\MethodInterface|\Magento\Payment\Model\MethodInterface Gateway-specific
+     * payment method
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getMethodInstance()
     {
-        if (is_null($this->method)) {
+        if ($this->method === null) {
             if ($this->hasData('method')) {
-                $this->method = $this->paymentHelper->getMethodInstance($this->getData('method'));
+                $this->method = $this->methodFactory->getMethodInstance($this->getData('method'));
             } else {
                 throw new \UnexpectedValueException('Payment method is unknown for the current card.');
             }
@@ -221,31 +236,16 @@ class Card
     }
 
     /**
-     * Get the arbitrary type instance for this card.
-     * Response will extend ParadoxLabs_TokenBase_Model_Card.
+     * Get the specific type implementation for this card.
      *
      * @return \ParadoxLabs\TokenBase\Api\Data\CardInterface|$this
      */
     public function getTypeInstance()
     {
-        if (is_null($this->instance)) {
-            if ($this->hasData('method')) {
-                // Get model from config for the payment method
-                $cardModel      = $this->scopeConfig->getValue(
-                    'payment/' . $this->getMethod() . '/card_model',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                );
-
-                if (get_class() != $cardModel) {
-                    // Create and initialize the instance via object man.
-                    $this->instance = $this->objectManager->create($cardModel);
-                    $this->instance->setData($this->getData());
-                } else {
-                    return $this;
-                }
-            } else {
-                return $this;
-            }
+        if ($this->instance === null) {
+            $this->instance = $this->cardFactory->getTypeInstance($this);
+        } elseif (get_class($this) === get_class($this->instance)) {
+            return $this;
         }
 
         return $this->instance;
@@ -254,29 +254,20 @@ class Card
     /**
      * Set the customer account (if any) for the card.
      *
-     * @param \Magento\Customer\Model\Customer $customer
+     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
      * @param \Magento\Payment\Model\InfoInterface|null $payment
      * @return $this
      */
     public function setCustomer(
-        \Magento\Customer\Model\Customer $customer,
+        \Magento\Customer\Api\Data\CustomerInterface $customer,
         \Magento\Payment\Model\InfoInterface $payment = null
     ) {
-        /** @var \Magento\Payment\Model\Info $payment */
         if ($customer->getEmail() != '') {
             $this->setCustomerEmail($customer->getEmail());
-
-            /**
-             * Make an ID if we don't have one (and hope this doesn't break anything)
-             */
-            if ($customer->getId() < 1) {
-                $customer->save();
-            }
-
             $this->setCustomerId($customer->getId());
 
             parent::setData('customer', $customer);
-        } elseif (!is_null($payment)) {
+        } elseif ($payment !== null) {
             $model = null;
 
             /**
@@ -305,7 +296,7 @@ class Card
                 $model = $this->checkoutSession->getQuote();
             }
 
-            if (!is_null($model)) {
+            if ($model !== null) {
                 if ($model->getCustomerEmail() == ''
                     && $model->getBillingAddress() instanceof \Magento\Framework\DataObject
                     && $model->getBillingAddress()->getEmail() != '') {
@@ -318,7 +309,7 @@ class Card
                     $this->setCustomerEmail($model->getData('customer_email'));
                 }
 
-                $this->setCustomerId(intval($model->getCustomerId()));
+                $this->setCustomerId((int)$model->getCustomerId());
             }
         }
 
@@ -328,7 +319,7 @@ class Card
     /**
      * Get the customer object (if any) for the card.
      *
-     * @return \Magento\Customer\Model\Customer
+     * @return \Magento\Customer\Api\Data\CustomerInterface
      */
     public function getCustomer()
     {
@@ -336,13 +327,12 @@ class Card
             return parent::getData('customer');
         }
 
-        /** @var \Magento\Customer\Model\Customer $customer */
         $customer = $this->customerFactory->create();
 
         if ($this->getData('customer_id') > 0) {
-            $customer->load($this->getData('customer_id'));
+            $customer = $this->customerRepository->getById($this->getData('customer_id'));
         } else {
-            $customer->setData('email', $this->getData('customer_email'));
+            $customer->setEmail($this->getData('customer_email'));
         }
 
         parent::setData('customer', $customer);
@@ -362,6 +352,8 @@ class Card
             /** @var \Magento\Payment\Model\Info $payment */
             if ($payment->getAdditionalInformation('save') === 0) {
                 $this->setData('active', 0);
+            } elseif ($payment->getAdditionalInformation('save') === 1) {
+                $this->setData('active', 1);
             }
 
             if ($payment->getData('cc_type') != '') {
@@ -374,6 +366,11 @@ class Card
                 $this->setAdditional('cc_last4', $payment->getData('cc_last4'));
             }
 
+            if (!empty($payment->getAdditionalInformation('cc_bin'))
+                && $this->getMethodInstance()->getConfigData('can_store_bin') == 1) {
+                $this->setAdditional('cc_bin', $payment->getAdditionalInformation('cc_bin'));
+            }
+
             if ($payment->getData('cc_exp_year') > date('Y')
                 || ($payment->getData('cc_exp_year') == date('Y') && $payment->getData('cc_exp_month') >= date('n'))) {
                 $yr  = $payment->getData('cc_exp_year');
@@ -382,7 +379,7 @@ class Card
 
                 $this->setAdditional('cc_exp_year', $payment->getData('cc_exp_year'))
                     ->setAdditional('cc_exp_month', $payment->getData('cc_exp_month'))
-                    ->setData('expires', sprintf("%s-%s-%s 23:59:59", $yr, $mo, $day));
+                    ->setData('expires', sprintf('%s-%s-%s 23:59:59', $yr, $mo, $day));
             }
 
             $this->setData('info_instance', $payment);
@@ -403,13 +400,13 @@ class Card
      */
     public function hasOwner($customerId)
     {
-        $customerId = intval($customerId);
+        $customerId = (int)$customerId;
 
         if ($customerId < 1) {
             return false;
         }
 
-        return ($this->getData('customer_id') == $customerId ? true : false);
+        return $this->getData('customer_id') == $customerId;
     }
 
     /**
@@ -419,12 +416,19 @@ class Card
      */
     public function isInUse()
     {
-        $orders    = $this->orderCollectionFactory->create();
-        $orders->addAttributeToSelect('*')
-               ->addAttributeToFilter('customer_id', $this->getData('customer_id'))
-               ->addAttributeToFilter('status', array( 'like' => 'pending%' ));
+        $registryKey = 'tokenbase_customer_orders_' . $this->getData('customer_id');
 
-        if (count($orders) > 0) {
+        $orders = $this->_registry->registry($registryKey);
+        if ($orders === null) {
+            $orders = $this->orderCollectionFactory->create();
+            $orders->addAttributeToSelect('*')
+                   ->addAttributeToFilter('customer_id', $this->getData('customer_id'))
+                   ->addAttributeToFilter('status', ['like' => 'pending%']);
+
+            $this->_registry->register($registryKey, $orders);
+        }
+
+        if ($orders instanceof \Magento\Sales\Model\ResourceModel\Order\Collection && $orders->getSize() > 0) {
             foreach ($orders as $order) {
                 /** @var \Magento\Sales\Model\Order $order */
                 $payment = $order->getPayment();
@@ -443,10 +447,12 @@ class Card
 
     /**
      * Change last_use date to the current time.
+     *
+     * @return $this
      */
     public function updateLastUse()
     {
-        $now = new \DateTime('@' . time());
+        $now = $this->dateProcessor->date(null, null, false);
         $this->setData('last_use', $now->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT));
 
         return $this;
@@ -465,17 +471,6 @@ class Card
     }
 
     /**
-     * Load card by security hash.
-     *
-     * @param $hash
-     * @return $this
-     */
-    public function loadByHash($hash)
-    {
-        return $this->load($hash, 'hash');
-    }
-
-    /**
      * Get billing address or some part thereof.
      *
      * @param string $key
@@ -483,8 +478,8 @@ class Card
      */
     public function getAddress($key = '')
     {
-        if (is_null($this->address) && parent::getData('address')) {
-            $this->address = unserialize(parent::getData('address'));
+        if ($this->address === null && parent::getData('address')) {
+            $this->address = json_decode(parent::getData('address'), 1);
         }
 
         if ($key !== '') {
@@ -510,7 +505,7 @@ class Card
 
         $street = $this->getAddress('street');
         if (!is_array($street)) {
-            $street = explode("\n", $street);
+            $street = explode("\n", str_replace("\r", '', $street));
         }
 
         $region->setRegion($this->getAddress('region'));
@@ -548,11 +543,11 @@ class Card
      */
     public function getAdditional($key = null)
     {
-        if (is_null($this->additional)) {
-            $this->additional = unserialize(parent::getData('additional'));
+        if ($this->additional === null) {
+            $this->additional = json_decode(parent::getData('additional'), 1);
         }
 
-        if (!is_null($key)) {
+        if ($key !== null) {
             return (isset($this->additional[ $key ]) ? $this->additional[ $key ] : null);
         }
 
@@ -562,25 +557,38 @@ class Card
     /**
      * Set additional card data.
      * Can pass in a key-value pair to set one value,
-     * or a single parameter (associative array) to overwrite all data.
+     * or a single parameter (associative array or CardAdditional instance) to overwrite all data.
      *
-     * @param string $key
+     * @param string|array|\ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface $key
      * @param string|null $value
      * @return $this
      */
     public function setAdditional($key, $value = null)
     {
-        if (!is_null($value)) {
-            if (is_null($this->additional)) {
-                $this->additional = array();
-            }
+        if ($this->additional === null) {
+            $this->getAdditional();
+        }
 
+        if ($value !== null) {
             $this->additional[ $key ] = $value;
         } elseif (is_array($key)) {
             $this->additional = $key;
+        } elseif ($key instanceof \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface) {
+            $values = $this->dataProcessor->buildOutputDataArray(
+                $key,
+                \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface::class
+            );
+
+            foreach ($values as $k => $v) {
+                if ($v !== null) {
+                    $this->additional[ $k ] = $v;
+                }
+            }
         }
 
-        return parent::setData('additional', serialize($this->additional));
+        parent::setData('additional', json_encode($this->additional));
+
+        return $this;
     }
 
     /**
@@ -594,7 +602,7 @@ class Card
         // Convert address to array
         $addressData = $this->dataProcessor->buildOutputDataArray(
             $address,
-            '\Magento\Customer\Api\Data\AddressInterface'
+            \Magento\Customer\Api\Data\AddressInterface::class
         );
 
         $addressData['region_code'] = $address->getRegion()->getRegionCode();
@@ -610,7 +618,9 @@ class Card
         $this->address = null;
 
         // Store
-        return parent::setData('address', serialize($addressData));
+        parent::setData('address', json_encode($addressData));
+
+        return $this;
     }
 
     /**
@@ -906,7 +916,7 @@ class Card
      * Get card label (formatted number).
      *
      * @param bool $includeType
-     * @return \Magento\Framework\Phrase|string
+     * @return string|\Magento\Framework\Phrase
      */
     public function getLabel($includeType = true)
     {
@@ -917,11 +927,11 @@ class Card
                 $cardType = $this->helper->translateCardType($this->getAdditional('cc_type'));
             }
 
-            return __(
+            return trim(__(
                 '%1 XXXX-%2',
                 $cardType,
                 $this->getAdditional('cc_last4')
-            );
+            ));
         }
 
         return '';
@@ -947,7 +957,13 @@ class Card
             $collection->addFieldToFilter('method', $this->getData('method'))
                        ->addFieldToFilter('profile_id', $this->getData('profile_id'))
                        ->addFieldToFilter('payment_id', $this->getData('payment_id'))
-                       ->addFieldToFilter('id', array( 'neq' => $this->getId() ));
+                       ->addFieldToFilter('customer_id', $this->getData('customer_id'))
+                       ->setPageSize(1)
+                       ->setCurPage(1);
+            
+            if ($this->getId() > 0) {
+                $collection->addFieldToFilter('id', ['neq' => $this->getId()]);
+            }
 
             /** @var \ParadoxLabs\TokenBase\Model\Card $dupe */
             $dupe = $collection->getFirstItem();
@@ -975,7 +991,7 @@ class Card
         /**
          * Update dates.
          */
-        $now = new \DateTime('@' . time());
+        $now = $this->dateProcessor->date(null, null, false);
 
         if ($this->isObjectNew()) {
             $this->setData('created_at', $now->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT));
@@ -1027,5 +1043,197 @@ class Card
         \ParadoxLabs\TokenBase\Api\Data\CardExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
+    }
+
+    /**
+     * Mapping methods for compatibility with \Magento\Vault\Api\Data\PaymentTokenInterface
+     */
+
+    /**
+     * Get public hash
+     *
+     * @return string
+     */
+    public function getPublicHash()
+    {
+        return $this->getHash();
+    }
+
+    /**
+     * Set public hash
+     *
+     * @param string $hash
+     * @return $this
+     */
+    public function setPublicHash($hash)
+    {
+        return $this->setHash($hash);
+    }
+
+    /**
+     * Get payment method code
+     *
+     * @return string
+     */
+    public function getPaymentMethodCode()
+    {
+        return $this->getMethod();
+    }
+
+    /**
+     * Set payment method code
+     *
+     * @param string $code
+     * @return $this
+     */
+    public function setPaymentMethodCode($code)
+    {
+        return $this->setMethod($code);
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->getAdditional('cc_type');
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        return $this->setAdditional('cc_type', $type);
+    }
+
+    /**
+     * Get token expiration timestamp
+     *
+     * @return string|null
+     */
+    public function getExpiresAt()
+    {
+        return $this->getExpires();
+    }
+
+    /**
+     * Set token expiration timestamp
+     *
+     * @param string $timestamp
+     * @return $this
+     */
+    public function setExpiresAt($timestamp)
+    {
+        return $this->setExpires($timestamp);
+    }
+
+    /**
+     * Get gateway token ID
+     *
+     * @return string
+     */
+    public function getGatewayToken()
+    {
+        return $this->getPaymentId();
+    }
+
+    /**
+     * Set gateway token ID
+     *
+     * @param string $token
+     * @return $this
+     */
+    public function setGatewayToken($token)
+    {
+        return $this->setPaymentId($token);
+    }
+
+    /**
+     * Get token details
+     *
+     * @return string
+     */
+    public function getTokenDetails()
+    {
+        return $this->getAdditional();
+    }
+
+    /**
+     * Set token details
+     *
+     * @param string $details
+     * @return $this
+     */
+    public function setTokenDetails($details)
+    {
+        return $this->setAdditional($details);
+    }
+
+    /**
+     * Gets is vault payment record active.
+     *
+     * @return bool Is active.
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsActive()
+    {
+        return $this->getActive();
+    }
+
+    /**
+     * Sets is vault payment record active.
+     *
+     * @param bool $isActive
+     * @return $this
+     */
+    public function setIsActive($isActive)
+    {
+        return $this->setActive($isActive);
+    }
+
+    /**
+     * Gets is vault payment record visible.
+     *
+     * @return bool Is visible.
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsVisible()
+    {
+        return $this->getActive();
+    }
+
+    /**
+     * Sets is vault payment record visible.
+     *
+     * @param bool $isVisible
+     * @return $this
+     */
+    public function setIsVisible($isVisible)
+    {
+        return $this->setActive($isVisible);
+    }
+
+    /**
+     * Get additional card data, in object form. Used to expose keys to API.
+     *
+     * @return \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface
+     */
+    public function getAdditionalObject()
+    {
+        $additional = $this->cardAdditionalFactory->create();
+
+        $this->dataObjectHelper->populateWithArray(
+            $additional,
+            $this->getAdditional() ?: [],
+            \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface::class
+        );
+
+        return $additional;
     }
 }

@@ -36,10 +36,54 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
          * I'm going to try a slightly different approach: Get the schema where it's supposed to be.
          */
 
-        /**
-         * paradoxlabs_stored_card.hash
-         */
-        $hashExists = $setup->getConnection()->tableColumnExists($setup->getTable('paradoxlabs_stored_card'), 'hash');
+        $this->addHashToCards($setup);
+        $this->addCustomerIndexToCards($setup);
+
+        $tableDdl = $setup->getConnection()->describeTable($setup->getTable('paradoxlabs_stored_card'));
+
+        $this->changeCardsMethodLength($setup, $tableDdl);
+        $this->changeCardsProfileIdType($setup, $tableDdl);
+        $this->changeCardsPaymentIdType($setup, $tableDdl);
+
+        $setup->endSetup();
+    }
+
+    /**
+     * paradoxlabs_stored_card.customer_id index
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @return void
+     */
+    protected function addCustomerIndexToCards(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $cardIndexes = $setup->getConnection()->getIndexList($setup->getTable('paradoxlabs_stored_card'));
+        $cardIdxKey  = $setup->getIdxName(
+            $setup->getTable('paradoxlabs_stored_card'),
+            ['customer_id']
+        );
+
+        if (!isset($cardIndexes[ $cardIdxKey ])) {
+            $setup->getConnection()->addIndex(
+                $setup->getTable('paradoxlabs_stored_card'),
+                $cardIdxKey,
+                ['customer_id']
+            );
+        }
+    }
+
+    /**
+     * paradoxlabs_stored_card.hash
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @return void
+     */
+    protected function addHashToCards(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $hashExists = $setup->getConnection()->tableColumnExists(
+            $setup->getTable('paradoxlabs_stored_card'),
+            'hash'
+        );
+
         if ($hashExists !== true) {
             /**
              * Add hash column
@@ -48,9 +92,9 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
                 $setup->getTable('paradoxlabs_stored_card'),
                 'hash',
                 [
-                    'type'      => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    'length'    => 10,
-                    'comment'   => 'Unique Hash',
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 40,
+                    'comment' => 'Unique Hash',
                 ]
             );
 
@@ -71,18 +115,29 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
             /**
              * Generate hashes for any existing cards
              */
-            $setup->getConnection()->query(
-                'UPDATE '.$setup->getTable('paradoxlabs_stored_card')
-                . ' SET `hash`=SHA1( CONCAT("tokenbase", customer_id, customer_email, method, profile_id, payment_id) )'
-                . ' WHERE `hash` IS NULL;'
+            $concat = new \Zend_Db_Expr(
+                'SHA1(CONCAT("tokenbase", customer_id, customer_email, method, profile_id, payment_id))'
+            );
+
+            $setup->getConnection()->update(
+                $setup->getTable('paradoxlabs_stored_card'),
+                [
+                    'hash' => $concat,
+                ],
+                'hash IS NULL'
             );
         }
+    }
 
-        /**
-         * paradoxlabs_stored_card.method length 12 => 32
-         */
-        $tableDdl = $setup->getConnection()->describeTable($setup->getTable('paradoxlabs_stored_card'));
-
+    /**
+     * paradoxlabs_stored_card.method length 12 => 32
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param $tableDdl
+     * @return void
+     */
+    protected function changeCardsMethodLength(\Magento\Framework\Setup\SchemaSetupInterface $setup, &$tableDdl)
+    {
         if (isset($tableDdl['method']) && $tableDdl['method']['LENGTH'] < 32) {
             $tableDdl['method']['LENGTH'] = 32;
 
@@ -92,7 +147,49 @@ class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
                 $tableDdl['method']
             );
         }
+    }
 
-        $setup->endSetup();
+    /**
+     * paradoxlabs_stored_card.profile_id int => varchar(32)
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param $tableDdl
+     * @return void
+     */
+    protected function changeCardsProfileIdType(\Magento\Framework\Setup\SchemaSetupInterface $setup, &$tableDdl)
+    {
+        if (isset($tableDdl['profile_id']) && $tableDdl['profile_id']['DATA_TYPE'] !== 'varchar') {
+            $tableDdl['profile_id']['COLUMN_NAME'] = 'profile_id';
+            $tableDdl['profile_id']['DATA_TYPE']   = 'varchar';
+            $tableDdl['profile_id']['LENGTH']      = 32;
+
+            $setup->getConnection()->modifyColumnByDdl(
+                $setup->getTable('paradoxlabs_stored_card'),
+                'profile_id',
+                $tableDdl['profile_id']
+            );
+        }
+    }
+
+    /**
+     * paradoxlabs_stored_card.payment_id int => varchar(32)
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param $tableDdl
+     * @return void
+     */
+    protected function changeCardsPaymentIdType(\Magento\Framework\Setup\SchemaSetupInterface $setup, &$tableDdl)
+    {
+        if (isset($tableDdl['payment_id']) && $tableDdl['payment_id']['DATA_TYPE'] !== 'varchar') {
+            $tableDdl['profile_id']['COLUMN_NAME'] = 'payment_id';
+            $tableDdl['payment_id']['DATA_TYPE']   = 'varchar';
+            $tableDdl['payment_id']['LENGTH']      = 32;
+
+            $setup->getConnection()->modifyColumnByDdl(
+                $setup->getTable('paradoxlabs_stored_card'),
+                'payment_id',
+                $tableDdl['payment_id']
+            );
+        }
     }
 }

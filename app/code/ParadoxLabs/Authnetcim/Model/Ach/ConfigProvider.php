@@ -18,46 +18,16 @@ namespace ParadoxLabs\Authnetcim\Model\Ach;
  */
 class ConfigProvider extends \ParadoxLabs\Authnetcim\Model\ConfigProvider
 {
-    /**
-     * @var string
-     */
-    protected $code = 'authnetcim_ach';
+    const CODE = 'authnetcim_ach';
 
     /**
-     * @param \Magento\Payment\Model\CcConfig $ccConfig
-     * @param \Magento\Payment\Helper\Data $paymentHelper
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Magento\Payment\Model\Config $paymentConfig
-     * @param \ParadoxLabs\Authnetcim\Helper\Data $dataHelper
-     * @param array $methodCodes
-     */
-    public function __construct(
-        \Magento\Payment\Model\CcConfig $ccConfig,
-        \Magento\Payment\Helper\Data $paymentHelper,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Payment\Model\Config $paymentConfig,
-        \ParadoxLabs\Authnetcim\Helper\Data $dataHelper,
-        array $methodCodes = []
-    ) {
-        parent::__construct(
-            $ccConfig,
-            $paymentHelper,
-            $checkoutSession,
-            $customerSession,
-            $paymentConfig,
-            $dataHelper,
-            $methodCodes
-        );
-    }
-
-    /**
-     * @return array|void
+     * Get checkout config.
+     *
+     * @return array
      */
     public function getConfig()
     {
-        if (!$this->methods[$this->code]->isAvailable()) {
+        if (!$this->methods[static::CODE]->isAvailable()) {
             return [];
         }
 
@@ -77,7 +47,7 @@ class ConfigProvider extends \ParadoxLabs\Authnetcim\Model\ConfigProvider
             $selected               = $card->getHash();
         }
 
-        $config['payment'][$this->code] = [
+        $config['payment'][static::CODE] = [
             'canSaveCard'               => $this->canSaveCard(),
             'forceSaveCard'             => $this->forceSaveCard(),
             'defaultSaveCard'           => $this->defaultSaveCard(),
@@ -106,7 +76,7 @@ class ConfigProvider extends \ParadoxLabs\Authnetcim\Model\ConfigProvider
      *
      * @return array
      */
-    private function getAchAccountTypes()
+    protected function getAchAccountTypes()
     {
         return $this->dataHelper->getAchAccountTypes();
     }

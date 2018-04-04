@@ -56,7 +56,6 @@ class QuotePaymentLoadTokenbaseId
         $modelId,
         $field = null
     ) {
-        /** @var \Magento\Quote\Api\Data\CartInterface $quote */
         $quote = $proceed($modelId, $field);
 
         $payment = $quote->getPayment();

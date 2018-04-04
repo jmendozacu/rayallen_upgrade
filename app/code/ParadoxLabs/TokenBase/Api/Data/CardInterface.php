@@ -17,28 +17,8 @@ namespace ParadoxLabs\TokenBase\Api\Data;
  *
  * @api
  */
-interface CardInterface
+interface CardInterface extends \Magento\Framework\Api\ExtensibleDataInterface
 {
-    /**#@+
-     * Constants defined for keys of array, makes typos less likely
-     */
-    const ID             = 'id';
-    const HASH           = 'hash';
-    const ACTIVE         = 'active';
-    const ADDITIONAL     = 'additional';
-    const ADDRESS        = 'address';
-    const CUSTOMER_EMAIL = 'customer_email';
-    const CREATED_AT     = 'created_at';
-    const PROFILE_ID     = 'profile_id';
-    const PAYMENT_ID     = 'payment_id';
-    const UPDATED_AT     = 'updated_at';
-    const EXPIRES        = 'expires';
-    const LAST_USE       = 'last_use';
-    const METHOD         = 'method';
-    const CUSTOMER_ID    = 'customer_id';
-    const CUSTOMER_IP    = 'customer_ip';
-    /**#@-*/
-
     /**
      * Get ID
      *
@@ -57,43 +37,20 @@ interface CardInterface
     /**
      * Set the method instance for this card. This is often necessary to route card data properly.
      *
-     * @param \ParadoxLabs\TokenBase\Api\MethodInterface $method
+     * @param \ParadoxLabs\TokenBase\Api\MethodInterface|\Magento\Payment\Model\MethodInterface $method
      * @return $this
      */
-    public function setMethodInstance(\ParadoxLabs\TokenBase\Api\MethodInterface $method);
-
-    /**
-     * Get the arbitrary method instance.
-     *
-     * @return \ParadoxLabs\TokenBase\Api\MethodInterface Gateway-specific payment method
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    public function getMethodInstance();
-
-    /**
-     * Get the arbitrary type instance for this card.
-     * Response will extend \ParadoxLabs\TokenBase\Model\Card.
-     *
-     * @return \ParadoxLabs\TokenBase\Model\Card|$this
-     */
-    public function getTypeInstance();
-
-    /**
-     * Get the customer object (if any) for the card.
-     *
-     * @return \Magento\Customer\Model\Customer
-     */
-    public function getCustomer();
+    public function setMethodInstance($method);
 
     /**
      * Set the customer account (if any) for the card.
      *
-     * @param \Magento\Customer\Model\Customer $customer
+     * @param \Magento\Customer\Api\Data\CustomerInterface $customer
      * @param \Magento\Payment\Model\InfoInterface|null $payment
      * @return $this
      */
     public function setCustomer(
-        \Magento\Customer\Model\Customer $customer,
+        \Magento\Customer\Api\Data\CustomerInterface $customer,
         \Magento\Payment\Model\InfoInterface $payment = null
     );
 
@@ -122,6 +79,8 @@ interface CardInterface
 
     /**
      * Change last_use date to the current time.
+     *
+     * @return $this
      */
     public function updateLastUse();
 
@@ -131,14 +90,6 @@ interface CardInterface
      * @return $this
      */
     public function queueDeletion();
-
-    /**
-     * Load card by security hash.
-     *
-     * @param $hash
-     * @return $this
-     */
-    public function loadByHash($hash);
 
     /**
      * Get additional card data.
@@ -153,13 +104,20 @@ interface CardInterface
     /**
      * Set additional card data.
      * Can pass in a key-value pair to set one value,
-     * or a single parameter (associative array) to overwrite all data.
+     * or a single parameter (associative array or CardAdditional instance) to overwrite all data.
      *
-     * @param string $key
+     * @param string|array|\ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface $key
      * @param string|null $value
      * @return $this
      */
     public function setAdditional($key, $value = null);
+
+    /**
+     * Get additional card data, in object form. Used to expose keys to API.
+     *
+     * @return \ParadoxLabs\TokenBase\Api\Data\CardAdditionalInterface
+     */
+    public function getAdditionalObject();
 
     /**
      * Get billing address or some part thereof.
@@ -365,13 +323,6 @@ interface CardInterface
     public function setExpires($expires);
 
     /**
-     * Get payment info instance (if any)
-     *
-     * @return \Magento\Payment\Model\InfoInterface|null
-     */
-    public function getInfoInstance();
-
-    /**
      * Set payment info instance
      *
      * @param \Magento\Payment\Model\InfoInterface $payment
@@ -383,7 +334,7 @@ interface CardInterface
      * Get card label (formatted number).
      *
      * @param bool $includeType
-     * @return \Magento\Framework\Phrase|string
+     * @return string|\Magento\Framework\Phrase
      */
     public function getLabel($includeType = true);
 
@@ -400,7 +351,5 @@ interface CardInterface
      * @param \ParadoxLabs\TokenBase\Api\Data\CardExtensionInterface $extensionAttributes
      * @return $this
      */
-    public function setExtensionAttributes(
-        \ParadoxLabs\TokenBase\Api\Data\CardExtensionInterface $extensionAttributes
-    );
+    public function setExtensionAttributes(\ParadoxLabs\TokenBase\Api\Data\CardExtensionInterface $extensionAttributes);
 }

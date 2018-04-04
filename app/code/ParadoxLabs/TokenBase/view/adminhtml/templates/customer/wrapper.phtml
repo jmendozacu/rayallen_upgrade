@@ -5,16 +5,17 @@
 <div class="admin__fieldset-wrapper" id="tokenbase-wrapper" data-mage-init='{"tokenbasePaymentinfo":{}}'>
     <div class="admin__fieldset-wrapper-title">
         <strong class="title">
-            <?php echo __('Payment Data'); ?>
+            <?php echo $block->escapeHtml(__('Payment Data')); ?>
         </strong>
     </div>
     <div class="admin__fieldset-wrapper-content">
-        <?php if (count($block->getActiveMethods()) > 1): ?>
+        <?php $activeMethods = $block->getActiveMethods(); ?>
+        <?php if (count($activeMethods) > 1): ?>
             <ul class="links">
-                <?php foreach ($block->getActiveMethods() as $method): ?>
+                <?php foreach ($activeMethods as $method): ?>
                     <li <?php if ($block->getCurrentMethod() == $method): ?>class="active"<?php endif; ?>>
-                        <a href="<?php echo $block->getUrl('*/*/paymentinfo', [ 'method' => $method, 'id' => $block->getRequest()->getParam('id') ]); ?>">
-                            <?php echo $block->getMethodTitle($method); ?>
+                        <a href="<?php echo $block->escapeUrl($block->getUrl('*/*/paymentinfo', [ 'method' => $method, 'id' => $block->getRequest()->getParam('id'), 'form_key' => $block->getFormKey() ])); ?>">
+                            <?php echo $block->escapeHtml($block->getMethodTitle($method)); ?>
                         </a>
                     </li>
                 <?php endforeach; ?>
@@ -22,10 +23,10 @@
         <?php endif; ?>
 
         <div class="manage-payment-method">
-            <?php if (count($block->getActiveMethods()) > 0): ?>
+            <?php if (!empty($activeMethods)): ?>
                 <?php echo $block->getChildHtml(); ?>
             <?php else: ?>
-                <?php echo __('There are currently no active TokenBase payment methods.'); ?>
+                <?php echo $block->escapeHtml(__('There are currently no active TokenBase payment methods.')); ?>
             <?php endif; ?>
         </div>
     </div>

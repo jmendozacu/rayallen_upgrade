@@ -31,12 +31,22 @@ class ApiTest extends \ParadoxLabs\TokenBase\Block\Adminhtml\Config\ApiTest
     protected function testApi()
     {
         /** @var \ParadoxLabs\Authnetcim\Model\Method $method */
-        $method = $this->helper->getMethodInstance($this->code);
+        $method = $this->methodFactory->getMethodInstance($this->code);
         $method->setStore($this->getStoreId());
 
         // Don't bother if details aren't entered.
         if ($method->getConfigData('login') == '' || $method->getConfigData('trans_key') == '') {
-            return 'Enter API credentials and save to test.';
+            return __('Enter API credentials and save to test.');
+        }
+
+        // Verify no invalid characters -- suggests changed encryption key/corrupted data.
+        if ($this->containsInvalidCharacters($method->getConfigData('login'))
+            || $this->containsInvalidCharacters($method->getConfigData('trans_key'))) {
+            return __('Please re-enter your API Login ID and Transaction Key. They may be corrupted.');
+        }
+
+        if ($method->getConfigData('acceptjs') == 1 && $method->getConfigData('client_key') == '') {
+            return __('Accept.js is enabled, but you have not entered your Client Key.');
         }
 
         /** @var \ParadoxLabs\Authnetcim\Model\Gateway $gateway */
@@ -54,18 +64,23 @@ class ApiTest extends \ParadoxLabs\TokenBase\Block\Adminhtml\Config\ApiTest
              */
 
             $result       = $gateway->getLastResponse();
-            $errorCode    = $this->helper->getArrayValue($result, 'message/message/code');
 
-            if (in_array($errorCode, array( 'E00005', 'E00006', 'E00007', 'E00008' ))) {
+            if (is_array($result)) {
+                $errorCode = $this->helper->getArrayValue($result, 'message/message/code');
+            } else {
+                $errorCode = 'E00001';
+            }
+
+            if (in_array($errorCode, ['E00005', 'E00006', 'E00007', 'E00008'])) {
                 // Bad login ID / trans key
                 return __('Your API credentials are invalid. (%1)', $errorCode);
-            } elseif ($errorCode == 'E00009') {
+            } elseif ($errorCode === 'E00009') {
                 // Test mode active
                 return __(
                     'Your account has test mode enabled. It must be disabled for CIM to work properly. (%1)',
                     $errorCode
                 );
-            } elseif ($errorCode == 'E00044') {
+            } elseif ($errorCode === 'E00044') {
                 // CIM not enabled
                 return __(
                     'Your account does not have CIM enabled. Please contact your Authorize.Net support rep '

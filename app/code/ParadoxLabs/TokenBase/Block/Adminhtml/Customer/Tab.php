@@ -28,7 +28,7 @@ class Tab extends TabWrapper
      *
      * @var Registry
      */
-    protected $coreRegistry = null;
+    protected $coreRegistry;
 
     /**
      * @var bool
@@ -65,7 +65,9 @@ class Tab extends TabWrapper
      */
     public function canShowTab()
     {
-        if (count($this->helper->getActiveMethods()) < 1) {
+        $activeMethods = $this->helper->getActiveMethods();
+
+        if (empty($activeMethods)) {
             return false;
         }
 

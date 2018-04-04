@@ -32,17 +32,17 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
 
     /**
      * @param DriverInterface $filesystem
+     * @param \Monolog\Formatter\LineFormatter $lineFormatter
      * @param string $filePath
      */
     public function __construct(
         DriverInterface $filesystem,
+        \Monolog\Formatter\LineFormatter $lineFormatter,
         $filePath = null
     ) {
         parent::__construct($filesystem, $filePath);
 
-        // Change the message format, and hide empty context/extra info.
-        $format = "[%datetime%] %message% %context% %extra%\n";
-
-        $this->setFormatter(new \Monolog\Formatter\LineFormatter($format, null, true, true));
+        $this->setBubble(false);
+        $this->setFormatter($lineFormatter);
     }
 }

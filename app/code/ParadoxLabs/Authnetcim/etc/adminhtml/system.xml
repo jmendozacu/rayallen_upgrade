@@ -36,16 +36,16 @@
                 </field>
                 <field id="payment_action" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Payment Action</label>
-                    <source_model>Magento\Authorizenet\Model\Source\PaymentAction</source_model>
+                    <source_model>ParadoxLabs\TokenBase\Model\Source\PaymentAction</source_model>
                     <attribute type="shared">1</attribute>
-                    <comment>'Authorize and Capture' to charge on checkout.</comment>
+                    <comment>This controls what happens upon checkout. 'Authorize' means funds will be reserved for several days, until the order is invoiced. 'Capture' means funds will be immediately withdrawn.</comment>
                 </field>
                 <field id="order_status" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>New Order Status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>ParadoxLabs\TokenBase\Model\Source\OrderStatus</source_model>
                     <comment>Normally 'Pending' if 'Authorize Only' above; 'Processing' if not.</comment>
                 </field>
-                <field id="validation_type" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="validation_mode" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Validation Type</label>
                     <source_model>ParadoxLabs\Authnetcim\Model\Source\ValidationType</source_model>
                     <attribute type="shared">1</attribute>
@@ -76,10 +76,6 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If yes, customers can choose whether to save their credit card during checkout.</comment>
                 </field>
-                <field id="currency" translate="label" type="select" sortOrder="117" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Accepted Currency</label>
-                    <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
-                </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Payment from Applicable Countries</label>
                     <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
@@ -107,6 +103,18 @@
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                     <attribute type="shared">1</attribute>
                 </field>
+                <field id="acceptjs" translate="label comment" type="select" sortOrder="175" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Accept.js</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Recommended. If enabled, card data is sent directly to Authorize.Net, so it doesn't touch your server at all. This is very good for security and PCI compliance. It may cause problems with some fraud services and custom solutions.</comment>
+                </field>
+                <field id="client_key" translate="label comment" type="text" sortOrder="176" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Client Key</label>
+                    <comment><![CDATA[In order to use Accept.js, you must enter your Client Key. To find this, log in to Authorize.Net and navigate to <em>Account &gt; Settings &gt; Security Settings &gt; General Security Settings &gt; Manage Public Client Key</em>.]]></comment>
+                    <depends>
+                        <field id="acceptjs">1</field>
+                    </depends>
+                </field>
                 <field id="require_ccv" translate="label comment" type="select" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Require CCV for all transactions</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -126,9 +134,6 @@
                     <label>Reauthorize on Partial Invoice</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If yes, when you create a partial invoice, we will reauthorize any outstanding balance on the order. This helps guarantee funds, but can cause multiple holds on the card until transactions settle.</comment>
-                    <depends>
-                        <field id="payment_action">authorize</field>
-                    </depends>
                 </field>
                 <field id="savecard_opt_out" translate="label comment" type="select" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Auto-select 'save for next time'</label>
@@ -178,16 +183,16 @@
                 </field>
                 <field id="payment_action" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Payment Action</label>
-                    <source_model>Magento\Authorizenet\Model\Source\PaymentAction</source_model>
+                    <source_model>ParadoxLabs\TokenBase\Model\Source\PaymentAction</source_model>
                     <attribute type="shared">1</attribute>
-                    <comment>'Authorize and Capture' to charge on checkout.</comment>
+                    <comment>This controls what happens upon checkout. 'Authorize' means funds will be reserved for several days, until the order is invoiced. 'Capture' means funds will be immediately withdrawn.</comment>
                 </field>
                 <field id="order_status" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>New Order Status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>ParadoxLabs\TokenBase\Model\Source\OrderStatus</source_model>
                     <comment>Normally 'Pending' if 'Authorize Only' above; 'Processing' if not.</comment>
                 </field>
-                <field id="validation_type" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="validation_mode" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Validation Type</label>
                     <source_model>ParadoxLabs\Authnetcim\Model\Source\ValidationType</source_model>
                     <attribute type="shared">1</attribute>
@@ -207,10 +212,6 @@
                     <label>Allow cards to not be stored</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If yes, customers can choose whether to save their data during checkout.</comment>
-                </field>
-                <field id="currency" translate="label" type="select" sortOrder="117" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Accepted Currency</label>
-                    <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
                 </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Payment from Applicable Countries</label>
@@ -253,9 +254,6 @@
                     <label>Reauthorize on Partial Invoice</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>If yes, when you create a partial invoice, we will reauthorize any outstanding balance on the order. This helps guarantee funds, but can cause multiple holds on the card until transactions settle.</comment>
-                    <depends>
-                        <field id="payment_action">authorize</field>
-                    </depends>
                 </field>
                 <field id="savecard_opt_out" translate="label comment" type="select" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Auto-select 'save for next time'</label>

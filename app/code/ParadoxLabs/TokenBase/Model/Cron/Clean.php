@@ -15,6 +15,8 @@ namespace ParadoxLabs\TokenBase\Model\Cron;
 
 /**
  * Perform scheduled maintenance actions
+ *
+ * TODO: Support multi-website configuration--determine and set store on method in card->getMethodInstance() if new
  */
 class Clean
 {
@@ -34,20 +36,28 @@ class Clean
     protected $cardCollectionFactory;
 
     /**
+     * @var \ParadoxLabs\TokenBase\Api\CardRepositoryInterface
+     */
+    protected $cardRepository;
+
+    /**
      * Constructor, yeah!
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
+     * @param \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \ParadoxLabs\TokenBase\Model\ResourceModel\Card\CollectionFactory $cardCollectionFactory,
-        \ParadoxLabs\TokenBase\Helper\Data $helper
+        \ParadoxLabs\TokenBase\Helper\Data $helper,
+        \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository
     ) {
         $this->helper = $helper;
         $this->scopeConfig = $scopeConfig;
         $this->cardCollectionFactory = $cardCollectionFactory;
+        $this->cardRepository = $cardRepository;
     }
 
     /**
@@ -71,7 +81,7 @@ class Clean
         /** @var \ParadoxLabs\TokenBase\Model\ResourceModel\Card\Collection $cards */
         $cards = $this->cardCollectionFactory->create();
         $cards->addFieldToFilter('active', '0')
-              ->addFieldToFilter('updated_at', array( 'lt' => date('c', strtotime('-120 days')), 'date' => true ))
+              ->addFieldToFilter('updated_at', [ 'lt' => date('c', strtotime('-120 days')), 'date' => true ])
               ->addFieldToFilter(
                   [
                       'last_use',
@@ -96,10 +106,9 @@ class Clean
         $cards = $this->cardCollectionFactory->create();
         $cards->addFieldToFilter('profile_id', ['null' => true])
               ->addFieldToFilter('payment_id', ['null' => true])
-              ->addFieldToFilter('updated_at', array( 'lt' => date('c', strtotime('-7 days')), 'date' => true ));
+              ->addFieldToFilter('updated_at', ['lt' => date('c', strtotime('-7 days')), 'date' => true]);
 
         $affectedCount   += $this->deleteCards($cards);
-
 
         if ($affectedCount > 0) {
             $this->helper->log('tokenbase', sprintf('Deleted %s queued cards.', $affectedCount));
@@ -112,7 +121,7 @@ class Clean
      * @param \ParadoxLabs\TokenBase\Model\ResourceModel\Card\Collection $cards
      * @return int
      */
-    protected function deleteCards(\ParadoxLabs\TokenBase\Model\ResourceModel\Card\Collection $cards)
+    public function deleteCards(\ParadoxLabs\TokenBase\Model\ResourceModel\Card\Collection $cards)
     {
         $affectedCount = 0;
 
@@ -125,7 +134,7 @@ class Clean
                 /**
                  * Delete the card.
                  */
-                $card->delete();
+                $this->cardRepository->delete($card);
 
                 $affectedCount++;
             } catch (\Exception $e) {

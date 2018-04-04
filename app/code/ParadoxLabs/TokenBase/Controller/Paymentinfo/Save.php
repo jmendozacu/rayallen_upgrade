@@ -35,15 +35,16 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
 
     /**
      * @param Context $context
-     * @param Session $customerSession
+     * @param Session $customerSession *Proxy
      * @param PageFactory $resultPageFactory
      * @param \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator
      * @param \Magento\Framework\Registry $registry
      * @param \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory
+     * @param \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
      * @param \ParadoxLabs\TokenBase\Helper\Address $addressHelper
      * @param \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory
-     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Checkout\Model\Session $checkoutSession *Proxy
      */
     public function __construct(
         Context $context,
@@ -52,6 +53,7 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         \Magento\Framework\Registry $registry,
         \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory,
+        \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository,
         \ParadoxLabs\TokenBase\Helper\Data $helper,
         \ParadoxLabs\TokenBase\Helper\Address $addressHelper,
         \Magento\Quote\Model\Quote\PaymentFactory $paymentFactory,
@@ -67,6 +69,7 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
             $formKeyValidator,
             $registry,
             $cardFactory,
+            $cardRepository,
             $helper,
             $addressHelper
         );
@@ -95,9 +98,13 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
                  */
 
                 /** @var \ParadoxLabs\TokenBase\Model\Card $card */
-                $card       = $this->cardFactory->create();
-                $card->loadByHash($id);
-                $card->setMethod($card->getMethod() ?: $method);
+                if (!empty($id)) {
+                    $card = $this->cardRepository->getByHash($id);
+                } else {
+                    $card = $this->cardFactory->create();
+                    $card->setMethod($card->getMethod() ?: $method);
+                }
+
                 $card       = $card->getTypeInstance();
                 $customer   = $this->helper->getCurrentCustomer();
 
@@ -105,7 +112,7 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
                     /**
                      * Process address data
                      */
-                    $newAddrId    = intval($this->getRequest()->getParam('billing_address_id'));
+                    $newAddrId    = (int)$this->getRequest()->getParam('billing_address_id');
 
                     if ($newAddrId > 0) {
                         // Existing address
@@ -132,6 +139,7 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
 
                     if (isset($cardData['cc_number'])) {
                         $cardData['cc_last4'] = substr($cardData['cc_number'], -4);
+                        $cardData['cc_bin']   = substr($cardData['cc_number'], 0, 6);
                     }
 
                     /** @var \Magento\Quote\Model\Quote\Payment $newPayment */
@@ -148,25 +156,47 @@ class Save extends \ParadoxLabs\TokenBase\Controller\Paymentinfo
                     $card->setCustomer($customer);
                     $card->setAddress($newAddr);
                     $card->importPaymentInfo($newPayment);
-                    $card->save();
+
+                    $card = $this->cardRepository->save($card);
 
                     $this->session->unsData('tokenbase_form_data');
 
-                    $this->messageManager->addSuccess(__('Payment data saved successfully.'));
+                    $this->messageManager->addSuccessMessage(__('Payment data saved successfully.'));
                 } else {
-                    $this->messageManager->addError(__('Invalid Request.'));
+                    $this->messageManager->addErrorMessage(__('Invalid Request.'));
                 }
             } catch (\Exception $e) {
                 $this->session->setData('tokenbase_form_data', $this->getRequest()->getParams());
 
                 $this->helper->log($method, (string)$e);
-                $this->messageManager->addError(__($e->getMessage()));
+                $this->messageManager->addErrorMessage(__($e->getMessage()));
+
+                $this->recordSessionFailure($e);
             }
         } else {
-            $this->messageManager->addError(__('Invalid Request.'));
+            $this->messageManager->addErrorMessage(__('Invalid Request.'));
         }
 
         $resultRedirect->setPath('*/*', ['method' => $method, '_secure' => true]);
         return $resultRedirect;
+    }
+
+    /**
+     * Record each save failure on their session. If they fail too many times in a given period, block access. This is
+     * to help prevent credit card validation abuse, trying to store CCs until one works.
+     *
+     * @param \Exception $e
+     * @return void
+     */
+    protected function recordSessionFailure(\Exception $e)
+    {
+        $failures = $this->session->getData('tokenbase_failures');
+        if (is_array($failures) === false) {
+            $failures = [];
+        }
+
+        $failures[time()] = $e->getMessage();
+
+        $this->session->setData('tokenbase_failures', $failures);
     }
 }

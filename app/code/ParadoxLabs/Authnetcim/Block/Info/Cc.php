@@ -26,15 +26,15 @@ class Cc extends \ParadoxLabs\TokenBase\Block\Info\Cc
     /**
      * Prepare credit card related payment info
      *
-     * @param \Magento\Framework\Object|array $transport
-     * @return \Magento\Framework\Object
+     * @param \Magento\Framework\DataObject|array $transport
+     * @return \Magento\Framework\DataObject
      */
     protected function _prepareSpecificInformation($transport = null)
     {
         $transport  = parent::_prepareSpecificInformation($transport);
         $data       = [];
 
-        if ($this->helper->getIsFrontend() === false && $this->isEcheck() === false) {
+        if ($this->getIsSecureMode() === false && $this->isEcheck() === false) {
             /** @var \Magento\Sales\Model\Order\Payment\Info $info */
             $info = $this->getInfo();
 

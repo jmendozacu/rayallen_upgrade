@@ -28,9 +28,9 @@ use Magento\Framework\DataObjectFactory as ObjectFactory;
 class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
 {
     /**
-     * @var \ParadoxLabs\TokenBase\Model\CardFactory
+     * @var \ParadoxLabs\TokenBase\Api\CardRepositoryInterface
      */
-    protected $cardFactory;
+    protected $cardRepository;
 
     /**
      * @var \ParadoxLabs\TokenBase\Helper\Data
@@ -41,11 +41,6 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
      * @var \ParadoxLabs\TokenBase\Helper\Address
      */
     protected $addressHelper;
-
-    /**
-     * @var \Magento\Backend\Model\Session
-     */
-    protected $session;
 
     /**
      * @var bool
@@ -79,10 +74,9 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory
+     * @param \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository
      * @param \ParadoxLabs\TokenBase\Helper\Data $helper
      * @param \ParadoxLabs\TokenBase\Helper\Address $addressHelper
-     * @param \Magento\Backend\Model\Session $session
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -110,15 +104,13 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \ParadoxLabs\TokenBase\Model\CardFactory $cardFactory,
+        \ParadoxLabs\TokenBase\Api\CardRepositoryInterface $cardRepository,
         \ParadoxLabs\TokenBase\Helper\Data $helper,
-        \ParadoxLabs\TokenBase\Helper\Address $addressHelper,
-        \Magento\Backend\Model\Session $session
+        \ParadoxLabs\TokenBase\Helper\Address $addressHelper
     ) {
-        $this->cardFactory = $cardFactory;
+        $this->cardRepository = $cardRepository;
         $this->helper = $helper;
         $this->addressHelper = $addressHelper;
-        $this->session = $session;
 
         parent::__construct(
             $context,
@@ -164,7 +156,7 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
         if ($this->methodIsValid() !== true) {
             $methods = $this->helper->getActiveMethods();
 
-            if (count($methods) > 0) {
+            if (!empty($methods)) {
                 sort($methods);
 
                 $this->_coreRegistry->register('tokenbase_method', $methods[0]);
@@ -179,10 +171,16 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
         if (empty($id) || $this->formKeyIsValid() !== true) {
             $id = null;
 
-            if ($this->session->hasData('tokenbase_form_data')) {
-                $data = $this->session->getData('tokenbase_form_data');
+            if ($this->_session->hasData('tokenbase_form_data')) {
+                if ($this->getRequest()->getParam('cancel') == 1) {
+                    $this->_session->setData('tokenbase_form_data', null);
+                }
 
-                if (isset($data['card_id']) && !empty($data['card_id'])) {
+                $data = $this->_session->getData('tokenbase_form_data');
+
+                if (isset($data['card_id'])
+                    && !empty($data['card_id'])
+                    && $data['method'] == $this->_coreRegistry->registry('tokenbase_method')) {
                     $id = $data['card_id'];
                 }
             }
@@ -190,8 +188,7 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
 
         if (!empty($id) && $this->skipCardLoad !== true) {
             /** @var \ParadoxLabs\TokenBase\Model\Card $card */
-            $card = $this->cardFactory->create();
-            $card->loadByHash($id);
+            $card = $this->cardRepository->getByHash($id);
             $card = $card->getTypeInstance();
 
             if ($card && $card->getHash() == $id) {
@@ -240,7 +237,7 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
     /**
      * Get current customer model.
      *
-     * @return \Magento\Customer\Model\Customer
+     * @return \Magento\Customer\Api\Data\CustomerInterface
      */
     protected function getCustomer()
     {
@@ -249,10 +246,7 @@ class Paymentinfo extends \Magento\Customer\Controller\Adminhtml\Index
         }
 
         $customerId = $this->initCurrentCustomer();
-
-        /** @var \Magento\Customer\Model\Customer $customer */
-        $customer = $this->_customerFactory->create();
-        $customer->load($customerId);
+        $customer   = $this->_customerRepository->getById($customerId);
 
         $this->_coreRegistry->register('current_customer', $customer);
 
