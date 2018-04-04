@@ -1,0 +1,40 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
+ * @package Amasty_Customform
+ */
+?>
+<?php
+/** @var \Amasty\Customform\Block\Adminhtml\Data\Edit\Answer $block */
+?>
+<section class="admin__page-section request-view-information">
+    <div class="admin__page-section-title">
+        <span class="title"><?php /* @escapeNotVerified */ echo __('Information') ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <table class="admin__table-secondary request-information-table">
+            <?php foreach ($block->getInformationData() as $data) :?>
+                <tr>
+                    <th><?php echo $block->escapeHtml($data['label']) ?></th>
+                    <td><?php echo /* @escapeNotVerified */ $data['value'] ?></td>
+                </tr>
+            <?php endforeach;?>
+        </table>
+    </div>
+</section>
+<section class="admin__page-section request-view-data">
+    <div class="admin__page-section-title">
+        <span class="title"><?php /* @escapeNotVerified */ echo __('Data') ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <table class="admin__table-secondary request-information-table">
+            <?php foreach ($block->getResponseData() as $data) :?>
+                <tr>
+                    <th><?php echo $block->escapeHtml($data['label']) ?></th>
+                    <td><?php echo /* escaped in block code*/ $data['value']?></td>
+                </tr>
+            <?php endforeach;?>
+        </table>
+    </div>
+</section>

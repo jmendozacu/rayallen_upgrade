@@ -1,0 +1,148 @@
+/*page styles*/
+
+.amcustomform-form-elements-part{
+    display: inline-block;
+    padding: 5px;
+    width: 49%;
+    min-height: 500px;
+}
+
+.amcustomform-form-elements-part.left-part{
+    border-right: 1px solid black;
+    margin-right: 5px;
+}
+
+#amcustomform-element-tabs li {
+    display: inline-block;
+    text-align: center;
+    min-height: 40px;
+    flex-grow: 1;
+    border-right: 1px solid #e3e3e3;
+    cursor: pointer;
+    line-height: 35px;
+    padding: 5px 0;
+    background: #f1f1f1;
+}
+
+#amcustomform-element-tabs li:hover {
+    background-color: #989FA9;
+}
+
+label.label-for-version-two {
+    margin-right: 10px;
+    display: inline-block;
+    padding-right: 20px;
+}
+
+#amcustomform-element-tabs li:last-child {
+    border-right: 0;
+}
+
+#amcustomform-element-tabs{
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+}
+
+#amcustomform-form-container .help-notice {
+    margin-bottom: 30px;
+    width: 350px;
+    border-left: 3px solid #eb5202;
+    padding: 3px 0 3px 15px;
+    font-size: 15px;
+}
+
+#amcustomform-element-tabs li.active {
+    background-color: white;
+    border-top: 3px solid #eb5202;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+#amcustomform-element-tabs .ui-tabs-panel{
+    padding: 0;
+}
+
+.amelement-leftvisible {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #e3e3e3;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    margin: 0 10px 10px 0;
+    cursor: pointer;
+}
+
+ul li.amelement-container {
+    display: block;
+    border: 1px solid #e3e3e3;
+    padding: 10px;
+    text-align: left;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    width: 100%;
+    height: auto;
+    vertical-align: top;
+    background: #f7f7f7;
+}
+
+.amelement-title, .amelement-content{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.amelement-title{
+    width: 25%;
+    margin-right: 5px;
+    padding-left: 5px;
+}
+
+.amelement-content{
+    width: 70%;
+}
+
+.amelement-content input, .amelement-content textarea{
+    width: 100%;
+}
+
+.amelement-content select {
+    width: 300px;
+}
+
+#frmb-0{
+    min-height: 300px !important;
+}
+
+#amcustomform-form-container div.form-actions.btn-group {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+div#frmb-0-cb-wrap {
+    min-height: 300px !important;
+    position: relative;
+    padding-bottom: 40px;
+}
+
+.amasty_custom_form{
+    max-width: 500px;
+}
+
+.amasty_custom_form input[type="number"] {
+    max-width: 70px;
+}
+
+#form_tabs_embeddings_section_content textarea[readonly] {
+    cursor: copy;
+    opacity: .8;
+}
+
+#form_layout{
+    min-height: 130px;
+}

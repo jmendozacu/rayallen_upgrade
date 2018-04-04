@@ -1,0 +1,60 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
+ * @package Amasty_Customform
+ */
+?>
+<?php
+    /** @var $block \Amasty\Customform\Block\Widget\Form\Renderer\Creator */
+    /** @var $element \Magento\Framework\Data\Form\Element\Fieldset */
+    $element = $block->getElement();
+    $containerId = $element->getFieldsetContainerId();
+    $id = $element->getHtmlId();
+    $isCollapsable = $element->getCollapsable();
+    $titleActions = '<div class="actions">' . $element->getHeaderBar() . '</div>';
+?>
+
+<div class="fieldset-wrapper <?php echo($isCollapsable) ? 'admin__collapsible-block-wrapper ' : ''; ?>"
+        id="<?php /* @escapeNotVerified */ echo $containerId ? $containerId : $id . '-wrapper';?>"
+        data-role="<?php /* @escapeNotVerified */ echo $id ?>-wrapper">
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+        <strong <?php /* @escapeNotVerified */ echo($isCollapsable) ?
+            'class="admin__collapsible-title" data-toggle="collapse" data-target="#' . $id . '-content"' :
+            'class="title"'; ?>>
+            <span><?php /* @escapeNotVerified */ echo $element->getLegend() ?></span>
+        </strong>
+        <?php /* @escapeNotVerified */ echo $titleActions; ?>
+    </div>
+
+    <div class="amasty_form_text fieldset-wrapper-content
+                admin__fieldset-wrapper-content <?php echo($isCollapsable) ? ' collapse' : ''; ?>"
+        id="<?php /* @escapeNotVerified */ echo $id ?>-content"
+        data-role="<?php /* @escapeNotVerified */ echo $id ?>-content">
+        <div id="amcustomform-form-container"></div>
+        <script type="text/javascript">
+            require([
+                'jquery',
+                'Amasty_Customform/js/form-builder',
+                'Amasty_Customform/js/form-render'
+            ], function($, customFormBuilder) {
+                $(document).ready(function($) {
+                    var buildWrap = document.querySelector('#amcustomform-form-container'),
+                        fbOptions = {
+                            dataType: 'json',
+                            frmbFields:  <?php
+                                echo $block->getFrmbFieldsJson();
+                            ?>,
+                            fieldsTypes:  <?php
+                                echo $block->getTypeFieldsJson();
+                            ?>,
+                            messages:  <?php
+                                echo $block->getMessagesJson();
+                            ?>
+                        };
+                    var formBuilder = $(buildWrap).customFormBuilder(fbOptions);
+                });
+            });
+        </script>
+    </div>
+</div>

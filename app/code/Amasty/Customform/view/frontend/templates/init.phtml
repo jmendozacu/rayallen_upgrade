@@ -1,0 +1,32 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2018 Amasty (https://www.amasty.com)
+ * @package Amasty_Customform
+ */
+?>
+<?php
+/** @var Amasty\Customform\Block\Init $block */
+$formId = $block->getFormId();
+?>
+<form class="rendered-form amasty_custom_form"
+      id="amasty_custom_form-<?php echo $formId;?>"
+      action="<?php echo $block->getFormAction();?>"
+      data-mage-init='{"validation": {}}'
+      enctype="multipart/form-data" method="post"
+>
+    <input name="form_key" type="hidden" value="<?php echo $block->escapeHtml($block->getFormKey()) ?>" />
+    <input name="form_id" type="hidden" value="<?php echo $formId;?>" />
+    <div class="amasty_custom_form_fieldset fieldset"></div>
+    <button type="submit" class="action submit primary"><span><?php echo $block->getButtonTitle()?></span></button>
+</form>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/validation',
+        'Amasty_Customform/js/form-render'
+    ], function ($) {
+        var renderedForm = $('#amasty_custom_form-<?php echo $formId;?> .amasty_custom_form_fieldset');
+        renderedForm.formRender(<?php echo $block->getFormDataJson()?>);
+    });
+</script>

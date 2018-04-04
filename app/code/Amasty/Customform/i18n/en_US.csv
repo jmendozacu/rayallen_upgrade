@@ -1,0 +1,243 @@
+Back,Back
+"This Form #%1 was removed","This Form #%1 was removed"
+Form,Form
+Submitted,Submitted
+IP,IP
+Customer,Customer
+Store,Store
+"Download: ","Download: "
+"Save Form","Save Form"
+"Save and Continue Edit","Save and Continue Edit"
+"Delete Form","Delete Form"
+"Edit Form '%1'","Edit Form '%1'"
+"New Form","New Form"
+Title,Title
+"Form Content","Form Content"
+"Submit Button","Submit Button"
+"Success Message","Success Message"
+"Thanks for contacting us. Your request was saved successfully.","Thanks for contacting us. Your request was saved successfully."
+Submit,Submit
+"Form Creator","Form Creator"
+"Cms Pages","Cms Pages"
+"Cms Embedding Code","Cms Embedding Code"
+"Copy this code into CMS Page Editor to insert form into any CMS page","Copy this code into CMS Page Editor to insert form into any CMS page"
+Templates,Templates
+"Template Embedding Code","Template Embedding Code"
+"Insert this code into *.phtml template directly to display form in any block.","Insert this code into *.phtml template directly to display form in any block."
+"Layout Updates","Layout Updates"
+"Layout Embedding Code","Layout Embedding Code"
+"Insert this code into layout to display the form.","Insert this code into layout to display the form."
+"This form is not saved yet. Please save this form first to get your embedding codes.","This form is not saved yet. Please save this form first to get your embedding codes."
+Embedding,Embedding
+"Form Information","Form Information"
+Code,Code
+"Success Url","Success Url"
+"Leave empty to redirect on homepage. Use ""/"" to redirect on previous page.","Leave empty to redirect on homepage. Use ""/"" to redirect on previous page."
+"Store View","Store View"
+Status,Status
+"Send notification to email","Send notification to email"
+"Recipients email","Recipients email"
+"Comma separated Emails, no spaces.","Comma separated Emails, no spaces."
+"Email Template","Email Template"
+"Checkbox v.1","Checkbox v.1"
+"Checkbox unselected","Checkbox unselected"
+"Checkbox selected","Checkbox selected"
+"Checkbox v.2","Checkbox v.2"
+Date,Date
+"Date Range","Date Range"
+DropDown,DropDown
+"--Select an option--","--Select an option--"
+File,File
+Hidden,Hidden
+H1,H1
+H3,H3
+H2,H2
+ListBox,ListBox
+"Number Input","Number Input"
+"Radio v.1","Radio v.1"
+"Radio button unselected","Radio button unselected"
+"Radio button selected","Radio button selected"
+"Radio v.2","Radio v.2"
+Text,Text
+"Sphinx of black quartz, judge my vow","Sphinx of black quartz, judge my vow"
+Textarea,Textarea
+"Text Input","Text Input"
+Time,Time
+"Amasty: Custom Forms","Amasty: Custom Forms"
+"Submitted Data","Submitted Data"
+"Answer was deleted.","Answer was deleted."
+"Can't delete item right now. Please review the log and try again.","Can't delete item right now. Please review the log and try again."
+"Can't find a item to delete.","Can't find a item to delete."
+"Response was not found.","Response was not found."
+"This Response no longer exists.","This Response no longer exists."
+"Submitted Data #","Submitted Data #"
+"A total of %1 record(s) have been deleted.","A total of %1 record(s) have been deleted."
+"The form has been deleted.","The form has been deleted."
+"We can't find a form to delete.","We can't find a form to delete."
+"Custom Forms","Custom Forms"
+"Manage Form","Manage Form"
+"This form no longer exists.","This form no longer exists."
+"Edit Custom Form","Edit Custom Form"
+"New Custom Form","New Custom Form"
+"Edit Form ","Edit Form "
+Content,Content
+"Manage Custom Forms","Manage Custom Forms"
+"A total of %1 record(s) have been disabled.","A total of %1 record(s) have been disabled."
+"A total of %1 record(s) have been enabled.","A total of %1 record(s) have been enabled."
+"You saved this form.","You saved this form."
+"Something went wrong while saving the page.","Something went wrong while saving the page."
+"Entity with code %1 already exist.","Entity with code %1 already exist."
+"Form code not found","Form code not found"
+"Form key is not valid. Please try to reload the page.","Form key is not valid. Please try to reload the page."
+"Sorry. There is a problem with Your Form Request. Please try again or use Contact Us link in the menu.","Sorry. There is a problem with Your Form Request. Please try again or use Contact Us link in the menu."
+"Please enter a %1.","Please enter a %1."
+"Please enter a valid email address.","Please enter a valid email address."
+"Unable to send email.","Unable to send email."
+Guest,Guest
+"Field exceeds the allowed file size(%1 mb).","Field exceeds the allowed file size(%1 mb)."
+"Add Option +","Add Option +"
+"Please drop us a line below and we`ll get in touch with you shortly!","Please drop us a line below and we`ll get in touch with you shortly!"
+"All fields were removed.","All fields were removed."
+"Allow Select","Allow Select"
+"Allow users to upload multiple files","Allow users to upload multiple files"
+Autocomplete,Autocomplete
+Button,Button
+"This field cannot be empty","This field cannot be empty"
+"Checkbox Group","Checkbox Group"
+Checkbox,Checkbox
+Checkboxes,Checkboxes
+Class,Class
+"Are you sure you want to clear all fields?","Are you sure you want to clear all fields?"
+Clear,Clear
+Close,Close
+"Copy To Clipboard","Copy To Clipboard"
+&#43;,&#43;
+Copy,Copy
+"Date Field","Date Field"
+Tooltip,Tooltip
+Description,Description
+"Developer Mode","Developer Mode"
+"Edit Names","Edit Names"
+"Form Elements","Form Elements"
+"Edit XML","Edit XML"
+"Enable &quot;Other&quot;","Enable &quot;Other&quot;"
+"Let users to enter an unlisted option","Let users to enter an unlisted option"
+"Field Variables","Field Variables"
+"This field cannot be edited.","This field cannot be edited."
+"Are you sure you want to remove this field?","Are you sure you want to remove this field?"
+"File Upload","File Upload"
+"Form Updated","Form Updated"
+"Drag a field from the right to this area","Drag a field from the right to this area"
+Header,Header
+Edit,Edit
+"Hidden Input","Hidden Input"
+"Field Title","Field Title"
+"Field Label cannot be empty","Field Label cannot be empty"
+"Limit access to one or more of the following roles:","Limit access to one or more of the following roles:"
+Mandatory,Mandatory
+"Max Length","Max Length"
+"This field requires a minimum of 2 options","This field requires a minimum of 2 options"
+"Multiple Files","Multiple Files"
+"Allowed Extensions","Allowed Extensions"
+"Max. File Size (MB)","Max. File Size (MB)"
+No,No
+Number,Number
+Off,Off
+On,On
+Option,Option
+Comment,Comment
+optional,optional
+Label,Label
+Value,Value
+"Option value required","Option value required"
+Other,Other
+Paragraph,Paragraph
+Placeholder,Placeholder
+"Enter you email","Enter you email"
+"space separated classes","space separated classes"
+"Enter your password","Enter your password"
+Preview,Preview
+"Radio Group","Radio Group"
+Radio,Radio
+"Remove Element","Remove Element"
+"Remove Option","Remove Option"
+&#215;,&#215;
+Required,Required
+"Rich Text Editor","Rich Text Editor"
+Access,Access
+Save,Save
+Options,Options
+Select,Select
+"Select Color","Select Color"
+"Allow Multiple Selections","Allow Multiple Selections"
+Size,Size
+"Extra Small","Extra Small"
+Small,Small
+Default,Default
+Large,Large
+"Custom Style","Custom Style"
+Danger,Danger
+Info,Info
+Primary,Primary
+Success,Success
+Warning,Warning
+Validation,Validation
+Type,Type
+"Text Field","Text Field"
+"Text Area","Text Area"
+Toggle,Toggle
+Warning!,Warning!
+"Default Value","Default Value"
+"{  }","{  }"
+&lt;/&gt;,&lt;/&gt;
+Yes,Yes
+"Unable to save answer with ID %1. Error: %2","Unable to save answer with ID %1. Error: %2"
+"Unable to save new answer. Error: %1","Unable to save new answer. Error: %1"
+"Answer with specified ID ""%1"" was not found.","Answer with specified ID ""%1"" was not found."
+"Unable to remove answer with ID %1. Error: %2","Unable to remove answer with ID %1. Error: %2"
+"Unable to remove answer. Error: %1","Unable to remove answer. Error: %1"
+"NOT LOGGED IN","NOT LOGGED IN"
+"Field attribute ""Name"" is required","Field attribute ""Name"" is required"
+Enabled,Enabled
+Disabled,Disabled
+"Option attribute ""Value"" is required","Option attribute ""Value"" is required"
+"Unable to save option with ID %1. Error: %2","Unable to save option with ID %1. Error: %2"
+"Unable to save new option. Error: %1","Unable to save new option. Error: %1"
+"Unable to remove option with ID %1. Error: %2","Unable to remove option with ID %1. Error: %2"
+"Unable to remove option. Error: %1","Unable to remove option. Error: %1"
+"Unable to save element with ID %1. Error: %2","Unable to save element with ID %1. Error: %2"
+"Unable to save new element. Error: %1","Unable to save new element. Error: %1"
+"Unable to remove element with ID %1. Error: %2","Unable to remove element with ID %1. Error: %2"
+"Unable to remove element. Error: %1","Unable to remove element. Error: %1"
+"Unable to remove old elements. Error: %1","Unable to remove old elements. Error: %1"
+"Unable to save request with ID %1. Error: %2","Unable to save request with ID %1. Error: %2"
+"Unable to save new request. Error: %1","Unable to save new request. Error: %1"
+"Form with specified ID ""%1"" not found.","Form with specified ID ""%1"" not found."
+"Unable to remove form with ID %1. Error: %2","Unable to remove form with ID %1. Error: %2"
+"Unable to remove form. Error: %1","Unable to remove form. Error: %1"
+View,View
+Information,Information
+Data,Data
+"You have new submitted custom form.","You have new submitted custom form."
+"%form_title form was submitted  by ","%form_title form was submitted  by "
+%userName,%userName
+"which you can see by the following ","which you can see by the following "
+link,link
+"Submitted Data:","Submitted Data:"
+"Admin Notification","Admin Notification"
+"Enable Notification to Email","Enable Notification to Email"
+"Send Emails To","Send Emails To"
+"Email Sender","Email Sender"
+"Custom Form","Custom Form"
+"Form ID","Form ID"
+Template,Template
+Delete,Delete
+"Delete items","Delete items"
+"Are you sure you wan't to delete selected items?","Are you sure you wan't to delete selected items?"
+ID,ID
+"Created at","Created at"
+"IP Address","IP Address"
+"Add New Form","Add New Form"
+Disable,Disable
+Enable,Enable
+Active,Active
