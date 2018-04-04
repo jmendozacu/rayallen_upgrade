@@ -45,60 +45,6 @@ class Configuration extends \Magento\Backend\Block\Widget\Form\Generic implement
         // save and continue flag
         $fieldset->addField('back_i', 'hidden', ['name' => 'back_i', 'value' => '']);
 
-        // ===================== all needed urls ===============================
-
-        $fieldset->addField(
-            'library_url',
-            'hidden',
-            [
-            'class' => 'debug',
-            'id' => 'library_url',
-            'name' => 'library_url',
-            'label' => __('Library url'),
-            'required' => false,
-                ]
-        );
-        $model->setData('library_url', $this->getUrl('*/*/library'));
-
-        $fieldset->addField(
-            'library_sample_url',
-            'hidden',
-            [
-            'class' => 'debug',
-            'id' => 'library_sample_url',
-            'name' => 'library_sample_url',
-            'label' => __('Library sample url'),
-            'required' => false,
-                ]
-        );
-        $model->setData('library_sample_url', $this->getUrl('*/*/librarysample'));
-
-        $fieldset->addField(
-            'sample_url',
-            'hidden',
-            [
-            'class' => 'debug',
-            'id' => 'sample_url',
-            'label' => __('Sample url'),
-            'required' => false,
-                ]
-        );
-        $model->setData('sample_url', $this->getUrl('*/*/sample'));
-
-        $fieldset->addField(
-            'categories_url',
-            'hidden',
-            [
-            'class' => 'debug',
-            'id' => 'categories_url',
-            'name' => 'categories_url',
-            'label' => __('Categories url'),
-            'required' => false
-                ]
-        );
-        $model->setData('categories_url', $this->getUrl('*/*/categories'));
-
-
         // ===================== required hidden fields ========================
 
         $fieldset->addField(

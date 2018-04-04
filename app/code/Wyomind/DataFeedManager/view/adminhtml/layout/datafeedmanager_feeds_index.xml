@@ -5,13 +5,18 @@
  -->
 <!-- Layout of the list of all google shopping data feeds -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
-    <head>
-        <link src="Wyomind_DataFeedManager::js/feeds/index.js"/>
-    </head>
     <body>
         <referenceContainer name="content">
-            <block class="Wyomind\DataFeedManager\Block\Adminhtml\Feeds" name="datafeedmanager_feeds"/>
-            <block template="Wyomind_DataFeedManager::importDataFeed.phtml" class="Wyomind\DataFeedManager\Block\Adminhtml\ImportDataFeed" name="wyomind_datafeedmanager_import"/>
+            <block class="Wyomind\DataFeedManager\Block\Adminhtml\Feeds" 
+                   name="datafeedmanager_feeds"/>
+            
+            <block class="Magento\Framework\View\Element\Template" 
+                   name="datafeedmanager_feeds_index" 
+                   template="Wyomind_DataFeedManager::index.phtml"/>
+            
+            <block class="Magento\Backend\Block\Template" 
+                   name="wyomind_datafeedmanager_import"
+                   template="Wyomind_DataFeedManager::import.phtml"/>
         </referenceContainer>
     </body>
 </page>

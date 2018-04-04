@@ -10,7 +10,7 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesReviews extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesReviews extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
 
     public function reviewCount(
@@ -52,4 +52,14 @@ class AttributesReviews extends \Magento\Framework\App\Helper\AbstractHelper
             return "";
         }
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }

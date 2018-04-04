@@ -50,7 +50,7 @@ class Link extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
         $baseurl = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB, false);
         $url = $baseurl . $fileName;
         $url = preg_replace('/([^\:])\/\//', '$1/', $url);
-        $url = str_replace('/pub/','/',$url);
+        $url = str_replace('/pub/', '/', $url);
         $rootdir = $this->_list->getPath(\Magento\Framework\App\Filesystem\DirectoryList::ROOT);
         if ($this->_io->fileExists($rootdir . '/' . $fileName)) {
             return '<a href="' . $url . '?r=' . time() . '" target="_blank">' . $url . '</a>';

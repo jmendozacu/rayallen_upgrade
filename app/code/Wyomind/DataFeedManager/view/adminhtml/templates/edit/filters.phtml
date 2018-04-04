@@ -79,14 +79,13 @@
         <br>
         <div>
             <script>
-                var attribute_codes = <?php echo $block->getJsData(); ?>;
-                attribute_codes['is_in_stock'] = [{"label": "Yes", "value": 1}, {"label": "No", "value": 0}];
-                attribute_codes['qty'] = [];
-                attribute_codes['entity_id'] = [];
+
             </script>
 
-            <?php $selectOutput = $block->getSelectHtml();
-            $nbFilters = $block->getNbFilters(); ?>
+            <?php
+            $selectOutput = $block->getSelectHtml();
+            $nbFilters = $block->getNbFilters();
+            ?>
             <?php for ($x = 0; $x < $nbFilters; $x++) : ?>
 
                 <div class="node advanced_filters" id='node_<?php echo $x; ?>'>
@@ -148,3 +147,60 @@
         </div>
     </fieldset>
 </div>
+
+<script>
+
+    require(["jquery", "dfm_filters"], function ($, filters) {
+        'use strict';
+
+        filters.attributeCodes = <?php echo $block->getJsData(); ?>;
+        filters.attributeCodes['is_in_stock'] = [{"label": "Yes", "value": 1}, {"label": "No", "value": 0}];
+        filters.attributeCodes['qty'] = [];
+        filters.attributeCodes['entity_id'] = [];
+
+        /* select product types */
+        $(document).on("click", ".filter_product_type", function (evt) {
+            var elt = $(this);
+            elt.parent().toggleClass('selected');
+            filters.updateProductTypes();
+        });
+        filters.loadProductTypes();
+        /* select attribute sets */
+        $(document).on("click", ".filter_attribute_set", function (evt) {
+            var elt = $(this);
+            elt.parent().toggleClass('selected');
+            filters.updateAttributeSets();
+        });
+        filters.loadAttributeSets();
+        /* select product visibilities */
+        $(document).on("click", ".filter_visibility", function (evt) {
+            var elt = $(this);
+            elt.parent().toggleClass('selected');
+            filters.updateProductVisibilities();
+        });
+        filters.loadProductVisibilities();
+        /* un/select all */
+        $(document).on("click", ".select-all", function (evt) {
+            var elt = $(this);
+            filters.selectAll(elt);
+        });
+        $(document).on("click", ".unselect-all", function (evt) {
+            var elt = $(this);
+            filters.unselectAll(elt);
+        });
+        filters.updateUnSelectLinks();
+        /* select advanced filters */
+
+        // change attribute select 
+        $(document).on('change', '.name-attribute,.condition-attribute', function (evt) {
+            var id = $(this).attr('identifier');
+            var attribute_code = $('#name_attribute_' + id).val();
+            filters.updateRow(id, attribute_code);
+        });
+        $(document).on('change', '.checked-attribute,.statement-attribute,.name-attribute,.condition-attribute,.value-attribute,.pre-value-attribute', function (evt) {
+            filters.updateAdvancedFilters();
+        });
+        filters.loadAdvancedFilters();
+
+    });
+</script>

@@ -42,7 +42,7 @@ class Preview extends \Magento\Backend\Block\Template
             $this->fileType = $model->getType() == 1 ? "xml" : "other";
             return $content;
         } catch (\Exception $e) {
-            return __('Unable to generate the data feed : ' . $e->getMessage());
+            return __('Unable to generate the data feed : ' . nl2br($e->getMessage()));
         }
     }
 }

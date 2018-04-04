@@ -98,7 +98,7 @@ class InstallSchema implements InstallSchemaInterface
                 ->addColumn(
                     'categories',
                     \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
+                    \Magento\Framework\DB\Ddl\Table::MAX_TEXT_SIZE,
                     [],
                     'Data Feed Categories Selection'
                 )

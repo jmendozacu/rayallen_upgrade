@@ -15,8 +15,8 @@ Licenses
 
 When purchasing a license from Wyomind.com, the license holder can use it for one live domain and as many staging, dev, or local domains he needs. In addition, the license is valid for an unlimited period of time. One license assigned to a domain is irrevocably linked to that domain and cannot be transferred to another domain, except in the two following cases:
 
-    • A transfer of the license can be performed from a staging, dev or local domain to a live domain
-    • The license can be transferred if the old domain redirects definitively to the new one (301 permanent redirection)
+    -  A transfer of the license can be performed from a staging, dev or local domain to a live domain
+    - The license can be transferred if the old domain redirects definitively to the new one (301 permanent redirection)
 
 Upgrades
 
@@ -61,11 +61,11 @@ Product Disclaimer
 Software downloaded from the Wyomind.com web-site is provided 'as is' without warranty of any kind, either express or implied, including, but not limited to, the implied warranties of fitness for a purpose, or the warranty of non-infringement. Without limiting the foregoing, Wyomind.com makes no warranty that:
 
 
-• the Software will meet its requirements
-• the Software will be uninterrupted, timely, secure or error-free
-• the results that may be obtained from the use of the Software will be effective, accurate or reliable
-• the quality of the Software will meet its expectations
-• any errors in the software obtained from the Wyomind.com web-site will be corrected
+- the Software will meet its requirements
+- the Software will be uninterrupted, timely, secure or error-free
+- the results that may be obtained from the use of the Software will be effective, accurate or reliable
+- the quality of the Software will meet its expectations
+- any errors in the software obtained from the Wyomind.com web-site will be corrected
 
 The Software and the Documentation made available on the Wyomind.com web-site could include technical or other mistakes, inaccuracies or typographical errors and may be out of date. Wyomind makes no commitment to update such materials nor assumes any responsibility for errors or omissions therein.
 
@@ -74,3 +74,4 @@ Wyomind.com may make changes to the Software or the Documentation made available
 In no event shall Wyomind be liable to the buyer or any third parties for any special, punitive, incidental, indirect or consequential damages of any kind, or any damages whatsoever, including, without limitation, those resulting from loss of use, data or profits, whether or not Wyomind has been advised of the possibility of such damages, and on any theory of liability, arising out of or in connection with the use of this Software.
 
 The use of the Software downloaded through the Wyomind.com web-site is done at its own discretion and risk and with agreement that the buyer will be solely responsible for any damage to its computer system or the loss of data that results from such activities. No advice or information, whether oral or written, obtained by the buyer from Wyomind or from the Wyomind.com web-site shall create any warranty for the Software.
+

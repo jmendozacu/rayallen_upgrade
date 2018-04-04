@@ -73,10 +73,10 @@ class Storage extends \Magento\Framework\App\Helper\AbstractHelper
                 $ftp->cd($ftpDir);
             }
             
-            if (!$useSftp && $ftp->write($file, $this->getAbsoluteRootDir() . $path . $file)) {
+            if (!$useSftp && $ftp->write($file, $this->getAbsoluteRootDir() . $path . "/" . $file)) {
                 $this->_messageManager->addSuccess(sprintf(__("File '%s' successfully uploaded on %s"), $file, $ftpHost) . ".");
                 $rtn = true;
-            } elseif ($useSftp && $ftp->write($file, $this->getAbsoluteRootDir() . $path . $file)) {
+            } elseif ($useSftp && $ftp->write($file, $this->getAbsoluteRootDir() . $path . "/" . $file)) {
                 $this->_messageManager->addSuccess(sprintf(__("File '%s' successfully uploaded on %s"), $file, $ftpHost) . ".");
                 $rtn = true;
             } else {

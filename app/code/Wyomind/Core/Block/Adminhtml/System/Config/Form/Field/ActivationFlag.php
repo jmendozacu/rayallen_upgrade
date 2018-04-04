@@ -1,12 +1,15 @@
 <?php
 
-/*
- * Copyright © 2015 Wyomind. All rights reserved.
+/**
+ * Copyright © 2017 Wyomind. All rights reserved.
  * See LICENSE.txt for license details.
  */
 
 namespace Wyomind\Core\Block\Adminhtml\System\Config\Form\Field;
 
+/**
+ * @deprecated but need to keep it for older versions of the extensions using it
+ */
 class ActivationFlag extends \Magento\Config\Block\System\Config\Form\Field
 {
 

@@ -122,7 +122,7 @@ class Ftp extends \Magento\Backend\Block\Widget\Form\Generic implements \Magento
             'label' => __('Destination directory'),
             'name' => 'ftp_dir',
             'id' => 'ftp_dir',
-            'note' => "<a style='margin:10px; display:block;' href='javascript:DataFeedManager.ftp.test(\"" . $this->getUrl('*/*/ftp') . "\")'>Test Connection</a>"
+            'note' => "<a style='margin:10px; display:block;' href='javascript:require([\"dfm_ftp\"], function (ftp) {ftp.test(\"" . $this->getUrl('*/*/ftp') . "\"); });'>Test Connection</a>"
             ]
         );
         

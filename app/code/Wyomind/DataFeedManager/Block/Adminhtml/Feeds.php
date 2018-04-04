@@ -23,16 +23,16 @@ class Feeds extends \Magento\Backend\Block\Widget\Grid\Container
 
         $this->_addButtonLabel = __('Create New Data Feed');
 
-        
+
         $this->addButton(
-            "import",
-            [
+                "import", [
             "label" => __("Import a data feed"),
             "class" => "add",
-            "onclick" => "DataFeedManager.importDataFeedModal();"
+            "onclick" => "require(['dfm_index'], function (index) { index.importDataFeedModal(); });"
                 ]
         );
-        
+
         parent::_construct();
     }
+
 }

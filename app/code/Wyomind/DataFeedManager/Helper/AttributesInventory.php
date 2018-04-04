@@ -10,7 +10,7 @@ namespace Wyomind\DataFeedManager\Helper;
 /**
  * Attributes management
  */
-class AttributesInventory extends \Magento\Framework\App\Helper\AbstractHelper
+class AttributesInventory extends \Magento\Framework\App\Helper\AbstractHelper implements \Wyomind\DataFeedManager\Helper\AttributesInterface
 {
     
     /**
@@ -96,8 +96,11 @@ class AttributesInventory extends \Magento\Framework\App\Helper\AbstractHelper
             return "";
         }
         $float = (!isset($options['float'])) ? 0 : $options['float'];
+        $value = 0;
         if ($product->getTypeID() == "configurable") {
-            $value = number_format($model->configurableQty[$product->getId()], $float, '.', '');
+            if (isset($model->configurableQty[$product->getId()])) { // when the configurable product doesn't have children
+                $value = number_format($model->configurableQty[$product->getId()], $float, '.', '');
+            }
         } elseif ($reference == "configurable") {
             $value = number_format($model->configurableQty[$item->getId()], $float, '.', '');
         } else {
@@ -105,4 +108,14 @@ class AttributesInventory extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $value;
     }
+
+    public function proceedGeneric($attributeCall,
+            $model,
+            $options,
+            $product,
+            $reference)
+    {
+        return null;
+    }
+
 }

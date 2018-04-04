@@ -30,7 +30,7 @@ class Sample extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstrac
                 $content = $model->generateFile($request);
                 $data = ["data"=>$content];
             } catch (\Exception $e) {
-                $data = ['data'=> __("Unable to generate the data feed\n") . $e->getMessage()];
+                $data = ['error'=> __("Unable to generate the data feed\n") . nl2br($e->getMessage())];
             }
             $this->getResponse()->representJson($this->_objectManager->create('Magento\Framework\Json\Helper\Data')->jsonEncode($data));
         }

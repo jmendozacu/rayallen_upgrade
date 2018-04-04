@@ -135,7 +135,7 @@ abstract class AbstractAction extends \Magento\Backend\App\Action
     public function edit()
     {
         $resultPage = $this->_resultPageFactory->create();
-        $resultPage->setActiveMenu("Magento_Catalog::" . $this->menu);
+        $resultPage->setActiveMenu("Magento_Catalog::catalog");
         $resultPage->addBreadcrumb(__($this->breadcrumbOne), __($this->breadcrumbOne));
         $resultPage->addBreadcrumb(__($this->breadcrumbTwo), __($this->breadcrumbTwo));
 

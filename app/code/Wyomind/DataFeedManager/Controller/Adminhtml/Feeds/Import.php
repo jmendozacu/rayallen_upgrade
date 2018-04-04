@@ -16,11 +16,13 @@ class Import extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstrac
         if ($this->_uploader->getFileExtension() != "dfm") {
             $this->messageManager->addError(__("Wrong file type (") . $this->_uploader->getFileExtension() . __(").<br>Choose a dfm file."));
         } else {
-            $this->_uploader->save("var/tmp", "import-datafeedmanager.csv");
+
+            $rootDir = $this->_directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::ROOT);
+            $this->_uploader->save($rootDir . "/var/tmp", "import-datafeedmanager.csv");
             // récuperer le contenu
             $file = new \Magento\Framework\Filesystem\Driver\File;
             $dfm = new \Magento\Framework\File\Csv($file);
-            $data = $dfm->getData("var/tmp/" . $this->_uploader->getUploadedFileName());
+            $data = $dfm->getData($rootDir . "/var/tmp/" . $this->_uploader->getUploadedFileName());
 
             if ($this->coreHelper->getStoreConfig("datafeedmanager/system/trans_domain_export")) {
                 $key = "dfm-empty-key";
@@ -33,10 +35,11 @@ class Import extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstrac
             } else {
                 $this->messageManager->addError(__("An error occured when importing the data feed."));
             }
-            $file->deleteFile("var/tmp/" . $this->_uploader->getUploadedFileName());
+            $file->deleteFile($rootDir . "/var/tmp/" . $this->_uploader->getUploadedFileName());
         }
-        
+
         $result = $this->_resultRedirectFactory->create()->setPath("datafeedmanager/feeds/index");
         return $result;
     }
+
 }

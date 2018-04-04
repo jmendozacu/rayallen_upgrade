@@ -20,7 +20,7 @@ class Export extends \Wyomind\DataFeedManager\Controller\Adminhtml\Feeds\Abstrac
             if ($field == "id") {
                 $values[] = "NULL";
             } else {
-                $values[] = "'" . str_replace(["'", "\\"], ["'", "\\\\"], $value) . "'";
+                $values[] = "'" . str_replace(["'", "\\"], ["''", "\\\\"], $value) . "'";
             }
         }
         $sql = "INSERT INTO {{datafeedmanager_feeds}}(" . implode(',', $fields) . ") VALUES (" . implode(',', $values) . ");";

@@ -1,21 +1,28 @@
 {
     "name": "wyomind/datafeedmanager",
-    "description": "N/A",
+    "version": "11.4.0.3",
+    "version_normalized": "11.4.0.3",
+    "dist": {
+        "type": "zip",
+        "url": "https://www.wyomind.com/wyomind-datafeedmanager-11.4.0.3.zip",
+        "reference": null
+    },
     "require": {
-        "php": "~5.5.0|~5.6.0",
-        "magento/framework": "100.0.*",
-        "lib-libxml": "*",
-        "wyomind/core":"3.0.4"
+        "magento/framework": ">=100.0.0",
+        "php": ">=7.0.0",
+        "wyomind/core": ">=3.0.0"
     },
     "type": "magento2-module",
-    "version": "8.0.5",
-    "license": [],
-     "autoload": {
+    "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
             "Wyomind\\DataFeedManager\\": ""
         }
-    }
+    },
+    "license": [
+        "Commercial License - Copyright 2016  - WYOMIND Sarl - Purchasing any product (Software) from the Wyomind.com web-site means buyer agree to the following statements (see LICENSE.TXT)"
+    ],
+    "description": "Export your products from your Magento website into csv, txt and xml data feeds for any shopping engine or market place! This extension includes all Google Shopping features and 19 sample templates. "
 }

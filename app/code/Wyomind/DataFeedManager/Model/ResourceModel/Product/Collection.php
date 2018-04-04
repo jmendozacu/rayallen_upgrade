@@ -16,9 +16,40 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     const CATEGORIES_FILTER_PRODUCT = 0;
     const CATEGORIES_FILTER_PRODUCT_AND_PARENT = 1;
     const CATEGORIES_FILTER_PARENT = 2;
-    
     const MAX_ATTRIBUTE = 25;
-    
+
+    protected $_coreHelper = null;
+
+    public function __construct(
+    \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
+            \Psr\Log\LoggerInterface $logger,
+            \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
+            \Magento\Framework\Event\ManagerInterface $eventManager,
+            \Magento\Eav\Model\Config $eavConfig,
+            \Magento\Framework\App\ResourceConnection $resource,
+            \Magento\Eav\Model\EntityFactory $eavEntityFactory,
+            \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper,
+            \Magento\Framework\Validator\UniversalFactory $universalFactory,
+            \Magento\Store\Model\StoreManagerInterface $storeManager,
+            \Magento\Framework\Module\Manager $moduleManager,
+            \Magento\Catalog\Model\Indexer\Product\Flat\State $catalogProductFlatState,
+            \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+            \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory,
+            \Magento\Catalog\Model\ResourceModel\Url $catalogUrl,
+            \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+            \Magento\Customer\Model\Session $customerSession,
+            \Magento\Framework\Stdlib\DateTime $dateTime,
+            \Magento\Customer\Api\GroupManagementInterface $groupManagement,
+            \Wyomind\Core\Helper\Data $coreHelper,
+            \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
+    )
+    {
+        $this->_coreHelper = $coreHelper;
+        parent::__construct(
+                $entityFactory, $logger, $fetchStrategy, $eventManager, $eavConfig, $resource, $eavEntityFactory, $resourceHelper, $universalFactory, $storeManager, $moduleManager, $catalogProductFlatState, $scopeConfig, $productOptionFactory, $catalogUrl, $localeDate, $customerSession, $dateTime, $groupManagement, $connection
+        );
+    }
+
     /**
      * @return boolean
      */
@@ -26,21 +57,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         return false;
     }
-    
+
     public function getConfigurableQuantities($storeId, $includeDisabled)
     {
-        
+
         $connection = $this->_resource;
         $tableCpsl = $connection->getTableName("catalog_product_super_link");
         $tableCsi = $connection->getTableName("cataloginventory_stock_item");
-        
-        
+
+
         $this->addStoreFilter($storeId);
-        
+
         if (!$includeDisabled) {
             $this->addAttributeToFilter("status", "1");
         }
-                
+
         $this->addAttributeToFilter("type_id", ["eq" => "configurable"])
                 ->addAttributeToFilter("visibility", ["neq" => "1"]);
         $this->getSelect()
@@ -54,34 +85,34 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
         return $configurableQty;
     }
-    
-    
-    public function getGroupedProducts($storeId, $notLike, $concat, $listOfAttributes, $includeDisabled)
+
+    public function getGroupedProducts($storeId, $notLike, $concat, $listOfAttributes,
+            $includeDisabled)
     {
-                
+
         $connection = $this->_resource;
         $tableCsi = $connection->getTableName("cataloginventory_stock_item");
         $tableCur = $connection->getTableName("url_rewrite");
         $tableCcp = $connection->getTableName("catalog_category_product");
         $tableCcpi = $connection->getTableName("catalog_category_product_index");
         $tableCpl = $connection->getTableName("catalog_product_link");
-        
-        
+
+
         $this->addStoreFilter($storeId);
-        
+
         if (!$includeDisabled) {
             $this->addAttributeToFilter("status", "1");
         }
-                
+
         $this->addAttributeToFilter("type_id", ["eq" => "grouped"]);
         $this->addAttributeToFilter("visibility", ["neq" => 1]);
-        
-        
-        $this->addAttributeToSelect($listOfAttributes, true);
+
+        $joinType = count($listOfAttributes) <= self::MAX_ATTRIBUTE;
+        $this->addAttributeToSelect($listOfAttributes, $joinType);
         $this->getSelect()
                 ->joinLeft(["cpl" => $tableCpl], "cpl.product_id=e.entity_id AND cpl.link_type_id=3", ["child_ids" => "GROUP_CONCAT( DISTINCT cpl.linked_product_id)"])
                 ->joinLeft(["stock" => $tableCsi], "stock.product_id=e.entity_id", ["qty" => "qty", "is_in_stock" => "is_in_stock", "manage_stock" => "manage_stock", "use_config_manage_stock" => "use_config_manage_stock", "backorders" => "backorders", "use_config_backorders" => "use_config_backorders"])
-                ->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"])
+                ->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.entity_type ='product' AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"])
                 ->joinLeft(["categories" => $tableCcp], "categories.product_id=e.entity_id")
                 ->joinLeft(["categories_index" => $tableCcpi], "categories_index.category_id=categories.category_id AND  categories_index.product_id=categories.product_id AND categories_index.store_id=" . $storeId, ["categories_ids" => "GROUP_CONCAT( DISTINCT categories_index.category_id)"])
                 ->group(["cpl.product_id"]);
@@ -99,13 +130,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
         return $grouped;
     }
-    
-    
+
     /**
      *
      * @return array | null
      */
-    protected function getParentProducts($type, $storeId, $notLike, $concat, $listOfAttributes, $includeDisabled)
+    protected function getParentProducts($type, $storeId, $notLike, $concat, $listOfAttributes,
+            $includeDisabled)
     {
 
         $connection = $this->_resource;
@@ -115,26 +146,29 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $tableCpsl = $connection->getTableName("catalog_product_super_link");
         $tableCur = $connection->getTableName("url_rewrite");
         $tableCurpc = $connection->getTableName("catalog_url_rewrite_product_category");
-        
-        
+
+
         $this->addStoreFilter($storeId);
-        
+
         if (!$includeDisabled) {
             $this->addAttributeToFilter("status", "1");
         }
-                
+        $joinType = count($listOfAttributes) <= self::MAX_ATTRIBUTE;
         $this->addAttributeToFilter("type_id", ["eq" => $type])
                 ->addAttributeToFilter("visibility", ["neq" => "1"])
-                ->addAttributeToSelect($listOfAttributes, true);
+                ->addAttributeToSelect($listOfAttributes, $joinType);
+
+        $idCol = $this->_coreHelper->moduleIsEnabled("Magento_Enterprise") ? "row_id" : "entity_id";
 
         $this->getSelect()
-                ->joinLeft(["cpsl" => $tableCpsl], "cpsl.parent_id=e.entity_id ", ["child_ids" => "GROUP_CONCAT( DISTINCT cpsl.product_id)"])
+                ->joinLeft(["cpsl" => $tableCpsl], "cpsl.parent_id=e." . $idCol . " ", ["child_ids" => "GROUP_CONCAT( DISTINCT cpsl.product_id)"])
                 ->joinLeft(["stock" => $tableCsi], "stock.product_id=e.entity_id", ["qty" => "qty", "is_in_stock" => "is_in_stock", "manage_stock" => "manage_stock", "use_config_manage_stock" => "use_config_manage_stock", "backorders" => "backorders", "use_config_backorders" => "use_config_backorders"])
-                ->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"])
+                ->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.entity_type ='product' AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"])
                 ->joinLeft(["curpc" => $tableCurpc], "url.url_rewrite_id=curpc.url_rewrite_id ")
-                ->joinLeft(["categories" => $tableCcp], "categories.product_id=e.entity_id")
+                ->joinLeft(["categories" => $tableCcp], "categories.product_id=e.entity_id", ['category_id', 'product_id', 'position'])
                 ->joinLeft(["categories_index" => $tableCcpi], "categories_index.category_id=categories.category_id AND  categories_index.product_id=categories.product_id AND categories_index.store_id=" . $storeId, ["categories_ids" => "GROUP_CONCAT( DISTINCT categories_index.category_id)"])
                 ->group(["cpsl.parent_id"]);
+
 
         $parent = [];
         foreach ($this as $p) {
@@ -144,18 +178,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
         return $parent;
     }
-    
-    
-    public function getBundleProducts($storeId, $notLike, $concat, $listOfAttributes, $includeDisabled)
+
+    public function getBundleProducts($storeId, $notLike, $concat, $listOfAttributes,
+            $includeDisabled)
     {
         return $this->getParentProducts("bundle", $storeId, $notLike, $concat, $listOfAttributes, $includeDisabled);
     }
-    public function getConfigurableProducts($storeId, $notLike, $concat, $listOfAttributes, $includeDisabled)
+
+    public function getConfigurableProducts($storeId, $notLike, $concat, $listOfAttributes,
+            $includeDisabled)
     {
         return $this->getParentProducts("configurable", $storeId, $notLike, $concat, $listOfAttributes, $includeDisabled);
     }
-    
-    public function getProductCount($storeId, $websiteId, $notLike, $concat, $manageStock, $listOfAttributes, $categoriesFilterList, $condition, $params, $includeDisabled)
+
+    public function getProductCount($storeId, $websiteId, $notLike, $concat, $manageStock,
+            $listOfAttributes, $categoriesFilterList, $condition, $params, $includeDisabled)
     {
         $this->getMainRequest($storeId, $websiteId, $notLike, $concat, $manageStock, $listOfAttributes, $categoriesFilterList, $condition, $params, $includeDisabled);
         $this->getSelect()->columns("COUNT(DISTINCT e.entity_id) As total");
@@ -163,15 +200,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->reset(\Zend_Db_Select::GROUP);
         return $this->getFirstItem()->getTotal();
     }
-    
+
     public function setLimit($sqlSize, $loop)
     {
         $this->getSelect()->limit($sqlSize, ($sqlSize * $loop));
     }
-    
-    public function getMainRequest($storeId, $websiteId, $notLike, $concat, $manageStock, $listOfAttributes, $categoriesFilterList, $condition, $params, $includeDisabled)
+
+    public function getMainRequest($storeId, $websiteId, $notLike, $concat, $manageStock,
+            $listOfAttributes, $categoriesFilterList, $condition, $params, $includeDisabled)
     {
-        
+
         $connection = $this->_resource;
         $tableCpsl = $connection->getTableName("catalog_product_super_link");
         $tableCsi = $connection->getTableName("cataloginventory_stock_item");
@@ -180,13 +218,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $tableCcpi = $connection->getTableName("catalog_category_product_index");
         $tableCurpc = $connection->getTableName("catalog_url_rewrite_product_category");
         $tableCpip = $connection->getTableName("catalog_product_index_price");
-        
+
         $this->addStoreFilter($storeId);
-        
+
         if (!$includeDisabled) {
             $this->addAttributeToFilter("status", "1");
         }
-             
+
         if (!in_array("*", explode(",", $params["type_ids"]))) {
             $this->addAttributeToFilter("type_id", ["in" => explode(",", $params["type_ids"])]);
         }
@@ -199,13 +237,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $this->addAttributeToFilter("attribute_set_id", ["in" => explode(",", $params["attribute_sets"])]);
         }
 
-        
         $joinType = count($listOfAttributes) <= self::MAX_ATTRIBUTE;
         $this->addAttributeToSelect($listOfAttributes, $joinType);
 
         $where = "";
         $a = 0;
-        
+
         $tempFilter = [];
 
         if ($manageStock != 1 && $manageStock != 0) {
@@ -304,7 +341,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $this->getSelect()->joinLeft(["stock" => $tableCsi], "stock.product_id=e.entity_id", ["qty" => "qty", "is_in_stock" => "is_in_stock", "manage_stock" => "manage_stock", "use_config_manage_stock" => "use_config_manage_stock", "backorders" => "backorders", "use_config_backorders" => "use_config_backorders"]);
-        $this->getSelect()->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"]);
+        $this->getSelect()->joinLeft(["url" => $tableCur], "url.entity_id=e.entity_id " . $notLike . " AND url.entity_type ='product' AND url.store_id=" . $storeId, ["request_path" => $concat . "(DISTINCT request_path)"]);
         $this->getSelect()->joinLeft(["curpc" => $tableCurpc], "url.url_rewrite_id=curpc.url_rewrite_id ");
 
         if ($categoriesFilterList[0] != "*") {
@@ -337,11 +374,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $this->getSelect()->joinLeft(["categories" => $tableCcp], $ct, []);
             $this->getSelect()->joinInner(["categories_index" => $tableCcpi], "categories_index.category_id=categories.category_id AND  categories_index.product_id=categories.product_id AND categories_index.store_id=" . $storeId . " " . $filter, ["categories_ids" => "GROUP_CONCAT( DISTINCT categories_index.category_id)"]);
         } else {
-            $this->getSelect()->joinLeft(["categories" => $tableCcp], "categories.product_id=e.entity_id");
+            $this->getSelect()->joinLeft(["categories" => $tableCcp], "categories.product_id=e.entity_id", []);
+            // use an empty array as selection to not rewrite the entity_id field from the main table
 
             $this->getSelect()->joinLeft(["categories_index" => $tableCcpi], "categories_index.category_id=categories.category_id AND  categories_index.product_id=categories.product_id AND categories_index.store_id=" . $storeId, ["categories_ids" => "GROUP_CONCAT(DISTINCT categories_index.category_id)"]);
         }
-        
+
         $this->getSelect()->joinLeft(["price_index" => $tableCpip], "price_index.entity_id=e.entity_id AND customer_group_id=0 AND  price_index.website_id=" . $websiteId, ["min_price" => "min_price", "max_price" => "max_price", "final_price" => "final_price"]);
 
         if (!empty($where)) {
@@ -352,4 +390,5 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this;
     }
+
 }

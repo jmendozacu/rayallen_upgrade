@@ -15,4 +15,13 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         $this->_init('Wyomind\DataFeedManager\Model\Feeds', 'Wyomind\DataFeedManager\Model\ResourceModel\Feeds');
     }
+    
+    
+    public function getList($feedsIds)
+    {
+        if (!empty($feedsIds)) {
+            $this->getSelect()->where("id IN (" . implode(',', $feedsIds) . ")");
+        }
+        return $this;
+    }
 }
