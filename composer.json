@@ -22,6 +22,10 @@
         "mirasvit-ssu2": {
             "type": "composer",
             "url": "https://18333:SNC8MOED9J@packages.mirasvit.com/"
+        },
+        "mirasvit-fpc2": {
+            "type": "composer",
+            "url": "https://35631:NWL4EVQSZ8@packages.mirasvit.com/"
         }
     },
     "require": {
@@ -29,7 +33,8 @@
         "composer/composer": "@alpha",
         "mirasvit/module-search-ultimate": "*",
         "magento/extension-b2b": "^1.0",
-        "bitexpert/magento2-force-customer-login": "^3.0"
+        "bitexpert/magento2-force-customer-login": "^3.0",
+        "mirasvit/module-cache-warmer": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.0",
