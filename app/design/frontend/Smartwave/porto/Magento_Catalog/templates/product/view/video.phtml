@@ -18,7 +18,63 @@
     $_product = $block->getProduct();
 ?>
 <?php if ($_additional = $_product->getVideo()): ?>
-    <div class="additional-attributes-wrapper table-wrapper">
-		<iframe width="420" height="315" src="<?php echo $_product->getVideo(); ?>" frameborder="0" allowfullscreen></iframe>
-    </div>
+	<?php // Grab Video(s) data ?>
+	<?php $_videoData = $_product->getData('video'); ?>
+	<?php $_arrayVideo = explode(',', $_videoData); ?>			
+	<?php if(count($_arrayVideo)): ?>
+		<?php foreach($_arrayVideo as $_videoURL): ?>
+			<div class="video-list">
+				<div class="video-wrapper">
+					<iframe width="420" height="315" src="<?php echo $_videoURL; ?>" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	<?php else: ?>
+		<div class="video-wrapper"><iframe width="420" height="315" src="<?php echo $_product->getVideo(); ?>" frameborder="0" allowfullscreen></iframe></div>
+	<?php endif; ?>
+
+	<script type="text/javascript">
+	    require(['jquery'], function ($) {
+	        $(function () {
+	            //
+	            //  Create YouTube iFrame Fluid
+	            //  _____________________________________________
+	            // Find all YouTube videos
+				var $allVideos = $("iframe[src^='//www.youtube.com']"),
+
+				    // The element that is fluid width
+				    $fluidEl = $("body");
+
+				// Figure out and save aspect ratio for each video
+				$allVideos.each(function() {
+
+				  $(this)
+				    .data('aspectRatio', this.height / this.width)
+
+				    // and remove the hard coded width/height
+				    .removeAttr('height')
+				    .removeAttr('width');
+
+				});
+
+				// When the window is resized
+				$(window).resize(function() {
+
+				  var newWidth = $fluidEl.width();
+
+				  // Resize all videos according to their own aspect ratio
+				  $allVideos.each(function() {
+
+				    var $el = $(this);
+				    $el
+				      .width(newWidth)
+				      .height(newWidth * $el.data('aspectRatio'));
+
+				  });
+
+				// Kick off one resize to fix all videos on page load
+				}).resize();
+	        });
+	    });
+	</script>
 <?php endif;?>
