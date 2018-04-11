@@ -5,6 +5,7 @@
  * @package Amasty_Base
  */
 
+
 namespace Amasty\Base\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -12,6 +13,7 @@ use SimpleXMLElement;
 use Zend\Http\Client\Adapter\Curl as CurlClient;
 use Zend\Http\Response as HttpResponse;
 use Zend\Uri\Http as HttpUri;
+use Magento\Framework\Json\DecoderInterface;
 
 class Module extends AbstractHelper
 {
@@ -22,10 +24,12 @@ class Module extends AbstractHelper
      * @var \Amasty\Base\Model\Serializer
      */
     protected $serializer;
+
     /**
      * @var CurlClient
      */
     protected $curlClient;
+
     /**
      * @var \Magento\Framework\App\CacheInterface
      */
@@ -35,20 +39,32 @@ class Module extends AbstractHelper
      * @var array
      */
     protected $restrictedModules = [
-        'Amasty_CommonRules'
+        'Amasty_CommonRules',
+        'Amasty_Router'
     ];
 
     /**
-     * Module constructor.
-     * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Amasty\Base\Model\Serializer $serializer
-     * @param \Magento\Framework\App\CacheInterface $cache
-     * @param CurlClient $curl
+     * @var \Magento\Framework\Module\Dir\Reader
      */
+    private $moduleReader;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Driver\File
+     */
+    private $filesystem;
+
+    /**
+     * @var DecoderInterface
+     */
+    private $jsonDecoder;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Amasty\Base\Model\Serializer $serializer,
         \Magento\Framework\App\CacheInterface $cache,
+        \Magento\Framework\Module\Dir\Reader $moduleReader,
+        \Magento\Framework\Filesystem\Driver\File $filesystem,
+        DecoderInterface $jsonDecoder,
         CurlClient $curl
     ) {
         parent::__construct($context);
@@ -56,6 +72,9 @@ class Module extends AbstractHelper
         $this->cache = $cache;
         $this->serializer = $serializer;
         $this->curlClient = $curl;
+        $this->moduleReader = $moduleReader;
+        $this->filesystem = $filesystem;
+        $this->jsonDecoder = $jsonDecoder;
     }
 
     /**
@@ -142,6 +161,7 @@ class Module extends AbstractHelper
         if ($this->curlClient === null) {
             $this->curlClient = new CurlClient();
         }
+
         return $this->curlClient;
     }
 
@@ -156,5 +176,22 @@ class Module extends AbstractHelper
     public function getRestrictedModules()
     {
         return $this->restrictedModules;
+    }
+
+    /**
+     * Read info about extension from composer json file
+     * @param $moduleCode
+     * @return mixed
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    public function getModuleInfo($moduleCode)
+    {
+        $dir = $this->moduleReader->getModuleDir('', $moduleCode);
+        $file = $dir . '/composer.json';
+
+        $string = $this->filesystem->fileGetContents($file);
+        $json = $this->jsonDecoder->decode($string);
+
+        return $json;
     }
 }

@@ -5,10 +5,10 @@
  * @package Amasty_Base
  */
 
+
 namespace Amasty\Base\Block;
 
 use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\Json\DecoderInterface;
 
 class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
@@ -16,22 +16,12 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
      * @var \Magento\Framework\Module\ModuleListInterface
      */
     protected $_moduleList;
+
     /**
      * @var \Magento\Framework\View\LayoutFactory
      */
     protected $_layoutFactory;
-    /**
-     * @var \Magento\Framework\Module\Dir\Reader
-     */
-    protected $_moduleReader;
-    /**
-     * @var DecoderInterface
-     */
-    protected $_jsonDecoder;
-    /**
-     * @var \Magento\Framework\Filesystem\Driver\File
-     */
-    protected $_filesystem;
+
     /**
      * @var \Amasty\Base\Helper\Module
      */
@@ -43,19 +33,13 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
         \Magento\Framework\View\Helper\Js $jsHelper,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
-        \Magento\Framework\Module\Dir\Reader $moduleReader,
-        \Magento\Framework\Filesystem\Driver\File $filesystem,
         \Amasty\Base\Helper\Module $moduleHelper,
-        DecoderInterface $jsonDecoder,
         array $data = []
     ) {
         parent::__construct($context, $authSession, $jsHelper, $data);
 
         $this->_moduleList    = $moduleList;
         $this->_layoutFactory = $layoutFactory;
-        $this->_moduleReader  = $moduleReader;
-        $this->_jsonDecoder   = $jsonDecoder;
-        $this->_filesystem    = $filesystem;
         $this->_moduleHelper  = $moduleHelper;
         $this->_scopeConfig   = $context->getScopeConfig();
     }
@@ -116,13 +100,7 @@ class Extensions extends \Magento\Config\Block\System\Config\Form\Fieldset
      */
     protected function _getModuleInfo($moduleCode)
     {
-        $dir = $this->_moduleReader->getModuleDir('', $moduleCode);
-        $file = $dir . '/composer.json';
-
-        $string = $this->_filesystem->fileGetContents($file);
-        $json = $this->_jsonDecoder->decode($string);
-
-        return $json;
+        return $this->_moduleHelper->getModuleInfo($moduleCode);
     }
 
     /**
