@@ -1,0 +1,51 @@
+//
+//  Author : I.CUBE
+//	Description : style the overall Rayallen's theme without touching the Smartwave styles (.less)
+
+//
+//  Common/General styles
+//  _____________________________________________
+
+
+& when (@media-common = true) {
+	body.cms-index-index {
+		.owl-stage {			
+			.product-item-photo {
+				max-height: inherit;
+			}
+			.product-image-photo.default_image {
+				position: relative;
+			}
+		}
+	}
+}
+
+//
+//  Max. 768px
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = (@screen__m + 1)){
+	footer {
+		.footer-social-icons {
+			li {
+				padding-left: 0 !important;
+				padding-right: 0 !important;
+				min-width: 36px;
+			}
+			li:last-child {
+				min-width: 45px;
+			}
+			li a {
+				display: block;
+				text-align: center;
+			}
+			li a [class^="porto-icon-"]:before, 
+			li a [class*=" porto-icon-"]:before {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+		.mage-error[generated] {
+			font-weight: bold;
+		}
+	}
+}
