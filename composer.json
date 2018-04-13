@@ -34,8 +34,7 @@
         "mirasvit/module-search-ultimate": "*",
         "magento/extension-b2b": "^1.0",
         "bitexpert/magento2-force-customer-login": "^3.0",
-        "mirasvit/module-cache-warmer": "*",
-        "magepal/magento2-gmailsmtpapp": "^2.5"
+        "mirasvit/module-cache-warmer": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.0",
@@ -76,5 +75,12 @@
     "prefer-stable": true,
     "extra": {
         "magento-force": "override"
-    }
+    },
+    "repositories": [
+    {
+    "type": "composer",
+    "url": "https://packagist.org"
+    },
+    { "packagist": false }
+    ]
 }
