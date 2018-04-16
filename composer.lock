@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddafe8ea0d2ff19753dae67c76af7ce4",
+    "content-hash": "bab75e166cf341173e78b7016ab7082e",
     "packages": [
         {
             "name": "bitexpert/magento2-force-customer-login",
@@ -881,12 +881,120 @@
             "time": "2015-01-18T14:31:58+00:00"
         },
         {
-            "name": "magento/composer",
-            "version": "1.2.0",
+            "name": "magefan/module-blog",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magefan/module-blog.git",
+                "reference": "c36a8b4c34acbd08f8058699f9ad0ad0b4c42013"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://repo.magento.com/archives/magento/composer/magento-composer-1.2.0.0.zip",
-                "reference": null,
+                "url": "https://api.github.com/repos/magefan/module-blog/zipball/c36a8b4c34acbd08f8058699f9ad0ad0b4c42013",
+                "reference": "c36a8b4c34acbd08f8058699f9ad0ad0b4c42013",
+                "shasum": ""
+            },
+            "require": {
+                "magefan/module-community": ">=2.0.0",
+                "php": "~5.6.5 || >=7.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Magefan\\Blog\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0",
+                "AFL-3.0"
+            ],
+            "description": "Implements Blog functionality on Magento 2 store",
+            "time": "2018-03-29T20:40:09+00:00"
+        },
+        {
+            "name": "magefan/module-blog-m22",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magefan/module-blog-m22.git",
+                "reference": "9f3ef2500c9805f52f806b1d0399ebc465159e89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magefan/module-blog-m22/zipball/9f3ef2500c9805f52f806b1d0399ebc465159e89",
+                "reference": "9f3ef2500c9805f52f806b1d0399ebc465159e89",
+                "shasum": ""
+            },
+            "require": {
+                "magefan/module-blog": "^2.6.2",
+                "php": "~5.6.5 || >=7.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Magefan\\BlogM22\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0",
+                "AFL-3.0"
+            ],
+            "description": "Fixes for Blog on Magento 2.2.x",
+            "time": "2018-01-04T07:20:20+00:00"
+        },
+        {
+            "name": "magefan/module-community",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magefan/module-community.git",
+                "reference": "8c508aa7157f79be38b8cdd4fcac0b91ca8c5e29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magefan/module-community/zipball/8c508aa7157f79be38b8cdd4fcac0b91ca8c5e29",
+                "reference": "8c508aa7157f79be38b8cdd4fcac0b91ca8c5e29",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.6.5 || >=7.0"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "Magefan\\Community\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0",
+                "AFL-3.0"
+            ],
+            "time": "2018-03-28T18:53:11+00:00"
+        },
+        {
+            "name": "magento/composer",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magento/composer.git",
+                "reference": "130753af2b755f1967e253deb661225942bb302c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magento/composer/zipball/130753af2b755f1967e253deb661225942bb302c",
+                "reference": "130753af2b755f1967e253deb661225942bb302c",
                 "shasum": "303513c83d4f6562ff1480a954bb298b37261fb3"
             },
             "require": {
@@ -10275,7 +10383,6 @@
             ],
             "time": "2017-06-21T14:56:23+00:00"
         },
-        
         {
             "name": "mirasvit/module-cache-warmer",
             "version": "1.1.18",
