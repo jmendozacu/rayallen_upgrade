@@ -1,7 +1,7 @@
 /**
- * Copyright Â© 2015 Magento. All rights reserved.
+ * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
- **/
+ */
 require([
     'jquery',
     'mage/smart-keyboard-handler',
@@ -39,7 +39,43 @@ require([
 require([
     'jquery'
 ], function ($) {
+    (function() {
+        var ev = new $.Event('classadded'),
+            orig = $.fn.addClass;
+        $.fn.addClass = function() {
+            $(this).trigger(ev, arguments);
+            return orig.apply(this, arguments);
+        }
+    })();
+    $.fn.extend({
+        scrollToMe: function(){
+            if($(this).length){
+                var top = $(this).offset().top - 100;
+                $('html,body').animate({scrollTop: top}, 300);
+            }
+        },
+        scrollToJustMe: function(){
+            if($(this).length){
+                var top = jQuery(this).offset().top;
+                $('html,body').animate({scrollTop: top}, 300);
+            }
+        }
+    });
     $(document).ready(function(){
+        var windowScroll_t;
+        $(window).scroll(function(){
+            clearTimeout(windowScroll_t);
+            windowScroll_t = setTimeout(function(){
+                if(jQuery(this).scrollTop() > 100){
+                    $('#totop').fadeIn();
+                }else{
+                    $('#totop').fadeOut();
+                }
+            }, 500);
+        });
+        $('#totop').off("click").on("click",function(){
+            $('html, body').animate({scrollTop: 0}, 600);
+        });
         if ($('body').hasClass('checkout-cart-index')) {
             if ($('#co-shipping-method-form .fieldset.rates').length > 0 && $('#co-shipping-method-form .fieldset.rates :checked').length === 0) {
                 $('#block-shipping').on('collapsiblecreate', function () {
@@ -49,19 +85,23 @@ require([
         }
         /** Added this for Popup **/
         $('#popup-myModal').click(function() {
-        $("#popup-myModal").hide();
-    });
-
-    $(".submenu").hide();
-    $(".open-children-toggle").click(function(){
-        $(this).next(".submenu").slideToggle('slow', function() {
-            $(this).prev(".open-children-toggle").toggleClass('active', $(this).is(':visible'));
+            $("#popup-myModal").hide();
         });
-    });
 
+        $(".products-grid .weltpixel-quickview").each(function(){
+            $(this).appendTo($(this).parent().parent().children(".product-item-photo"));
+        });
+        $('#maincontent .columns').append($('.ln_overlay').detach());
         
+        $(".submenu").hide();
+        $(".open-children-toggle").click(function(){
+            $(this).next(".submenu").slideToggle('slow', function() {
+                $(this).prev(".open-children-toggle").toggleClass('active', $(this).is(':visible'));
+            });
+        });
+
         /** Added For more Categories **/
-    if ($(window).width() < 850) {
+        if ($(window).width() < 850) {
             var vis = 10;
         }
         else if($(window).width() < 1030) {
@@ -78,6 +118,7 @@ require([
             $more.hide();
         });
         $('.side-custom-menu > .navigation > ul').after($more);
+
         $(".word-rotate").each(function() {
 
             var $this = $(this),
@@ -113,7 +154,17 @@ require([
             }, 2000);
 
         });
-        
+        $(".top-links-icon").off("click").on("click", function(e){
+            if($(this).parent().children("ul.links").hasClass("show")) {
+                $(this).parent().children("ul.links").removeClass("show");
+            } else {
+                $(this).parent().children("ul.links").addClass("show");
+            }
+            e.stopPropagation();
+        });
+        $(".top-links-icon").parent().click(function(e){
+            e.stopPropagation();
+        });
         $(".search-toggle-icon").click(function(e){
             if($(this).parent().children(".block-search").hasClass("show")) {
                 $(this).parent().children(".block-search").removeClass("show");
@@ -127,9 +178,41 @@ require([
         });
         $("html,body").click(function(){
             $(".search-toggle-icon").parent().children(".block-search").removeClass("show");
+            $(".top-links-icon").parent().children("ul.links").removeClass("show");
         });
-        
+
         /********************* Qty Holder **************************/
+        $(document).on("click", ".qtyplus", function(e) {
+            // Stop acting like a button
+            e.preventDefault();
+            // Get its current value
+            var currentVal = parseInt($(this).parents('form').find('input[name="qty"]').val());
+            // If is not undefined
+            if (!isNaN(currentVal)) {
+                // Increment
+                $(this).parents('form').find('input[name="qty"]').val(currentVal + 1);
+            } else {
+                // Otherwise put a 0 there
+                $(this).parents('form').find('input[name="qty"]').val(0);
+            }
+        });
+        // This button will decrement the value till 0
+        $(document).on("click", ".qtyminus", function(e) {
+            // Stop acting like a button
+            e.preventDefault();
+            // Get the field name
+            fieldName = $(this).attr('field');
+            // Get its current value
+            var currentVal = parseInt($(this).parents('form').find('input[name="qty"]').val());
+            // If it isn't undefined or its greater than 0
+            if (!isNaN(currentVal) && currentVal > 0) {
+                // Decrement one
+                $(this).parents('form').find('input[name="qty"]').val(currentVal - 1);
+            } else {
+                // Otherwise put a 0 there
+                $(this).parents('form').find('input[name="qty"]').val(0);
+            }
+        });
         $(".qty-inc").unbind('click').click(function(){
             if($(this).parent().parent().children(".control").children("input.input-text.qty").is(':enabled')){
                 $(this).parent().parent().children(".control").children("input.input-text.qty").val((+$(this).parent().parent().children(".control").children("input.input-text.qty").val() + 1) || 0);
@@ -174,6 +257,13 @@ require([
             }
             $(this).get(0).play();
         });
+        if($(".page-header").hasClass("type10") || $(".page-header").hasClass("type22")) {
+            if(s_width >= 992){
+                $(".navigation").addClass("side-megamenu")
+            } else {
+                $(".navigation").removeClass("side-megamenu")
+            }
+        }
         
         $(window).resize(function(){
             s_width = $(window).innerWidth();
@@ -194,6 +284,40 @@ require([
                     $(this).css("top","0px");
                 }
             });
+            if($(".page-header").hasClass("type10") || $(".page-header").hasClass("type22")) {
+                if(s_width >= 992){
+                    $(".navigation").addClass("side-megamenu")
+                } else {
+                    $(".navigation").removeClass("side-megamenu")
+                }
+            }
+        });
+        var breadcrumb_pos_top = 0;
+        $(window).scroll(function(){
+            if(!$("body").hasClass("cms-index-index")){
+                var side_header_height = $(".page-header.type10, .page-header.type22").innerHeight();
+                var window_height = $(window).height();
+                if(side_header_height-window_height<$(window).scrollTop()){
+                    if(!$(".page-header.type10, .page-header.type22").hasClass("fixed-bottom"))
+                        $(".page-header.type10, .page-header.type22").addClass("fixed-bottom");
+                }
+                if(side_header_height-window_height>=$(window).scrollTop()){
+                    if($(".page-header.type10, .page-header.type22").hasClass("fixed-bottom"))
+                        $(".page-header.type10, .page-header.type22").removeClass("fixed-bottom");
+                }
+            }
+            if($("body.side-header .page-wrapper > .breadcrumbs").length){
+                if(!$("body.side-header .page-wrapper > .breadcrumbs").hasClass("fixed-position")){
+                    breadcrumb_pos_top = $("body.side-header .page-wrapper > .breadcrumbs").offset().top;
+                    if($("body.side-header .page-wrapper > .breadcrumbs").offset().top<$(window).scrollTop()){
+                        $("body.side-header .page-wrapper > .breadcrumbs").addClass("fixed-position");
+                    }
+                }else{
+                    if($(window).scrollTop()<=1){
+                        $("body.side-header .page-wrapper > .breadcrumbs").removeClass("fixed-position");
+                    }
+                }
+            }
         });
     });
 });
