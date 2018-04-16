@@ -2,6 +2,12 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
+//require([
+//    'jquery',
+//    'bootstrap/js/bootstrap.min'
+//], function ($) {
+
+//});
 require([
     'jquery',
     'mage/smart-keyboard-handler',
@@ -83,42 +89,10 @@ require([
                 });
             }
         }
-        /** Added this for Popup **/
-        $('#popup-myModal').click(function() {
-            $("#popup-myModal").hide();
-        });
-
         $(".products-grid .weltpixel-quickview").each(function(){
             $(this).appendTo($(this).parent().parent().children(".product-item-photo"));
         });
         $('#maincontent .columns').append($('.ln_overlay').detach());
-        
-        $(".submenu").hide();
-        $(".open-children-toggle").click(function(){
-            $(this).next(".submenu").slideToggle('slow', function() {
-                $(this).prev(".open-children-toggle").toggleClass('active', $(this).is(':visible'));
-            });
-        });
-
-        /** Added For more Categories **/
-        if ($(window).width() < 850) {
-            var vis = 10;
-        }
-        else if($(window).width() < 1030) {
-            var vis = 15;
-        }
-        else{
-            var vis = 20;
-        }
-
-        $('.side-custom-menu .navigation li.level0').slice(vis).hide();
-        var $more = $('<a href="javascript:void(0);" class="more-categories">More Categories</a>');
-        $more.click(function(){
-            $('.side-custom-menu .navigation li:hidden').slice(0,$('.side-custom-menu .navigation li').length).show();
-            $more.hide();
-        });
-        $('.side-custom-menu > .navigation > ul').after($more);
-
         $(".word-rotate").each(function() {
 
             var $this = $(this),
