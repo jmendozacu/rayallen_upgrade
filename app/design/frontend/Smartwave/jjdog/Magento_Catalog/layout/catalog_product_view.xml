@@ -18,12 +18,12 @@
         <move element="product.info.review" destination="product.info.main" before="product.info.price"/>
         <!--<move element="catalog.product.related" destination="sidebar.additional" after="product_view_custom_block"/>-->
 		<referenceContainer name="product.info.details">
-			<block class="Smartwave\Porto\Block\Product\View\Video" name="video" template="Magento_Catalog::product/view/video.phtml" group="detailed_info">
+			<block class="Magento\Catalog\Block\Product\View\Description" name="video" template="Magento_Catalog::product/view/video.phtml" group="detailed_info">
                 <arguments>
                     <argument name="title" translate="true" xsi:type="string">Video</argument>
                 </arguments>
             </block>
-			<block class="Smartwave\Porto\Block\Product\View\Compareproducts" name="compareproducts" template="Magento_Catalog::product/view/compareproducts.phtml" group="detailed_info">
+			<block class="Magento\Catalog\Block\Product\View\Description" name="compareproducts" template="Magento_Catalog::product/view/compareproducts.phtml" group="detailed_info">
                 <arguments>
                     <argument name="title" translate="true" xsi:type="string">Compare Products</argument>
                 </arguments>
