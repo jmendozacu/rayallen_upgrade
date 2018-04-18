@@ -8,6 +8,8 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="custom_block" remove="true"/>
+        <referenceBlock name="top.search" remove="true"/>
+        <referenceBlock name="minicart" remove="true"/>
 		<referenceContainer name="content.bottom">
 		<block class="Magento\Cms\Block\Block" name="checkout_identifier">
 			<arguments>
