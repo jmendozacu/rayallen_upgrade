@@ -16,7 +16,8 @@
         <move element="category.image" destination="content" before="category_desc_main_column"/>        
         <move element="catalog.leftnav" destination="sidebar.main" after="category_view_custom_block"/>
 		<referenceContainer name="sidebar.main">
-            <block class="Smartwave\Porto\Block\Template" name="category_view_featured_block" template="Magento_Catalog::category/custom_block.phtml"/>
+            <block class="Smartwave\Porto\Block\Template" name="category_view_featured_block" template="Magento_Catalog::category/custom_block.phtml" after="-"/>
         </referenceContainer>
+        <referenceBlock name="category_leftnav" remove="true"/>
     </body>
 </page>
