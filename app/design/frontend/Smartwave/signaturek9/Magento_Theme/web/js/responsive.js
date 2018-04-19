@@ -38,10 +38,11 @@ define([
                 galleryElement.gallery('option', 'showNav', false);
                 galleryElement.gallery('option', 'showThumbs', true);
             }
-
-            setTimeout(function () {
-                $('.product.data.items').tabs('option', 'openOnFocus', true);
-            }, 500);
+            (function () {
+                setTimeout(function () {
+                    $('.product.data.items').tabs('option', 'openOnFocus', true);
+                }, 500);
+            });
         },
         // Switch to Mobile Version
         exit: function () {

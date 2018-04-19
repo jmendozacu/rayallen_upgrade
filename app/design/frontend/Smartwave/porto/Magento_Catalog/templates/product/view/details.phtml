@@ -12,16 +12,18 @@
     $porto_helper = $this->helper('Smartwave\Porto\Helper\Data');
     $_helper = $this->helper('Smartwave\Porto\Helper\Customtabs');
     $product_config = $porto_helper->getConfig('porto_settings/product');
-    $static_block_tab = $product_config['custom_block_next_tab'];
+    if(isset($product_config['custom_block_next_tab'])) {
+        $static_block_tab = $product_config['custom_block_next_tab'];
+    }
     $custom_block = $this->getLayout()->createBlock('Magento\Cms\Block\Block');
-    if($custom_block) {
+    if($custom_block && isset($product_config['custom_block_next_tab'])) {
         $custom_block->setBlockId($static_block_tab);
     }
     $tab_style = "";
     if(isset($product_config['tab_style']) && $product_config['tab_style'])
         $tab_style = $product_config['tab_style'];
 ?>
-    <?php if($product_config['tab_full_background']):?>
+    <?php if(isset($product_config['tab_full_background'])):?>
     <div class="move-product-tab">
         <div class="row">
             <div class="<?php if($custom_block && $static_block_tab):?>col-md-9<?php else:?>col-md-12<?php endif;?>">
@@ -194,7 +196,7 @@
                     });
                 </script>
                 </div>
-    <?php if($product_config['tab_full_background']):?>
+    <?php if(isset($product_config['tab_full_background'])):?>
             </div>
             <?php if($custom_block && $static_block_tab):?>
             <div class="col-md-3">
