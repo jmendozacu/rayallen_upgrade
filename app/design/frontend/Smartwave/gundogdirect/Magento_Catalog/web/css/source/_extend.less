@@ -24,6 +24,29 @@
 		width: 100%;
 		height: 100%;
 	}
+
+	/*Product Detail Page*/
+	.product-info-main {
+		.product.attribute.sku {
+			word-wrap: break-word;
+
+			.type {
+				font-weight: normal;
+		    	margin-right: 4.5px;
+		    	&:after {
+		    		content: '#:';
+		    	}
+			}
+
+			.value {
+				display: inline-block;
+			}
+		}
+
+		.box-tocart .action.tocart:not(:last-child) {
+			margin-bottom: 0;
+		}
+	}
 }
 
 //
