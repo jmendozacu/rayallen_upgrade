@@ -82,4 +82,24 @@
 			margin-right: 0;
 		}
 	}
+
+	.header.content .search-block .col-md-7.col-sm-7.col-xs-8 {
+		width: 61%;
+	}
+	.header.content .search-block .col-md-3.col-sm-3.col-xs-4.pull-right {
+		margin-right: 20px;
+	}
+}
+
+//
+//    Max. 375px
+// --------------------------------------
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xxs-375) {
+	.header.content .search-block .col-md-7.col-sm-7.col-xs-8 {
+		width: 100% !important;
+	}
+
+	.header.content .search-block .col-md-3.col-sm-3.col-xs-4.pull-right {
+		margin-right: 0 !important;
+	}
 }
