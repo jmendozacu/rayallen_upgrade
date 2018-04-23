@@ -13,7 +13,10 @@
  */
 ?>
 <?php
-if ($exist = ($block->getRecentlyViewedProducts() && $block->getRecentlyViewedProducts()->getSize())) {
+$OM = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $OM->get('Magento\Customer\Model\Session');
+
+if ($exist = ($block->getRecentlyViewedProducts() && $block->getRecentlyViewedProducts()->getSize() && $customerSession->isLoggedIn())) {
     $type = 'widget-viewed';
     $mode = 'list';
 
