@@ -17,6 +17,7 @@
         <referenceBlock name="report.bugs" remove="true"/>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
         <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceBlock name="requisition.list.link" remove="true"/>
         <move element="breadcrumbs" destination="content.top" before="-"/>
 		<move element="messages" destination="content.top" before="-"/>
         <move element="page.main.title" destination="content.top" after="breadcrumbs"/>		
