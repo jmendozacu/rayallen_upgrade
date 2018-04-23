@@ -36,5 +36,8 @@
                 </arguments>
             </block>  			
         </referenceContainer>
+
+        <move element="page.main.title" destination="product.info.main" before="-"/>
+
     </body>
 </page>
