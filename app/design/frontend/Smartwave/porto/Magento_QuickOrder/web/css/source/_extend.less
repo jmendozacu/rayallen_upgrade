@@ -1,0 +1,146 @@
+//
+//  Author : I.CUBE
+//	Description : style the overall Rayallen's theme without touching the Smartwave styles (.less)
+
+//
+//  Common
+//  _____________________________________________
+& when (@media-common = true) {
+	.quickorder-index-index {
+		.deletable-item-title, .deletable-item {
+			overflow: hidden;
+		}
+
+		.column .block-addbysku .block-content .actions-toolbar {
+			clear: both!important;
+		}
+		
+		.deletable-item {
+			margin-bottom: 10px;
+		}
+
+		.column .block-addbysku .fieldset .fields {
+			overflow: unset;
+			clear: both;
+			.field {
+				display: block;
+				padding: 0;
+
+				&.sku, &.qty {
+					width: 50%;
+				}
+
+				&.sku {
+					float: left;
+					position: relative;
+
+					.product-block {
+						&:not(:empty) {
+							background: transparent;
+    						margin-top: -5px;
+						}
+
+						.name a {
+							color: #333;
+							&:active, &:hover {
+								color: #777777;
+							}
+						}
+					}
+				}
+
+				&.qty {
+					float: right;
+					padding-left: 20px;
+				}
+			}
+
+			.actions-toolbar {
+				position: absolute;
+				top: 0;
+				right: 0;
+			}
+		}
+
+		.box-upload {
+			.upload.skus {
+				clear: both;
+			}
+		}
+	}
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+	
+}
+
+//
+//  Mobile
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+	.quickorder-index-index {
+		.column {
+			.block-addbysku {
+				.fieldset {
+					.fields {
+						.actions-toolbar {
+							margin-right: 0!important;
+
+							.action.remove {
+								right: 0;
+								padding: 0 12px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@screen__s6: 640px;
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s6) {
+	.quickorder-index-index {
+		.column {
+			.block-addbysku {
+				.box-items {
+					.fieldset {
+						.fields {
+							.field {
+								&.sku, &.qty {
+									width: 100%;
+								}
+
+								&.qty {
+									padding: 0;
+								}
+
+								.actions-toolbar {
+									top: 27px;
+								}
+							}
+						}
+					}
+				}
+
+				.box-upload {
+					.fieldset {
+						.fields {
+							.field.sku {
+								width: 100%;
+							}
+						}
+					}
+				}
+
+				.action.remove:active:before, .action.remove:hover:before {
+					color: #8f8f8f;
+				}
+			}
+		}
+	}
+}
