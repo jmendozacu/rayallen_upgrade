@@ -298,18 +298,31 @@ $move_actions = "";
         </script>
     <?php endif; ?>
 <?php endif; ?>
-<?php
-$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-$customerSession = $objectManager->create('Magento\Customer\Model\Session');
-$url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl();
+
+<?php 
+/**
+ * ICUBE
+ * Description: Disabling hardcoded script, temporary fixed until further notice (the script below is calling Amasty_Promo Ajax with specific customer data)
+ */
+?>
+<?php 
+/**
+ * ICUBE
+ * Description: Disabling hardcoded script, temporary fixed until further notice (the script below is calling Amasty_Promo Ajax with specific customer data)
+ */
+?>
+<!-- <?php
+//$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+//$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+//$url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl();
     ?>
     <div class='productListView'></div>
 
     <script type="text/javascript">
         function ajaxListView() {
             var myVariable;
-            var criteoPids = '<?php echo $criteoPids;?>';
-            var url = '<?php echo $url;?>';
+            var criteoPids = '<?php //echo $criteoPids;?>';
+            var url = '<?php //echo $url;?>';
             jQuery.ajax({
                 'async': false,
                 'type': "POST",
@@ -324,5 +337,5 @@ $url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStor
         }
         var listView = ajaxListView();
         jQuery('.productListView').html(listView);
-    </script>
+    </script> -->
 

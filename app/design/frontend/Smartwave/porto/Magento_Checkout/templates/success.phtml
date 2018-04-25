@@ -95,15 +95,20 @@ if($orderSidecar->getDiscountDescription() != "" && $orderSidecar->getDiscountDe
 	};
 </script>
 
-<div class='SuccessView'></div>
+<?php
+/**
+ * ICUBE
+ * Description: Disabling hardcoded script, temporary fixed until further notice (the script below is calling Amasty_Promo Ajax with specific customer data)
+ */?>
+<!-- <div class='SuccessView'></div>
 
 <script type="text/javascript">
     function ajaxSuccess() {
         var myVariable;
-        var email = '<?php echo $email;?>';
-        var lastTransId = '<?php echo $transId;?>';
-        var orderItems = '<?php echo $itemsList;?>';
-        var url = '<?php echo $url;?>';
+        var email = '<?php //echo $email;?>';
+        var lastTransId = '<?php //echo $transId;?>';
+        var orderItems = '<?php //echo $itemsList;?>';
+        var url = '<?php //echo $url;?>';
         jQuery.ajax({
             'async': false,
             'type': "POST",
@@ -118,7 +123,7 @@ if($orderSidecar->getDiscountDescription() != "" && $orderSidecar->getDiscountDe
     }
     var success = ajaxSuccess();
     jQuery('.SuccessView').html(success);
-</script>
+</script> -->
 
 <?php 
 	$shippingAddress = $order->getShippingAddress();
