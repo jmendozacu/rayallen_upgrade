@@ -1,0 +1,102 @@
+//
+//  Author : I.CUBE
+//	Description : style the overall Rayallen's theme without touching the Smartwave styles (.less)
+
+//
+//  Common
+//  _____________________________________________
+& when (@media-common = true) {
+	/*Sitemap*/
+	.mageworx-htmlsitemap-index-index {
+		.breadcrumbs{
+			margin-bottom: 0;
+		}
+
+		.page-title-wrapper {
+			display: none;
+		}
+
+		.xsitemap-categories, .xsitemap-pages {
+			width: 100%;
+		}
+
+		.xsitemap {
+			h3 {
+				font-size: 18px;
+    			font-weight: 600;
+			}
+
+			ul {
+				padding-left: 10px;
+				margin-top: 15px;
+			}
+
+			li {
+				list-style: none;
+
+				&.level-0, &.page-url {
+					font-size: 13px;
+					font-weight: normal;
+				}
+
+				a {
+					color: #333333;
+					font-weight: normal;
+
+					&:hover {
+						color: #0088cc;
+					}
+				}
+
+				&:before {
+					color: #333333;
+				    content: "\f105";
+				    font-family: FontAwesome;
+				    padding-right: 5px;
+				}
+			}
+		}
+	}
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+	/*Sitemap*/
+	.mageworx-htmlsitemap-index-index {
+		.xsitemap {
+			li {
+				width: 50%; 
+				float: left;
+			}
+		}
+	}
+}
+
+//
+//  Max. 768px
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = (@screen__m + 1)){
+	/*Sitemap*/
+	.mageworx-htmlsitemap-index-index {
+		.column.main {
+			overflow: hidden;
+		}
+		
+		.xsitemap {
+			li {
+				width: 100%; 
+				float: none;
+			}
+		}
+	}
+}
+
+//
+//    Max. 375px
+// --------------------------------------
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xxs-375) {
+	
+}
