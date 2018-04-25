@@ -159,6 +159,116 @@
 ?>
 </div>
 
+<?php 
+/**
+ * ICUBE
+ * Description: Disabling hardcoded script, temporary fixed until further notice (the script below is calling Amasty_Promo Ajax with specific customer data)
+ */
+?>
+<!-- <?php
+//$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+//$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+//$url = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl();
+//if( $this->getRequest()->getFullActionName() == 'cms_index_index') {
+?>
+    <div class='viewHome'></div>
+
+    <script type="text/javascript">
+        function ajaxEmail() {
+            var myVariable;
+            var url = '<?php //echo $url;?>';
+            jQuery.ajax({
+                'async': false,
+                'type': "POST",
+                'global': false,
+                'dataType': 'html',
+                'url': url+"amasty_promo/customer/info?ajax=viewHome&account=32513",
+                'success': function (data) {
+                    myVariable = data;
+                }
+            });
+            return myVariable;
+        }
+        var email = ajaxEmail();
+        jQuery('.viewHome').html(email);
+
+    </script>
+<?php //} else if($this->getRequest()->getFullActionName() == 'catalog_product_view') {
+
+    //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    //$product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');//get current product
+    //$sku = $product->getSku();
+?>
+    <div class='productView'></div>
+
+    <script type="text/javascript">
+        function ajaxProduct() {
+            var myVariable;
+            var prosku = '<?php //echo $sku;?>';
+            var url = '<?php //echo $url;?>';
+            jQuery.ajax({
+                'async': false,
+                'type': "POST",
+                'global': false,
+                'dataType': 'html',
+                'url': url+"amasty_promo/customer/info?ajax=productView&account=32513"+'&sku='+prosku,
+                'success': function (data) {
+                    myVariable = data;
+                }
+            });
+            return myVariable;
+        }
+        var product = ajaxProduct();
+        jQuery('.productView').html(product);
+    </script>
+    <script type="text/javascript">
+        var sidecar = sidecar || {};
+        sidecar.product_info = {
+        group_id: '<?php //echo $sku;?>'
+        };
+    </script>
+
+<?php //} else if($this->getRequest()->getFullActionName() == 'checkout_cart_index') {
+
+    //$om =   \Magento\Framework\App\ObjectManager::getInstance();
+    //$cartData = $om->create('Magento\Checkout\Model\Cart')->getQuote()->getAllVisibleItems();
+    //$cartDataCount = count( $cartData );
+    //$viewBasket = '';
+    //$i = 1;
+    //foreach($cartData as $item) {
+        //$viewBasket .= '{ id: "'.$item->getSku().'", price: '.$item->getPrice().' , quantity: '.$item->getQty().' }';
+        //if($i < $cartDataCount)
+            //$viewBasket .= ', ';
+
+        //$i++;
+    //}
+?>
+    <div class='checkoutCartView'></div>
+
+    <script type="text/javascript">
+        function ajaxCheckout() {
+            var myVariable;
+            var proViewBasket = '<?php //echo $viewBasket;?>';
+            var url = '<?php //echo $url;?>';
+            jQuery.ajax({
+                'async': false,
+                'type': "POST",
+                'global': false,
+                'dataType': 'html',
+                'url': url+"amasty_promo/customer/info?ajax=checkoutCartView&account=32513"+'&viewBasket='+proViewBasket,
+                'success': function (data) {
+                    myVariable = data;
+                }
+            });
+            return myVariable;
+        }
+        var checkout = ajaxCheckout();
+        jQuery('.checkoutCartView').html(checkout);
+    </script>
+<?php //} ?> -->
+
+
+
 <!--Start of Zopim Live Chat Script-->
 <script type="text/javascript">
 window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
@@ -171,10 +281,19 @@ type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
 
 <script>
 jQuery(document).ready(function() {
-    jQuery('body').on('blur', '#customfield', function(){
-        var prn = jQuery(this).val();
-        jQuery.post("<?php echo $this->getUrl('kensium_checkoutfield/checkout/add', array('_secure' => 'true')); ?>?prn="+prn,{ajax:1}, function(response){
-        });
+    jQuery(".qty-inc").unbind('click').click(function(){
+        if(jQuery(this).parent().parent().children(".control").children("input.input-text.qty").is(':enabled')){
+            jQuery(this).parent().parent().children(".control").children("input.input-text.qty").val((+jQuery(this).parent().parent().children(".control").children("input.input-text.qty").val() + 1) || 0);
+            jQuery(this).parent().parent().children(".control").children("input.input-text.qty").trigger('change');
+            jQuery(this).focus();
+        }
+    });
+    jQuery(".qty-dec").unbind('click').click(function(){
+        if(jQuery(this).parent().parent().children(".control").children("input.input-text.qty").is(':enabled')){
+            jQuery(this).parent().parent().children(".control").children("input.input-text.qty").val((jQuery(this).parent().parent().children(".control").children("input.input-text.qty").val() - 1 > 0) ? (jQuery(this).parent().parent().children(".control").children("input.input-text.qty").val() - 1) : 0);
+            jQuery(this).parent().parent().children(".control").children("input.input-text.qty").trigger('change');
+            jQuery(this).focus();
+        }
     });
 });
 </script>
