@@ -46,6 +46,34 @@
 }
 
 //
+//  Max. 767px
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m){
+	.header.content {
+		.search-block {
+			& > div:first-child {
+				width: 100% !important;
+			}
+
+			& > div .block-title {
+				left: calc(~"100% - 80px");
+				position: absolute;
+				top: -44px;
+			}
+
+			& > div .show-search {
+				width: 92%;
+			}
+
+			& > div.pull-right {
+				margin-right: 0 !important;
+			}
+		}
+	}
+}
+
+
+//
 //    Max. 375px
 // --------------------------------------
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xxs-375) {
