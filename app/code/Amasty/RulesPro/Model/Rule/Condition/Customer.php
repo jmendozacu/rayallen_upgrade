@@ -27,14 +27,36 @@ class Customer extends \Magento\Rule\Model\Condition\AbstractCondition
      */
     private $customerFactory;
 
+    /**
+     * @var \Magento\Customer\Model\Session
+     */
+    private $customerSession;
+
+    /**
+     * @var array
+     */
+    protected $notAllowedAttributes = [
+        'lock_expires',
+        'first_failure',
+        'group_id',
+        'default_billing',
+        'default_shipping',
+        'failures_num',
+        'created_in',
+        'disable_auto_group_change',
+        'confirmation'
+    ];
+
     public function __construct(
         Condition\Context $context,
         \Magento\Customer\Model\ResourceModel\Customer $resource,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Customer\Model\Session $customerSession,
         array $data = []
     ) {
         $this->resource = $resource;
         $this->customerFactory = $customerFactory;
+        $this->customerSession = $customerSession;
         parent::__construct($context, $data);
     }
 
@@ -58,6 +80,10 @@ class Customer extends \Magento\Rule\Model\Condition\AbstractCondition
         /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         foreach ($customerAttributes as $attribute) {
             if (!($attribute->getFrontendLabel()) || !($attribute->getAttributeCode())) {
+                continue;
+            }
+
+            if (in_array($attribute->getAttributeCode(), $this->notAllowedAttributes)) {
                 continue;
             }
 
@@ -236,17 +262,35 @@ class Customer extends \Magento\Rule\Model\Condition\AbstractCondition
         $customer = $model;
         if (!$customer instanceof \Magento\Customer\Model\Customer) {
             $customer = $model->getQuote()->getCustomer();
-            $attr     = $this->getAttribute();
 
-            $allAttr = $customer->__toArray();
+            if (!$customer->getId()) {
+                $customer = $this->customerSession->getCustomer();
+            }
+
+            $attr     = $this->getAttribute();
+            $allAttr = $customer instanceof \Magento\Customer\Model\Customer
+                ? $customer->getData() : $customer->__toArray();
 
             if ($attr == 'membership_days') {
                 $allAttr[$attr] = $this->getMembership($customer->getCreatedAt());
             }
+
             if ($attr != 'entity_id' && !array_key_exists($attr, $allAttr)) {
-                $address        = $model->getQuote()->getBillingAddress();
-                $allAttr[$attr] = $address->getData($attr);
+                if (array_key_exists($attr, $allAttr['custom_attributes'])) {
+                    $customAttribute = $this->resource->getAttribute($attr);
+                    $attributeValue = $allAttr['custom_attributes'][$attr]['value'];
+
+                    if ($customAttribute->getFrontendInput() == 'multiselect') {
+                        $attributeValue = explode(',', $attributeValue);
+                    }
+
+                    $allAttr[$attr] = $attributeValue;
+                } else {
+                    $address        = $model->getQuote()->getBillingAddress();
+                    $allAttr[$attr] = $address->getData($attr);
+                }
             }
+            
             $customer = $this->customerFactory->create()->setData($allAttr);
         }
 

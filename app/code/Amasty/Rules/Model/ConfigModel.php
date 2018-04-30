@@ -13,10 +13,12 @@ class ConfigModel
     const MODULE = 'amrules';
     const SECTION_GENERAL = 'general';
     const SECTION_SKIP_PRICE = 'skip_price';
+    const SECTION_DISCOUNT_BREAKDOWN = 'discount_breakdown';
     const FIELD_SKIP_SPECIAL_PRICE = 'skip_special_price';
     const FIELD_SKIP_SPECIAL_PRICE_CONFIGURABLE = 'skip_special_price_configurable';
     const FIELD_SKIP_TIER_PRICE = 'skip_tier_price';
     const FIELD_OPTIONS_VALUE = 'options_value';
+    const FIELD_DISCOUNT_BREAKDOWN_ENABLE = 'enable';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -58,6 +60,14 @@ class ConfigModel
     public function getSkipSpecialPriceConfigurable()
     {
         return $this->getConfigValue(self::SECTION_SKIP_PRICE, self::FIELD_SKIP_SPECIAL_PRICE_CONFIGURABLE);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShowDiscountBreakdown()
+    {
+        return $this->getConfigValue(self::SECTION_DISCOUNT_BREAKDOWN, self::FIELD_DISCOUNT_BREAKDOWN_ENABLE);
     }
 
     /**

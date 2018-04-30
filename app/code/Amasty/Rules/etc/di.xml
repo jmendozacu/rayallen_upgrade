@@ -27,4 +27,7 @@
     <type name="Magento\SalesRule\Model\Rule\Metadata\ValueProvider">
         <plugin name="Amasty_Rules::SalesRule_ValueProvider" type="Amasty\Rules\Plugin\ValueProvider" />
     </type>
+    <type name="Magento\Rule\Model\Condition\AbstractCondition">
+        <plugin name="Amasty_Rules::AbstractCondition" type="Amasty\Rules\Plugin\Model\Condition\AbstractConditionPlugin"/>
+    </type>
 </config>

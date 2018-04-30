@@ -13,6 +13,9 @@
             <skip_price>
                 <skip_special_price>1</skip_special_price>
             </skip_price>
+            <discount_breakdown>
+                <enable>1</enable>
+            </discount_breakdown>
         </amrules>
     </default>
 </config>

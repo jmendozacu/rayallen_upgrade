@@ -18,16 +18,16 @@ class SerializedFieldDataConverter
     private $objectManager;
 
     /**
-     * @var \Magento\Framework\Setup\ModuleDataSetupInterface
+     * @var \Magento\Framework\App\ResourceConnection
      */
-    private $dataSetup;
+    private $connectionResource;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\Setup\ModuleDataSetupInterface $dataSetup
+        \Magento\Framework\App\ResourceConnection $connectionResource
     ) {
         $this->objectManager = $objectManager;
-        $this->dataSetup = $dataSetup;
+        $this->connectionResource = $connectionResource;
     }
 
     /**
@@ -54,7 +54,7 @@ class SerializedFieldDataConverter
 
         $fieldConverter->convert(
             $convertData,
-            $this->dataSetup->getConnection()
+            $this->connectionResource->getConnection()
         );
     }
 
@@ -68,7 +68,7 @@ class SerializedFieldDataConverter
     {
         $instance = new \Magento\Framework\DB\FieldToConvert(
             \Magento\Framework\DB\DataConverter\SerializedToJson::class,
-            $this->dataSetup->getTable($tableName),
+            $this->connectionResource->getTableName($tableName),
             $identifierField,
             $field
         );

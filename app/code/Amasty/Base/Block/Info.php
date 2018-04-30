@@ -8,6 +8,7 @@
 
 namespace Amasty\Base\Block;
 
+use Magento\Framework\App\State;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
@@ -16,11 +17,6 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
      * @var \Magento\Framework\View\LayoutFactory
      */
     private $_layoutFactory;
-    
-    /**
-     * @var \Magento\Framework\App\State
-     */
-    private $appState;
     
     /**
      * @var \Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory
@@ -43,6 +39,11 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
     private $productMetadata;
 
     /**
+     * @var \Magento\Framework\App\DeploymentConfig\Reader
+     */
+    private $reader;
+
+    /**
      * Info constructor.
      *
      * @param \Magento\Backend\Block\Context                               $context
@@ -51,7 +52,7 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
      * @param \Magento\Framework\View\LayoutFactory                        $layoutFactory
      * @param \Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory $cronFactory
      * @param \Magento\Framework\App\Filesystem\DirectoryList              $directoryList
-     * @param \Magento\Framework\App\State                                 $appState
+     * @param \Magento\Framework\App\DeploymentConfig\Reader               $reader
      * @param \Magento\Framework\App\ResourceConnection                    $resourceConnection
      * @param \Magento\Framework\App\ProductMetadataInterface              $productMetadata
      * @param array                                                        $data
@@ -63,7 +64,7 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Cron\Model\ResourceModel\Schedule\CollectionFactory $cronFactory,
         \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
-        \Magento\Framework\App\State $appState,
+        \Magento\Framework\App\DeploymentConfig\Reader $reader,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         array $data = []
@@ -72,11 +73,11 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
 
         $this->_layoutFactory = $layoutFactory;
         $this->_scopeConfig   = $context->getScopeConfig();
-        $this->appState = $appState;
         $this->cronFactory = $cronFactory;
         $this->directoryList = $directoryList;
         $this->resourceConnection = $resourceConnection;
         $this->productMetadata = $productMetadata;
+        $this->reader = $reader;
     }
 
     /**
@@ -122,7 +123,9 @@ class Info extends \Magento\Config\Block\System\Config\Form\Fieldset
     private function getMagentoMode($fieldset)
     {
         $label = __("Magento Mode");
-        $mode = $this->appState->getMode();
+
+        $env = $this->reader->load();
+        $mode = isset($env[State::PARAM_MODE]) ? $env[State::PARAM_MODE] : '';
 
         return $this->getFieldHtml($fieldset, 'magento_mode', $label, ucfirst($mode));
     }

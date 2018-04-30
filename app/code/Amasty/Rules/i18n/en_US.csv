@@ -32,6 +32,9 @@
 "Discount Qty Step (Buy X)","Discount Qty Step (Buy X)"
 "Discount Amount","Discount Amount"
 "Maximum Qty Discount is Applied To","Maximum Qty Discount is Applied To"
+"Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly </br>","Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly </br>"
+"Please see ","Please see "
+"usage example","usage example"
 "Special Promotions","Special Promotions"
 General,General
 "Check Special Options Values","Check Special Options Values"
@@ -39,8 +42,10 @@ General,General
 "Skip Items with Special Price","Skip Items with Special Price"
 "Skip Items with Tier Price","Skip Items with Tier Price"
 "Skip Configurable Items when Child has Special Price","Skip Configurable Items when Child has Special Price"
-"Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly","Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly"
+"Discount Breakdown","Discount Breakdown"
+"Show Discount Breakdown","Show Discount Breakdown"
 Apply,Apply
+"Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly","Please, change the priority of this rule to 0. If more than one rule has priority 0, the discount can be calculated incorrectly"
 "Define Y product (X and Y are different products)","Define Y product (X and Y are different products)"
 "Promo Categories","Promo Categories"
 "Comma separated list of the category ids","Comma separated list of the category ids"
