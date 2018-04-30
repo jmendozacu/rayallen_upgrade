@@ -16,6 +16,11 @@ class GenerateInformationTab implements ObserverInterface
     const SEO_PARAMS = '?utm_source=extension&utm_medium=backend&utm_campaign=';
     const MAGENTO_VERSION = '_m2';
 
+    /**
+     * @var array
+     */
+    private $moduleData = null;
+
     private $block;
 
     /**
@@ -38,12 +43,19 @@ class GenerateInformationTab implements ObserverInterface
      */
     private $moduleManager;
 
+    /**
+     * @var \Magento\Framework\View\Asset\Repository
+     */
+    private $assetRepo;
+
     public function __construct(
         Module $moduleHelper,
-        \Magento\Framework\Module\Manager $moduleManager
+        \Magento\Framework\Module\Manager $moduleManager,
+        \Magento\Framework\View\Asset\Repository $assetRepo
     ) {
         $this->moduleHelper = $moduleHelper;
         $this->moduleManager = $moduleManager;
+        $this->assetRepo = $assetRepo;
     }
 
     /**
@@ -77,11 +89,23 @@ class GenerateInformationTab implements ObserverInterface
     /**
      * @return string
      */
+    private function getLogoHtml()
+    {
+        $src = $this->assetRepo->getUrl("Amasty_Base::images/amasty_logo.svg");
+        $href = 'https://amasty.com' . $this->getSeoparams() . 'amasty_logo_' . $this->getModuleCode();
+        $html = '<a target="_blank" href="' . $href . '"><img class="amasty-logo" src="' . $src . '"/></a>';
+
+        return $html;
+    }
+
+    /**
+     * @return string
+     */
     private function additionalContent()
     {
         $html = '';
         if ($content = $this->getBlock()->getAdditionalModuleContent()) {
-            $html = '<div class="amasty-additional-content"><span class="message message-warning">'
+            $html = '<div class="amasty-additional-content"><span class="message success">'
                 . $content
                 .'</span></div>';
         }
@@ -101,9 +125,12 @@ class GenerateInformationTab implements ObserverInterface
             $isVersionLast = $this->isLastVersion($currentVer);
             $class = $isVersionLast ? 'last-version' : '';
             $html .= '<div><span class="version-title">'
-                . __('Extension version installed: ')
+                . $this->getModuleName() . ' '
+                . '<span class="module-version ' . $class . '">' . $currentVer . '</span>'
+                . __(' by ')
                 . '</span>'
-                . '<span class="module-version ' . $class . '">' . $currentVer . '</span></div>';
+                . $this->getLogoHtml()
+                . '</div>';
 
             if (!$isVersionLast) {
                 $html .=
@@ -161,9 +188,9 @@ class GenerateInformationTab implements ObserverInterface
     {
         $html = '<div class="amasty-user-guide"><span class="message success">'
             . __(
-                'Confused with configuration?'
-                . ' No worries, please consult the <a target="_blank" href="%1">user guide</a>'
-                .' to properly configure the extension.',
+                'Need help with the settings?'
+                . '  Please  consult the <a target="_blank" href="%1">user guide</a>'
+                .' to configure the extension properly.',
                 $this->getUserGuideLink()
             )
             . '</span></div>';
@@ -201,29 +228,33 @@ class GenerateInformationTab implements ObserverInterface
     private function isLastVersion($currentVer)
     {
         $result = true;
-        $allExtensions = $this->moduleHelper->getAllExtensions();
-        if ($allExtensions && isset($allExtensions[$this->getModuleCode()])) {
-            $module = $allExtensions[$this->getModuleCode()];
-            if ($module && is_array($module)) {
-                $module = array_shift($module);
-            }
 
-            if (isset($module['version']) && $module['version'] > (string)$currentVer) {
-                $result = false;
-            }
+        $module = $this->getFeedModuleData();
+        if ($module && isset($module['version']) && $module['version'] > (string)$currentVer) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    private function getModuleName()
+    {
+        $result = __('Extension');
+        $module = $this->getFeedModuleData();
+        if ($module && isset($module['name'])) {
+            $result = $module['name'];
+            $result = str_replace(' for Magento 2', '', $result);
         }
 
         return $result;
     }
 
     /**
-     * @param $currentVer
-     * @return bool
+     * @return array|null
      */
-    private function getModuleLink()
+    private function getFeedModuleData()
     {
-        if (!$this->moduleLink) {
-            $this->moduleLink = '';
+        if ($this->moduleData === null) {
             $allExtensions = $this->moduleHelper->getAllExtensions();
             if ($allExtensions && isset($allExtensions[$this->getModuleCode()])) {
                 $module = $allExtensions[$this->getModuleCode()];
@@ -231,9 +262,24 @@ class GenerateInformationTab implements ObserverInterface
                     $module = array_shift($module);
                 }
 
-                if (isset($module['url']) && $module['url']) {
-                    $this->moduleLink = $module['url'];
-                }
+                $this->moduleData = $module;
+            }
+        }
+
+        return $this->moduleData;
+    }
+
+    /**
+     * @param $currentVer
+     * @return string
+     */
+    private function getModuleLink()
+    {
+        if (!$this->moduleLink) {
+            $this->moduleLink = '';
+            $module = $this->getFeedModuleData();
+            if ($module && isset($module['url'])) {
+                $this->moduleLink = $module['url'];
             }
         }
 

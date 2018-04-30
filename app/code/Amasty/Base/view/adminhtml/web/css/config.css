@@ -38,3 +38,10 @@
 a[id*="amasty_information"] {
     display: none !important;
 }
+
+.amasty-module-version .amasty-logo {
+    display: inline-block;
+    position: relative;
+    max-height: 26px;
+    bottom: -5px;
+}
