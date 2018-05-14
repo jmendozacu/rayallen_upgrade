@@ -65,6 +65,24 @@
 		    border-top: 3px solid #0088cc;
 			max-width: none;
 		    padding-top: 15px;
+
+		    label.fb-text-label.label, label.fb-select-label.label, 
+		    label.fb-textarea-label.label, label.fb-number-label.label {
+		    	width: 33.33333333%;
+		    }
+
+		    .control {
+		    	width: 66.66666667%;
+    			display: inline-block;
+
+    			select {
+    				background: #fff url('../images/select-bg.svg') no-repeat 100% 48%;
+    			}
+
+    			input[type="number"] {
+    				max-width: none;
+    			}
+		    }
 		}
 	}
 }
