@@ -78,8 +78,8 @@ EOD;
 		            'identifier' => 'contact-us',
 		            'content' => $pageContent,
 		            'is_active' => 1,
-		            'stores' => 0,
-		            'sort_order' => 0,
+		            'store_id' => 0,
+		            'sort_order' => 0
 		        ];
 		        $this->createPage()->setData($cmsPageContent)->save();
 		    } else {
@@ -107,8 +107,8 @@ EOD;
                     'identifier' => 'requestquote',
                     'content' => $pageContent,
                     'is_active' => 1,
-                    'stores' => 0,
-                    'sort_order' => 0,
+                    'store_id' => 0,
+                    'sort_order' => 0
                 ];
                 $this->createPage()->setData($cmsPageContent)->save();
             } else {
@@ -154,7 +154,7 @@ EOD;
                     'identifier' => 'contact-info_rayallen',
                     'content' => $cmsBlockContent,
                     'is_active' => 1,
-                    'stores' => 1,
+                    'store_id' => 1
                 ];
                 $this->createBlock()->setData($cmsBlock)->save();
             } else {
@@ -194,7 +194,7 @@ EOD;
                     'identifier' => 'contact-info_gundog',
                     'content' => $cmsBlockContent,
                     'is_active' => 1,
-                    'stores' => 4,
+                    'store_id' => 4
                 ];
                 $this->createBlock()->setData($cmsBlock)->save();
             } else {
@@ -237,7 +237,7 @@ EOD;
                     'identifier' => 'contact-info_jjdog',
                     'content' => $cmsBlockContent,
                     'is_active' => 1,
-                    'stores' => 2,
+                    'store_id' => 2
                 ];
                 $this->createBlock()->setData($cmsBlock)->save();
             } else {
@@ -280,7 +280,7 @@ EOD;
                     'identifier' => 'contact-info_signaturek9',
                     'content' => $cmsBlockContent,
                     'is_active' => 1,
-                    'stores' => 3,
+                    'store_id' => 3
                 ];
                 $this->createBlock()->setData($cmsBlock)->save();
             } else {
@@ -326,7 +326,7 @@ EOD;
                     'identifier' => 'contact-info_rayallenb2b',
                     'content' => $cmsBlockContent,
                     'is_active' => 1,
-                    'stores' => 5,
+                    'store_id' => 5
                 ];
                 $this->createBlock()->setData($cmsBlock)->save();
             } else {

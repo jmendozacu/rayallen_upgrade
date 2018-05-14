@@ -66,7 +66,7 @@ EOD;
                 'identifier' => 'tes',
                 'content' => $cmsBlockContent,
                 'is_active' => 1,
-                'stores' => 0,
+                'store_id' => 0
             ];
             $this->createBlock()->setData($cmsBlock)->save();
         } else {
