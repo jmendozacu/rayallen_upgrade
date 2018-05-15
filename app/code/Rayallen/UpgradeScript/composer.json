@@ -1,6 +1,6 @@
 {
-  "name": "icube/upgrade-script",
-  "description": "icube upgrade script",
+  "name": "rayallen/upgrade-script",
+  "description": "rayallen upgrade script",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": [

@@ -4,7 +4,7 @@
  * See COPYING.txt for license details.
  */
 
-namespace Icube\UpgradeScript\Setup;
+namespace Rayallen\UpgradeScript\Setup;
 
 use Magento\Cms\Model\Page;
 use Magento\Cms\Model\PageFactory;

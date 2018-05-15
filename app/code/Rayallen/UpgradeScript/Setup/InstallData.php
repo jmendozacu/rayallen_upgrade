@@ -1,10 +1,10 @@
 <?php
 /**
- * Copyright © 2015 iCube. All rights reserved.
+ * Copyright © 2015 rayallen. All rights reserved.
  * See COPYING.txt for license details.
  */
 
-namespace Icube\UpgradeScript\Setup;
+namespace Rayallen\UpgradeScript\Setup;
 
 use Magento\Cms\Model\Page;
 use Magento\Cms\Model\PageFactory;
