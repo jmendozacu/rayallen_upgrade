@@ -116,6 +116,10 @@
 			max-width: none;
 		    padding-top: 15px;
 
+			.amasty_custom_form_fieldset {
+				padding: 0 30px;
+			}
+
 		    label.fb-text-label.label, label.fb-select-label.label, 
 		    label.fb-textarea-label.label, label.fb-number-label.label {
 		    	width: 33.33333333%;
@@ -167,6 +171,31 @@
 			li {
 				width: 100%; 
 				float: none;
+			}
+		}
+	}
+
+	/*Contact Us*/
+	body.cms-contact-us {
+		.amasty_custom_form {
+
+		    label.fb-text-label.label, label.fb-select-label.label, 
+		    label.fb-textarea-label.label, label.fb-number-label.label {
+		    	width: 100%;
+		    }
+
+		    .control {
+		    	width: 100%;
+    			display: block;
+		    }
+		}
+	}
+
+	/*Quotes*/
+	body.cms-requestquote {
+		.amasty_custom_form {
+		    [class*="field-textinput-"], [class*="field-textinput-third"] {
+		    	width: 100%;
 			}
 		}
 	}
