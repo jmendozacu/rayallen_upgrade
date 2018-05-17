@@ -111,5 +111,5 @@ define([
         }
 
     });
-    $(document).rayallenb2b();
+    $(document).rayallen();
 });
