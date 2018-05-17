@@ -4,7 +4,7 @@ define([
   ], function($){
     'use strict';
 
-    $.widget('icube.rayallenb2b', {
+    $.widget('icube.rayallen', {
 
         _create: function() {
             this.initAllPages();
