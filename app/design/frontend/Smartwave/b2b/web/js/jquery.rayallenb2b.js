@@ -67,23 +67,38 @@ define([
             }
 
             if ($('body.cms-requestquote').length) {
-            	var checkInterval;
-                checkInterval = setInterval(function () {
+            	$(window).load(function() {
+                    var checkInterval;
+                    checkInterval = setInterval(function () {
 
-                    var loaderContainer = $('.cms-requestquote .amasty_custom_form [class*="field-textinput-email-"]');
+                        var loaderContainer = $('.desc1-textinput-14');
 
-                    //Return if loader still load
-                    if (loaderContainer.length == 0) {
-                        return;
-                    }
+                        //Return if loader still load
+                        if (loaderContainer.length == 0) {
+                            return;
+                        }
 
-                    //Remove loader and clear update interval if content loaded
-                    if (loaderContainer.length > 0 ) {
-                        clearInterval(checkInterval);
-            			$( '#quote-text p.quote-description' ).insertAfter( '.cms-requestquote .amasty_custom_form [class*="field-textinput-email-"]' );
-                    }
-                }, 100);
+                        //Remove loader and clear update interval if content loaded
+                        if (loaderContainer.length > 0 ) {
+                            clearInterval(checkInterval);
+                            $( '#quote-text p.quote-description' ).insertAfter( '.cms-requestquote .amasty_custom_form [class*="field-textinput-email-"]' );
 
+                            // Setup Dynamic Static Boxes for SKU/Items
+                            // Check last input box index
+                            var lastIndexInput = 14,
+                                counter = 1;
+                            $('.desc1-textinput-14').closest('.field').nextAll().hide();
+                            $('.amasty_custom_form_fieldset').append('<button class="add-more-items"><span><span>Add More Items</span></span></button>');
+                            $('.amasty_custom_form_fieldset').on('click', 'button.add-more-items',function(){
+                                var lastVisibelField = $('.amasty_custom_form_fieldset > .field:visible:last');
+                                lastVisibelField.next().css('display', 'inline-block');
+                                lastVisibelField.next().next().css('display', 'inline-block');
+                                lastVisibelField.next().next().next().css('display', 'inline-block');
+                                return false;                                
+                            });
+                        }
+                    }, 100);
+                });
             }
 
         },
